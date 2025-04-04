@@ -55,20 +55,6 @@ export const createSlugifiedKeys = (headers) =>
  * @param {Object} data - The data object containing CSV values.
  * @param {Array} data.values - An array where the first element is the header row, and the rest are data rows.
  * @returns {Array<Object>} - The mapped JSON data with slugified keys.
- * @example
- * const csvData = {
- *   values: [
- *     ["Name", "Age", "City"],
- *     ["Alice", "30", "New York"],
- *     ["Bob", "25", "San Francisco"]
- *   ]
- * };
- * const jsonData = mapCsvDataToJson(csvData);
- * // jsonData will be:
- * // [
- * //   { name: "Alice", age: "30", city: "New York" },
- * //   { name: "Bob", age: "25", city: "San Francisco" }
- * // ]
  */
 export const mapCsvDataToJson = (data) => {
   const [header, ...rows] = data.values;

@@ -6,7 +6,14 @@ import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import ora from "ora";
 
-import { mapCsvDataToJson, cleanString, createSlug, generateShortHash, padIndex, parseAndUniqueList } from "./utils.js";
+import {
+  cleanString,
+  createSlug,
+  generateShortHash,
+  mapCsvDataToJson,
+  padIndex,
+  parseAndUniqueList,
+} from "./utils/utils.js";
 
 dotenv.config({ path: ".env.local" });
 
@@ -17,7 +24,7 @@ dotenv.config({ path: ".env.local" });
  * @throws {Error} If the base64 encoded service account or necessary fields are missing.
  */
 const createJwtClient = () => {
-  const base64ServiceAccount = process.env.NEXT_PUBLIC_GOOGLE_SERVICE_ACCOUNT_BASE64;
+  const base64ServiceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_BASE64;
 
   if (!base64ServiceAccount) {
     throw new Error("Base64 encoded service account is not defined in environment variables.");
@@ -46,7 +53,7 @@ const createJwtClient = () => {
  * @throws {Error} If the spreadsheet ID is not defined, or the sheet is not found.
  */
 const getGoogleSheetData = async (sheetName) => {
-  const SPREADSHEET_ID = process.env.NEXT_PUBLIC_SPREADSHEET_ID;
+  const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
   if (!SPREADSHEET_ID) {
     throw new Error("Spreadsheet ID is not defined in environment variables.");

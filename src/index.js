@@ -6,9 +6,11 @@ import morgan from "morgan";
 
 import apiRouter from "./api.js";
 
-dotenv.config();
+dotenv.config({ path: ".env.local" });
 
-console.log(process.env);
+if (!process.env.PORT) {
+  throw new Error("Missing required environment variable: PORT");
+}
 
 const app = express();
 const port = process.env.PORT || 3005;
