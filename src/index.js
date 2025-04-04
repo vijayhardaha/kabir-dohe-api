@@ -1,36 +1,35 @@
+import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
 
 import apiRouter from "./api.js";
 
-const app = express();
-const port = process.env.PORT || 3000;
+dotenv.config();
 
+console.log(process.env);
+
+const app = express();
+const port = process.env.PORT || 3005;
+
+app.use(helmet());
+app.use(cors());
+app.use(morgan("dev"));
 app.use(express.json());
 
 // Welcome route
-/**
- * GET / - Welcome route for the API.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
 app.get("/", (req, res) => {
-  res.json("Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.");
+  res.json({
+    success: true,
+    message: "Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.",
+  });
 });
 
 // Base API route
-/**
- * API routes are handled by the apiRouter.
- * @type {import('express').Router}
- */
 app.use("/api", apiRouter);
 
 // 404 Error Handler
-/**
- * Middleware to handle 404 errors.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @param {Function} next - Express next middleware function.
- */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -38,10 +37,31 @@ app.use((req, res) => {
   });
 });
 
+// Global Error Handler
+app.use((err, req, res) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: "An unexpected error occurred. Please try again later.",
+  });
+});
+
 // Start the server
-/**
- * Starts the Express server and listens on the specified port.
- */
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+  server.close(() => {
+    console.log("HTTP server closed");
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT signal received: closing HTTP server");
+  server.close(() => {
+    console.log("HTTP server closed");
+  });
 });

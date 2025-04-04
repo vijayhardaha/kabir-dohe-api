@@ -20,21 +20,24 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"dotenv": "^16.1.4",
-		"express": "^5.0.0",
-		"google-auth-library": "^9.14.1",
-		"google-spreadsheet": "^4.1.4"
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"express": "^5.1.0",
+		"google-auth-library": "^9.15.1",
+		"google-spreadsheet": "^4.1.4",
+		"helmet": "^8.1.0",
+		"morgan": "^1.10.0"
 	},
 	"devDependencies": {
-		"@babel/eslint-parser": "^7.25.1",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-import": "^2.30.0",
-		"eslint-plugin-jsx-a11y": "^6.10.0",
-		"eslint-plugin-prettier": "^5.2.1",
-		"eslint": "^8.57.0",
+		"@babel/eslint-parser": "^7.27.0",
+		"eslint": "^9.24.0",
+		"eslint-config-prettier": "^10.1.1",
+		"eslint-plugin-import": "^2.31.0",
+		"eslint-plugin-jsx-a11y": "^6.10.2",
+		"eslint-plugin-prettier": "^5.2.6",
 		"latinize": "^2.0.0",
-		"ora": "^8.1.0",
-		"prettier": "^3.3.3",
+		"ora": "^8.2.0",
+		"prettier": "^3.5.3",
 		"slugify": "^1.6.6"
 	}
 }
