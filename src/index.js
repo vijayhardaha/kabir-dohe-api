@@ -1,16 +1,9 @@
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
 import apiRouter from "./api.js";
-
-dotenv.config({ path: ".env.local" });
-
-if (!process.env.PORT) {
-  throw new Error("Missing required environment variable: PORT");
-}
 
 const app = express();
 const port = process.env.PORT || 3005;
@@ -22,10 +15,7 @@ app.use(express.json());
 
 // Welcome route
 app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.",
-  });
+	res.json("Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.");
 });
 
 // Base API route
