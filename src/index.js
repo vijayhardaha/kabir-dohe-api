@@ -14,7 +14,7 @@ app.use(express.json());
  * @param {Object} res - Express response object.
  */
 app.get("/", (req, res) => {
-	res.json("Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.");
+  res.json("Welcome to the Kabir Ke Dohe API! Explore our endpoints to retrieve and filter couplets.");
 });
 
 // Base API route
@@ -32,10 +32,10 @@ app.use("/api", apiRouter);
  * @param {Function} next - Express next middleware function.
  */
 app.use((req, res) => {
-	res.status(404).json({
-		success: false,
-		message: "Oops! The requested resource could not be found. Please check the URL and try again.",
-	});
+  res.status(404).json({
+    success: false,
+    message: "Oops! The requested resource could not be found. Please check the URL and try again.",
+  });
 });
 
 // Start the server
@@ -43,5 +43,5 @@ app.use((req, res) => {
  * Starts the Express server and listens on the specified port.
  */
 app.listen(port, () => {
-	console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });

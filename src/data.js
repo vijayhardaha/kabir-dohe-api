@@ -13,19 +13,19 @@ import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateDat
  * @throws {Error} Throws an error if the file cannot be read or parsed.
  */
 function loadData() {
-	// Construct the path to the 'couplets.json' file in the 'data' directory
-	const filePath = path.join(process.cwd(), "data/couplets.json");
+  // Construct the path to the 'couplets.json' file in the 'data' directory
+  const filePath = path.join(process.cwd(), "data/couplets.json");
 
-	try {
-		// Read the file content as a string
-		const jsonData = fs.readFileSync(filePath, "utf-8");
+  try {
+    // Read the file content as a string
+    const jsonData = fs.readFileSync(filePath, "utf-8");
 
-		// Parse the JSON string into an array of objects
-		return JSON.parse(jsonData);
-	} catch (error) {
-		// Throw an error if file reading or JSON parsing fails
-		throw new Error(`Failed to load data from '${filePath}': ${error.message}`);
-	}
+    // Parse the JSON string into an array of objects
+    return JSON.parse(jsonData);
+  } catch (error) {
+    // Throw an error if file reading or JSON parsing fails
+    throw new Error(`Failed to load data from '${filePath}': ${error.message}`);
+  }
 }
 
 /**
@@ -45,31 +45,31 @@ function loadData() {
  * @returns {Object} - Object containing filtered and paginated couplets.
  */
 export function getData({
-	s = "",
-	exactMatch = false,
-	searchWithin = "all",
-	tags = "",
-	popular = false,
-	orderBy = "id",
-	order = "ASC",
-	page = 1,
-	perPage = 10,
-	pagination = true,
+  s = "",
+  exactMatch = false,
+  searchWithin = "all",
+  tags = "",
+  popular = false,
+  orderBy = "id",
+  order = "ASC",
+  page = 1,
+  perPage = 10,
+  pagination = true,
 }) {
-	let data = loadData(); // Load the initial dataset
+  let data = loadData(); // Load the initial dataset
 
-	// Apply sorting
-	data = sortData(data, orderBy, order);
+  // Apply sorting
+  data = sortData(data, orderBy, order);
 
-	// Apply search filtering
-	data = filterBySearch(data, s, exactMatch, searchWithin);
+  // Apply search filtering
+  data = filterBySearch(data, s, exactMatch, searchWithin);
 
-	// Apply tag filtering
-	data = filterByTags(data, tags);
+  // Apply tag filtering
+  data = filterByTags(data, tags);
 
-	// Apply popularity filtering
-	data = filterByPopularity(data, popular);
+  // Apply popularity filtering
+  data = filterByPopularity(data, popular);
 
-	// Apply pagination
-	return paginateData(data, page, perPage, pagination);
+  // Apply pagination
+  return paginateData(data, page, perPage, pagination);
 }
