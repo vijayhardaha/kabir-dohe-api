@@ -1,43 +1,53 @@
 {
-	"name": "kabir-ke-dohe-api",
-	"version": "1.0.0",
-	"description": "An Express.js API for fetching and filtering Kabir's dohas, hosted on Vercel.",
-	"type": "module",
-	"main": "src/index.js",
-	"scripts": {
-		"start": "node src/index.js",
-		"build": "node scripts/build.js",
-		"lint": "eslint . --ext .js",
-		"format": "eslint . --ext .js --fix"
-	},
-	"keywords": [
-		"Kabir",
-		"dohe",
-		"Express",
-		"API",
-		"Vercel"
-	],
-	"author": "",
-	"license": "MIT",
-	"dependencies": {
-		"cors": "^2.8.5",
-		"dotenv": "^16.4.7",
-		"express": "^5.1.0",
-		"google-auth-library": "^9.15.1",
-		"google-spreadsheet": "^4.1.4",
-		"helmet": "^8.1.0",
-		"morgan": "^1.10.0"
-	},
-	"devDependencies": {
-		"@babel/eslint-parser": "^7.27.0",
-		"eslint": "^9.24.0",
-		"eslint-config-prettier": "^10.1.1",
-		"eslint-plugin-import": "^2.31.0",
-		"eslint-plugin-jsx-a11y": "^6.10.2",
-		"eslint-plugin-prettier": "^5.2.6",
-		"latinize": "^2.0.0",
-		"ora": "^8.2.0",
-		"prettier": "^3.5.3",
-		"slugify": "^1.6.6"
-	}
+  "name": "kabir-ke-dohe-api",
+  "version": "1.0.0",
+  "description": "An API for fetching and filtering Kabir's dohas, built with Next.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "data:build": "node scripts/build.js"
+  },
+  "keywords": [
+    "Kabir",
+    "dohe",
+    "Next.js",
+    "API",
+    "Vercel"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "google-auth-library": "^9.15.1",
+    "google-spreadsheet": "^4.1.4",
+    "latinize": "^2.0.0",
+    "next": "^15.2.4",
+    "prism-react-renderer": "^2.4.1",
+    "prop-types": "^15.8.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/eslint-parser": "^7.27.0",
+    "@tailwindcss/postcss": "^4.1.3",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.2.4",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react": "^7.37.5",
+    "ora": "^8.2.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^4.1.3"
+  }
 }
