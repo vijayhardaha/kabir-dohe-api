@@ -13,7 +13,7 @@ import {
   mapCsvDataToJson,
   padIndex,
   parseAndUniqueList,
-} from "./utils/utils.js";
+} from "./utils/utils.mjs";
 
 dotenv.config({ path: ".env.local" });
 
@@ -177,10 +177,10 @@ const ensureDataDirectoryExists = () => {
     });
 
     // Save processed data to file
-    const coupletsFilePath = path.join(process.cwd(), "data/couplets.json");
+    const coupletsFilePath = path.join(process.cwd(), "src/data/couplets.json");
     fs.writeFileSync(coupletsFilePath, JSON.stringify(processedData, null, 2));
 
-    spinner.succeed("Data fetched and saved to data/couplets.json");
+    spinner.succeed("Data fetched and saved to src/data/couplets.json");
   } catch (error) {
     spinner.fail("Error fetching data");
     console.error("Error fetching group data:", error);

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "data:build": "node scripts/build.js"
+    "build-data": "node src/scripts/build.mjs",
+    "prebuild": "npm run build-data"
   },
   "keywords": [
     "Kabir",
