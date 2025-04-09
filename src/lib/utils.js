@@ -1,4 +1,5 @@
 import crypto from "crypto";
+
 import latinize from "latinize";
 import slugify from "slugify";
 

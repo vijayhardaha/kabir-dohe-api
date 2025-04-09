@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getData } from "@/lib/data";
+import { checkRateLimit } from "@/lib/rateLimiter";
 
 /**
  * Default parameter values for the API
@@ -127,6 +128,19 @@ async function processRequest(params) {
 }
 
 /**
+ * Helper function to add CORS headers to response
+ *
+ * @param {NextResponse} response - The response object to modify
+ * @returns {NextResponse} Response with CORS headers
+ */
+function addCorsHeaders(response) {
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  return response;
+}
+
+/**
  * GET route handler for the couplets API
  * Retrieves couplets based on URL query parameters
  *
@@ -136,6 +150,17 @@ async function processRequest(params) {
  */
 export async function GET(request) {
   try {
+    const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
+
+    const { allowed } = await checkRateLimit({
+      ip,
+      endpoint: "/api/hello",
+    });
+
+    if (!allowed) {
+      return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
+    }
+
     // Extract parameters from URL
     const { searchParams } = new URL(request.url);
     const params = getParamsWithDefaults(searchParams, "GET");
@@ -143,12 +168,14 @@ export async function GET(request) {
     const result = await processRequest(params);
 
     if (!result.success) {
-      return NextResponse.json({ success: result.success, message: result.message }, { status: result.status });
+      return addCorsHeaders(
+        NextResponse.json({ success: result.success, message: result.message }, { status: result.status })
+      );
     }
 
-    return NextResponse.json({ success: true, data: result.data });
+    return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return addCorsHeaders(NextResponse.json({ success: false, message: error.message }, { status: 500 }));
   }
 }
 
@@ -162,6 +189,17 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
+    const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
+
+    const { allowed } = await checkRateLimit({
+      ip,
+      endpoint: "/api/hello",
+    });
+
+    if (!allowed) {
+      return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
+    }
+
     // Extract parameters from request body
     const body = await request.json();
     const params = getParamsWithDefaults(body, "POST");
@@ -169,11 +207,13 @@ export async function POST(request) {
     const result = await processRequest(params);
 
     if (!result.success) {
-      return NextResponse.json({ success: result.success, message: result.message }, { status: result.status });
+      return addCorsHeaders(
+        NextResponse.json({ success: result.success, message: result.message }, { status: result.status })
+      );
     }
 
-    return NextResponse.json({ success: true, data: result.data });
+    return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return addCorsHeaders(NextResponse.json({ success: false, message: error.message }, { status: 500 }));
   }
 }

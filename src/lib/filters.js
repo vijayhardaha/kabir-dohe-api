@@ -117,8 +117,8 @@ export const filterByPopularity = (data, popular) => {
  */
 export const sortData = (data, orderBy, order) => {
   // Normalize orderBy to lowercase and order to uppercase
-  const normalizedOrderBy = orderBy?.toLowerCase() || 'id';
-  const normalizedOrder = order?.toUpperCase() || 'ASC';
+  const normalizedOrderBy = orderBy?.toLowerCase() || "id";
+  const normalizedOrder = order?.toUpperCase() || "ASC";
 
   return data.sort((a, b) => {
     if (normalizedOrderBy === "random") {
