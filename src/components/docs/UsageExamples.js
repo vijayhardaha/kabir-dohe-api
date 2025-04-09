@@ -7,9 +7,9 @@ import { CodeBlock } from "@/components/CodeBlock";
  * @returns {JSX.Element} - The rendered examples section
  */
 export function UsageExamples() {
-  const curlExample = `curl -X GET "https://kabir-ke-dohe-api.vercel.app/api/couplets?category=devotion&limit=5"`;
+  const curlExample = `curl -X GET "https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5"`;
 
-  const jsExample = `fetch("https://kabir-ke-dohe-api.vercel.app/api/couplets?category=devotion&limit=5")
+  const jsExample = `fetch("https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5")
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));`;
@@ -17,9 +17,10 @@ export function UsageExamples() {
   const pythonExample = `import requests
 
 response = requests.get("https://kabir-ke-dohe-api.vercel.app/api/couplets", params={
-    "category": "devotion",
-    "limit": 5
+  "category": "devotion",
+  "limit": 5
 })
+
 data = response.json()
 print(data)`;
 

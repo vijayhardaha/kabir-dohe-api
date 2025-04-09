@@ -8,29 +8,37 @@ import { CodeBlock } from "@/components/CodeBlock";
  */
 export function ResponseFormat() {
   const responseExample = `{
-	couplets: [
-		{
-			id: "1",
-			slug: "couplet-slug",
-			unique_slug: "couplet-slug-with-id-and-unique-hash",
-			couplet_hindi: "हिन्दी में दोहा",
-			couplet_english: "English couplet",
-			translation_hindi: "हिन्दी में अनुवाद",
-			translation_english: "English translation",
-			explanation_hindi: "हिन्दी में व्याख्या",
-			explanation_english: "English explanation",
-			tags: [
-				{ slug: "tag1", name: "name1", count: 1 },
-				{ slug: "tag2", name: "name1", count: 1 },
-			],
-			popular: true,
-		},
-	],
-	total: 100,
-	totalPages: 10,
-	page: 1,
-	perPage: 10,
-	pagination: true,
+  "couplets": [
+    {
+      "id": "1",
+      "slug": "couplet-slug",
+      "unique_slug": "couplet-slug-with-id-and-unique-hash",
+      "couplet_hindi": "हिन्दी में दोहा",
+      "couplet_english": "English couplet",
+      "translation_hindi": "हिन्दी में अनुवाद",
+      "translation_english": "English translation",
+      "explanation_hindi": "हिन्दी में व्याख्या",
+      "explanation_english": "English explanation",
+      "tags": [
+        {
+          "slug": "tag1",
+          "name": "name1",
+          "count": 1
+        },
+        {
+          "slug": "tag2",
+          "name": "name1",
+          "count": 1
+        }
+      ],
+      "popular": true
+    }
+  ],
+  "total": 100,
+  "totalPages": 10,
+  "page": 1,
+  "perPage": 10,
+  "pagination": true
 }`;
 
   return (
