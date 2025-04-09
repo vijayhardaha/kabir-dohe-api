@@ -11,6 +11,7 @@ import {
   Contribution,
 } from "@/components/docs";
 import { API_QUERY_PARAMS } from "@/constants/api-params";
+import { SITE_CONFIG } from "@/constants/seo";
 
 /**
  * Metadata for the Kabir Ke Dohe API documentation page.
@@ -18,22 +19,11 @@ import { API_QUERY_PARAMS } from "@/constants/api-params";
  * @type {Object}
  */
 export const metadata = {
-  title: "Kabir Ke Dohe API",
-  description:
-    "Explore over 2500 timeless dohas (couplets) by Saint Kabir with this powerful and free API — ideal for spiritual seekers, developers, and Hindi literature enthusiasts.",
-  keywords: ["kabir", "dohe", "couplets", "api", "hindi poetry", "spiritual"],
-  openGraph: {
-    title: "Kabir Ke Dohe API",
-    description:
-      "Explore over 2500 timeless dohas (couplets) by Saint Kabir with this powerful and free API — ideal for spiritual seekers, developers, and Hindi literature enthusiasts.",
-    type: "website",
-    url: "https://kabir-ke-dohe-api.vercel.app",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Kabir Ke Dohe API",
-    description:
-      "Explore over 2500 timeless dohas (couplets) by Saint Kabir with this powerful and free API — ideal for spiritual seekers, developers, and Hindi literature enthusiasts.",
+  title: SITE_CONFIG.name,
+  description: SITE_CONFIG.description,
+  canonical: SITE_CONFIG.url,
+  alternates: {
+    canonical: SITE_CONFIG.url,
   },
 };
 

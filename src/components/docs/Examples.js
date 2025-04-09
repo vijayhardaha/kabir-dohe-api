@@ -36,9 +36,7 @@ export function Examples() {
   const getApiUrl = (code) => {
     // Extract everything after "GET " and construct the full URL
     const path = code.replace("GET ", "");
-    // Use the base URL of your deployed API or a placeholder
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://kabir-ke-dohe-api.vercel.app";
-    return `${baseUrl}${path}`;
+    return path;
   };
 
   const actionElement = (example) => (
