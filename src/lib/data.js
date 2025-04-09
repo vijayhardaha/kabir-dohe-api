@@ -1,31 +1,20 @@
-import fs from "fs";
-import path from "path";
+import coupletData from "../data/couplets.json";
 
 import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateData } from "./filters";
+
+// A more Vercel-friendly approach
 
 /**
  * Loads couplets data from a JSON file.
  *
- * Reads the JSON file containing couplets data from the 'data' directory,
- * parses the JSON content, and returns the array of couplets.
+ * NOTE: On Vercel serverless functions, this cache will NOT persist between
+ * different requests as each request may run on a new isolated instance.
+ * For Vercel, consider bundling the JSON with your app or using Vercel's KV storage.
  *
  * @returns {Array<Object>} Array of couplets where each couplet is an object containing its data.
- * @throws {Error} Throws an error if the file cannot be read or parsed.
  */
 export function loadData() {
-  // Construct the path to the 'couplets.json' file in the 'data' directory
-  const filePath = path.join(process.cwd(), "src/data/couplets.json");
-
-  try {
-    // Read the file content as a string
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-
-    // Parse the JSON string into an array of objects
-    return JSON.parse(jsonData);
-  } catch (error) {
-    // Throw an error if file reading or JSON parsing fails
-    throw new Error(`Failed to load data from '${filePath}': ${error.message}`);
-  }
+  return coupletData; // Already loaded at build time
 }
 
 /**
