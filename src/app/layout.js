@@ -15,7 +15,6 @@ export const metadata = {
   keywords: ["kabir", "dohe", "couplets", "api", "hindi poetry", "spiritual"],
   author: "Vijay Hardaha",
   robots: "index, follow",
-  viewport: "width=device-width, initial-scale=1",
   language: "en",
   openGraph: {
     title: SITE_CONFIG.name,
