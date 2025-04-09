@@ -84,12 +84,12 @@ const getGoogleSheetData = async (sheetName) => {
 };
 
 /**
- * Ensures that the 'data' directory exists. If not, it creates it.
+ * Ensures that the 'data' directory exists. If not, it creates it recursively.
  */
 const ensureDataDirectoryExists = () => {
-  const dataDirPath = path.join(process.cwd(), "data");
+  const dataDirPath = path.join(process.cwd(), "src/data");
   if (!fs.existsSync(dataDirPath)) {
-    fs.mkdirSync(dataDirPath);
+    fs.mkdirSync(dataDirPath, { recursive: true });
   }
 };
 
