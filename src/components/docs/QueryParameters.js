@@ -16,7 +16,7 @@ export function QueryParameters({ parameters }) {
       <h3 className="mb-4">Query Parameters</h3>
       <p className="mb-4">The following parameters can be used to filter and paginate results:</p>
 
-      <div className="rounded-lg border border-slate-200">
+      <div className="overflow-scroll rounded-lg border border-slate-200">
         <table className="table">
           <thead>
             <tr className="table-header">
