@@ -17,26 +17,26 @@ export function QueryParameters({ parameters }) {
       <p className="mb-4">The following parameters can be used to filter and paginate results:</p>
 
       <div className="rounded-lg border border-slate-200">
-        <table className="min-w-full overflow-hidden rounded-lg bg-white">
+        <table className="table">
           <thead>
-            <tr className="bg-slate-100">
-              <th className="border-b px-4 py-2 text-left whitespace-nowrap">Parameter</th>
-              <th className="border-b px-4 py-2 text-left whitespace-nowrap">Type</th>
-              <th className="border-b px-4 py-2 text-left whitespace-nowrap">Description</th>
-              <th className="border-b px-4 py-2 text-left whitespace-nowrap">Default Value</th>
-              <th className="border-b px-4 py-2 text-left whitespace-nowrap">Possible Values</th>
+            <tr className="table-header">
+              <th className="table-th">Parameter</th>
+              <th className="table-th">Type</th>
+              <th className="table-th">Description</th>
+              <th className="table-th">Default Value</th>
+              <th className="table-th">Possible Values</th>
             </tr>
           </thead>
           <tbody>
             {parameters.map((param, index) => (
-              <tr key={index}>
-                <td className={`px-4 py-2 ${!isLastItem(index) ? "border-b" : ""}`}>{param.name}</td>
-                <td className={`px-4 py-2 ${!isLastItem(index) ? "border-b" : ""}`}>{param.type}</td>
-                <td className={`px-4 py-2 ${!isLastItem(index) ? "border-b" : ""}`}>{param.description}</td>
-                <td className={`px-4 py-2 ${!isLastItem(index) ? "border-b" : ""}`}>
+              <tr key={index} className="table-row-hover">
+                <td className={`table-td ${!isLastItem(index) ? "" : "border-b-0"}`}>{param.name}</td>
+                <td className={`table-td ${!isLastItem(index) ? "" : "border-b-0"}`}>{param.type}</td>
+                <td className={`table-td ${!isLastItem(index) ? "" : "border-b-0"}`}>{param.description}</td>
+                <td className={`table-td ${!isLastItem(index) ? "" : "border-b-0"}`}>
                   {param.defaultValue && <code>{param.defaultValue}</code>}
                 </td>
-                <td className={`px-4 py-2 ${!isLastItem(index) ? "border-b" : ""}`}>{param.possibleValues}</td>
+                <td className={`table-td ${!isLastItem(index) ? "" : "border-b-0"}`}>{param.possibleValues}</td>
               </tr>
             ))}
           </tbody>

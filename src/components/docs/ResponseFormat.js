@@ -41,37 +41,49 @@ export function ResponseFormat() {
       <div className="mt-4">
         <h4 className="mb-2 text-lg font-semibold">Response Fields</h4>
         <div className="rounded-lg border border-slate-200">
-          <table className="min-w-full overflow-hidden rounded-lg bg-white">
+          <table className="table">
             <thead>
-              <tr className="bg-slate-100">
-                <th className="border-b px-4 py-2 text-left">Field</th>
-                <th className="border-b px-4 py-2 text-left">Description</th>
+              <tr className="table-header">
+                <th className="table-th">Field</th>
+                <th className="table-th">Description</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border-b px-4 py-2 font-mono">couplets</td>
-                <td className="border-b px-4 py-2">Array of couplet objects</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>couplets</code>
+                </td>
+                <td className="table-td">Array of couplet objects</td>
               </tr>
-              <tr>
-                <td className="border-b px-4 py-2 font-mono">total</td>
-                <td className="border-b px-4 py-2">Total number of records matching the query</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>total</code>
+                </td>
+                <td className="table-td">Total number of records matching the query</td>
               </tr>
-              <tr>
-                <td className="border-b px-4 py-2 font-mono">totalPages</td>
-                <td className="border-b px-4 py-2">Total number of pages</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>totalPages</code>
+                </td>
+                <td className="table-td">Total number of pages</td>
               </tr>
-              <tr>
-                <td className="border-b px-4 py-2 font-mono">page</td>
-                <td className="border-b px-4 py-2">Current page number</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>page</code>
+                </td>
+                <td className="table-td">Current page number</td>
               </tr>
-              <tr>
-                <td className="border-b px-4 py-2 font-mono">perPage</td>
-                <td className="border-b px-4 py-2">Number of results per page</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>perPage</code>
+                </td>
+                <td className="table-td">Number of results per page</td>
               </tr>
-              <tr>
-                <td className="px-4 py-2 font-mono">pagination</td>
-                <td className="px-4 py-2">Boolean indicating if pagination is enabled</td>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>pagination</code>
+                </td>
+                <td className="table-td">Boolean indicating if pagination is enabled</td>
               </tr>
             </tbody>
           </table>

@@ -49,6 +49,26 @@
   @apply border-slate-300 bg-slate-200 text-slate-900 hover:bg-slate-300;
 }
 
+@utility table {
+  @apply min-w-full overflow-hidden rounded-lg bg-white;
+}
+
+@utility table-header {
+  @apply bg-slate-100;
+}
+
+@utility table-th {
+  @apply border-b px-4 py-2 text-left font-medium whitespace-nowrap;
+}
+
+@utility table-td {
+  @apply border-b px-4 py-2;
+}
+
+@utility table-row-hover {
+  @apply hover:bg-slate-50;
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);

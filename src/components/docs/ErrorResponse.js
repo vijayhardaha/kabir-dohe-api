@@ -20,29 +20,42 @@ export function ErrorResponse() {
       <div className="mt-4">
         <h4 className="mb-2 text-lg font-semibold">Common Error Responses</h4>
         <div className="rounded-lg border border-slate-200">
-          <table className="min-w-full overflow-hidden rounded-lg bg-white">
+          <table className="table">
             <thead>
-              <tr className="bg-slate-100">
-                <th className="border-b px-4 py-2 text-left whitespace-nowrap">Error Message</th>
-                <th className="border-b px-4 py-2 text-left whitespace-nowrap">Description</th>
-                <th className="border-b px-4 py-2 text-left whitespace-nowrap">HTTP Status</th>
+              <tr className="table-header">
+                <th className="table-th">Error Message</th>
+                <th className="table-th">Description</th>
+                <th className="table-th">HTTP Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border-b px-4 py-2">Invalid parameter value</td>
-                <td className="border-b px-4 py-2">One or more request parameters are invalid</td>
-                <td className="border-b px-4 py-2">400</td>
+              <tr className="table-row-hover">
+                <td className="table-td">Invalid parameter value</td>
+                <td className="table-td">One or more request parameters are invalid</td>
+                <td className="table-td">
+                  <code>400</code>
+                </td>
               </tr>
-              <tr>
-                <td className="border-b px-4 py-2">Resource not found</td>
-                <td className="border-b px-4 py-2">The requested resource could not be found</td>
-                <td className="border-b px-4 py-2">404</td>
+              <tr className="table-row-hover">
+                <td className="table-td">Resource not found</td>
+                <td className="table-td">The requested resource could not be found</td>
+                <td className="table-td">
+                  <code>404</code>
+                </td>
               </tr>
-              <tr>
-                <td className="px-4 py-2">Internal server error</td>
-                <td className="px-4 py-2">An unexpected error occurred on the server</td>
-                <td className="px-4 py-2">500</td>
+              <tr className="table-row-hover">
+                <td className="table-td">Too many requests</td>
+                <td className="table-td">You have exceeded the rate limit of 60 requests per minute</td>
+                <td className="table-td">
+                  <code>429</code>
+                </td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td">Internal server error</td>
+                <td className="table-td">An unexpected error occurred on the server</td>
+                <td className="table-td">
+                  <code>500</code>
+                </td>
               </tr>
             </tbody>
           </table>
