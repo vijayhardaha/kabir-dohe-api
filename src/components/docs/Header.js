@@ -9,7 +9,8 @@ export function DocsHeader() {
     <header className="mb-12 text-center">
       <h1 className="mb-4 text-4xl font-bold">Kabir Ke Dohe API</h1>
       <p className="text-lg text-slate-600">
-        A comprehensive API with 2500+ Kabir’s dohas (couplets), built with Next.js and deployed on Vercel.
+        A comprehensive API with 2500+ Kabir’s dohas (couplets), designed to fetch and filter Kabir’s timeless spiritual
+        wisdom.
       </p>
       <div className="mt-8 flex justify-center space-x-4">
         <a href="/api/couplets" className="btn btn-primary">
