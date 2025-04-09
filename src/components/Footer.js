@@ -8,7 +8,7 @@ import { LuArrowUpRight } from "react-icons/lu";
 export default function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-slate-100 py-8">
-      <div className="mx-auto max-w-4xl px-4">
+      <div className="container">
         <div className="text-center">
           <p className="mb-2">
             Crafted with ❤️ by{" "}

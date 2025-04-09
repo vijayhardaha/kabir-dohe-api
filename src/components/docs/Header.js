@@ -1,3 +1,5 @@
+import { LuArrowUpRight } from "react-icons/lu";
+
 /**
  * Header component for the documentation page.
  * Displays the title and main heading for the Kabir Ke Dohe API documentation.
@@ -23,6 +25,7 @@ export function DocsHeader() {
           rel="noopener noreferrer"
         >
           View on GitHub
+          <LuArrowUpRight className="ml-1" />
         </a>
       </div>
     </header>

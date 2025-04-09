@@ -10,7 +10,7 @@ export function Contribution() {
   return (
     <div className="mb-8">
       <div className="rounded-lg border border-slate-300 p-6">
-        <h3 className="mb-4 text-4xl">Contribute to the Project</h3>
+        <h3 className="mb-4 text-3xl">Contribute to the Project</h3>
 
         <p className="mb-4">
           <strong>We need your help!</strong> This project grows through community contributions.
@@ -40,7 +40,7 @@ export function Contribution() {
             rel="noopener noreferrer"
             className="bg-primary-500 hover:bg-primary-600 inline-flex items-center rounded-md px-6 py-3 font-medium text-white"
           >
-            Contribute on GitHub <LuArrowUpRight className="ml-2" />
+            Contribute on GitHub <LuArrowUpRight className="ml-1" />
           </a>
         </div>
       </div>
