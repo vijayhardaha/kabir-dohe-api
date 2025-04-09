@@ -44,7 +44,7 @@ export const filterBySearch = (data, search, exactMatch, searchWithin) => {
 
   // Filter data based on the whole search string
   const exactMatchResults = data.filter((item) =>
-    fieldsToSearch.some((field) => item[field]?.toLowerCase().includes(searchLower))
+    fieldsToSearch.some((field) => searchTerms.every((term) => item[field]?.toLowerCase().includes(term)))
   );
 
   // If exactMatch is false, filter based on individual search terms
