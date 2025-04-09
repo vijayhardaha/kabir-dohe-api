@@ -1,10 +1,10 @@
-import { Lexend, Geist_Mono } from "next/font/google";
+import { Kumbh_Sans, Fira_Code } from "next/font/google";
 import PropTypes from "prop-types";
 
 import Footer from "@/components/Footer";
 
-const sansFont = Lexend({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-sans" });
-const monoFont = Geist_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-mono" });
+const sansFont = Kumbh_Sans({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-sans" });
+const monoFont = Fira_Code({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-mono" });
 
 export const metadata = {
   title: "Kabir Ke Dohe API",
