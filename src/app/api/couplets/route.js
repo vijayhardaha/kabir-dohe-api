@@ -31,6 +31,12 @@ const DEFAULT_PARAMS = {
 };
 
 /**
+ * Secret hash value for skipping rate limiting
+ * In production, this should be stored in environment variables
+ */
+const BYPASS_RATE_LIMIT_HASH = "r>9c%sW9Pd`vaQ3n^Jn_ApP>1.xgwP50.=i]Dym823B^;nID";
+
+/**
  * Extracts and normalizes request parameters with default values
  *
  * @param {URLSearchParams|Object} requestData - Request data (search params for GET, body for POST)
@@ -150,19 +156,23 @@ function addCorsHeaders(response) {
  */
 export async function GET(request) {
   try {
-    const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
+    const { searchParams } = new URL(request.url);
+    const skipHash = searchParams.get("skipHash");
 
-    const { allowed } = await checkRateLimit({
-      ip,
-      endpoint: "/api/hello",
-    });
+    // Skip rate limiting if valid hash is provided
+    if (skipHash !== BYPASS_RATE_LIMIT_HASH) {
+      const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
+      const { allowed } = await checkRateLimit({
+        ip,
+        endpoint: "/api/hello",
+      });
 
-    if (!allowed) {
-      return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
+      if (!allowed) {
+        return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
+      }
     }
 
     // Extract parameters from URL
-    const { searchParams } = new URL(request.url);
     const params = getParamsWithDefaults(searchParams, "GET");
 
     const result = await processRequest(params);
@@ -189,19 +199,23 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
-
-    const { allowed } = await checkRateLimit({
-      ip,
-      endpoint: "/api/hello",
-    });
-
-    if (!allowed) {
-      return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
-    }
-
     // Extract parameters from request body
     const body = await request.json();
+    const skipHash = body.skipHash;
+
+    // Skip rate limiting if valid hash is provided
+    if (skipHash !== BYPASS_RATE_LIMIT_HASH) {
+      const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
+      const { allowed } = await checkRateLimit({
+        ip,
+        endpoint: "/api/hello",
+      });
+
+      if (!allowed) {
+        return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
+      }
+    }
+
     const params = getParamsWithDefaults(body, "POST");
 
     const result = await processRequest(params);
