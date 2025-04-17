@@ -1,6 +1,5 @@
-import coupletData from "../data/couplets.json";
-
 import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateData } from "./filters";
+import coupletData from "../data/couplets.json";
 
 // A more Vercel-friendly approach
 
