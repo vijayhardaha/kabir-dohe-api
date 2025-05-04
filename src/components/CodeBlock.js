@@ -46,12 +46,12 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }) {
                 {tokens.map((line, i) => {
                   const lineProps = getLineProps({ line });
                   return (
-                    <div key={i} {...lineProps}>
+                    <span key={i} {...lineProps}>
                       {line.map((token, key) => {
                         const tokenProps = getTokenProps({ token });
                         return <span key={key} {...tokenProps} />;
                       })}
-                    </div>
+                    </span>
                   );
                 })}
               </code>
