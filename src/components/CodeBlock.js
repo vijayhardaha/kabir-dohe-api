@@ -46,7 +46,7 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }) {
                 {tokens.map((line, i) => {
                   const lineProps = getLineProps({ line });
                   return (
-                    <span key={i} {...lineProps}>
+                    <span key={i} {...lineProps} className="block">
                       {line.map((token, key) => {
                         const tokenProps = getTokenProps({ token });
                         return <span key={key} {...tokenProps} />;
