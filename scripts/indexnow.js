@@ -38,9 +38,7 @@ function readSitemap(filePath) {
           return reject(new Error("Invalid sitemap XML structure."));
         }
 
-        const urls = result.urlset.url
-          .map((entry) => entry && entry.loc && entry.loc[0])
-          .filter(Boolean);
+        const urls = result.urlset.url.map((entry) => entry && entry.loc && entry.loc[0]).filter(Boolean);
 
         if (!urls.length) {
           return reject(new Error("No URLs found in sitemap."));
