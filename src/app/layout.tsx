@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Kumbh_Sans, Fira_Code } from "next/font/google";
 
 import Footer from "@/components/Footer";
@@ -25,6 +26,9 @@ export const metadata: IBaseMetadata = baseMetadata;
 const RootLayout = ({ children }: { children: ReactNode }): React.JSX.Element => {
   return (
     <html lang="en">
+      <head>
+        <GoogleAnalytics gaId="G-GM50Y47GMH" />
+      </head>
       <body className={`${sansFont.variable} ${monoFont.variable} font-sans`}>
         <div className="flex min-h-screen flex-col">
           <main className="flex-1">{children}</main>
