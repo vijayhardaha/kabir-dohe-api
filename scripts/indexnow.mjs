@@ -1,18 +1,13 @@
-/**
- * Script to notify IndexNow about updated URLs from the generated sitemap.
- * Reads URLs from the generated next-sitemap XML and submits them to IndexNow API.
- *
- * Usage: node scripts/indexnow.js
- */
+import fs from "fs";
+import path from "path";
 
-const fs = require("fs");
-const path = require("path");
-
-const xml2js = require("xml2js");
+import ora from "ora";
+import xml2js from "xml2js";
 
 const siteUrl = "https://kabir-ke-dohe-api.vercel.app";
 const key = "91c80f732f4e4e5b80b4c02a7e8c9e9c";
 const keyLocation = `${siteUrl}/${key}.txt`;
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const sitemapPath = path.join(__dirname, "..", "public", "sitemap-0.xml");
 
 /**
@@ -53,11 +48,12 @@ function readSitemap(filePath) {
 /**
  * Notifies IndexNow API with a list of URLs, processing each URL individually and asynchronously.
  * @param {string[]} urls - Array of URLs to notify.
+ * @param {object} spinner - ora spinner instance.
  * @returns {Promise<void>}
  */
-async function notifyIndexNow(urls) {
+async function notifyIndexNow(urls, spinner) {
   if (!Array.isArray(urls) || urls.length === 0) {
-    console.warn("No URLs to notify IndexNow.");
+    spinner.warn("No URLs to notify IndexNow.");
     return;
   }
 
@@ -75,13 +71,13 @@ async function notifyIndexNow(urls) {
         }),
       });
     } catch (err) {
-      console.error(`❌ Network error while submitting ${url} to IndexNow:`, err);
+      spinner.fail(`❌ Network error while submitting ${url} to IndexNow: ${err}`);
       console.log(`Status for ${url}: Failed (Network error)`);
       continue;
     }
 
     if (res && res.ok) {
-      console.log(`Status for ${url}: ✅ Success`);
+      spinner.succeed(`Status for ${url}: ✅ Success`);
     } else {
       let errorText = "";
       try {
@@ -89,9 +85,10 @@ async function notifyIndexNow(urls) {
       } catch (e) {
         errorText = e instanceof Error ? e.message : "Unknown error";
       }
-      console.log(`Status for ${url}: Failed (${errorText})`);
+      spinner.fail(`Status for ${url}: Failed (${errorText})`);
       console.error(`❌ Submission failed for ${url}:`, errorText);
     }
+    spinner.start("Processing next URL...");
   }
 }
 
@@ -99,20 +96,23 @@ async function notifyIndexNow(urls) {
  * Main execution block.
  */
 (async () => {
+  const spinner = ora("Reading sitemap...").start();
   try {
     const urls = await readSitemap(sitemapPath);
 
     // Optional: split into chunks of 10000 (IndexNow limit)
     const chunkSize = 10000;
     if (!Array.isArray(urls) || urls.length === 0) {
-      console.warn("No URLs found to submit.");
+      spinner.warn("No URLs found to submit.");
       return;
     }
     for (let i = 0; i < urls.length; i += chunkSize) {
       const chunk = urls.slice(i, i + chunkSize);
-      await notifyIndexNow(chunk);
+      spinner.text = `Submitting URLs ${i + 1} to ${i + chunk.length} of ${urls.length}`;
+      await notifyIndexNow(chunk, spinner);
     }
+    spinner.succeed("All URLs processed.");
   } catch (error) {
-    console.error("Error:", error.message || error);
+    spinner.fail("Error: " + (error.message || error));
   }
 })();

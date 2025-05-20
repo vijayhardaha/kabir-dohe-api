@@ -41,7 +41,7 @@ export const createSlug = (text, replacement = "-") =>
 /**
  * Converts an array of header names to slugified keys.
  * @param {string[]} headers - The array of header names.
- * @returns {Object} - An object mapping original header names to their slugified versions.
+ * @returns {Record<string, string>} - An object mapping original header names to their slugified versions.
  */
 export const createSlugifiedKeys = (headers) =>
   headers.reduce((acc, header) => {
@@ -54,7 +54,7 @@ export const createSlugifiedKeys = (headers) =>
  * Maps CSV data to JSON format with optional slugified keys.
  * @param {Object} data - The data object containing CSV values.
  * @param {Array} data.values - An array where the first element is the header row, and the rest are data rows.
- * @returns {Array<Object>} - The mapped JSON data with slugified keys.
+ * @returns {Array<Record<string, any>>} - The mapped JSON data with slugified keys.
  */
 export const mapCsvDataToJson = (data) => {
   const [header, ...rows] = data.values;

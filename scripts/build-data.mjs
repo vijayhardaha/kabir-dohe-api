@@ -13,7 +13,7 @@ import {
   mapCsvDataToJson,
   padIndex,
   parseAndUniqueList,
-} from "./utils/utils.mjs";
+} from "./utils/index.mjs";
 
 dotenv.config({ path: ".env.local" });
 
@@ -71,14 +71,19 @@ const getGoogleSheetData = async (sheetName) => {
     }
 
     const rows = await sheet.getRows();
-    const data = rows.map((row) => row._rawData);
+    const data = rows.map((row) => row.toObject());
+    // Convert each row object to an array of values in header order
+    const values = [
+      sheet.headerValues,
+      ...data.map((rowObj) => sheet.headerValues.map((header) => rowObj[header] ?? "")),
+    ];
     const mappedData = mapCsvDataToJson({
-      values: [sheet.headerValues, ...data],
+      values,
     });
 
     return mappedData;
   } catch (error) {
-    console.error("Error fetching data from Google Sheets:", error.message);
+    console.error("Error fetching data from Google Sheets:", error?.message ?? error);
     return [];
   }
 };
@@ -116,8 +121,8 @@ const ensureDataDirectoryExists = () => {
 
     // Process the fetched data
     let processedData = couplets.map((row) => ({
-      index: parseInt(row.index ?? 0, 10),
-      slug: cleanString(createSlug(row.title_english, "-")),
+      index: parseInt((row.index ?? "0").toString(), 10),
+      slug: cleanString(createSlug(row.title_english ?? "", "-")),
       popular: row.popular?.toLowerCase() === "yes" || false,
       couplet_hindi: cleanString(row.couplet_hindi ?? ""),
       translation_hindi: row?.translation_hindi?.trim() ?? "",
@@ -183,6 +188,6 @@ const ensureDataDirectoryExists = () => {
     spinner.succeed("Data fetched and saved to src/data/couplets.json");
   } catch (error) {
     spinner.fail("Error fetching data");
-    console.error("Error fetching group data:", error);
+    console.error("Error fetching group data:", error?.message ?? error);
   }
 })();

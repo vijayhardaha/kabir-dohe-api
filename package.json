@@ -4,16 +4,17 @@
   "description": "An API for fetching and filtering Kabir's dohas, built with Next.js",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "build-data": "node ./scripts/build-data.mjs",
+    "dev": "next dev",
     "fix": "next lint --fix",
-    "build-data": "node src/scripts/build.mjs",
-    "prebuild": "npm run build-data",
-    "typecheck": "tsc --noEmit",
+    "indexnow": "node ./scripts/indexnow.mjs",
+    "lint": "next lint",
     "postbuild": "next-sitemap",
-    "indexnow": "node scripts/indexnow.js"
+    "prebuild": "npm run build-data",
+    "preindexnow": "next-sitemap",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "Kabir",
@@ -67,6 +68,7 @@
     "react-icons": "^5.5.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
     "xml2js": "^0.6.2"
