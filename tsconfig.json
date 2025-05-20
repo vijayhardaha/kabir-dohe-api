@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "baseUrl": ".",
+    "downlevelIteration": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
-    "baseUrl": ".",
+    "lib": ["dom", "dom.iterable"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -22,23 +19,12 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2024"
   },
-  "include": [
-    "./**/*.js",
-    "./**/*.jsx",
-    "./**/*.mjs",
-    "./**/*.mjsx",
-    "./**/*.cjs",
-    "./**/*.cjsx",
-    "./**/*.ts",
-    "./**/*.tsx",
-    "./src/*",
-    "*.config.mjs",
-    "next.config.mjs",
-    "eslint.config.mjs",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "include": ["**/*.{js,jsx,ts,tsx,mjs,cjs}", "*.config.mjs", "next-env.d.ts", "*.d.ts", ".next/types/**/*.ts"]
 }
