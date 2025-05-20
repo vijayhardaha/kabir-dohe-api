@@ -10,10 +10,10 @@ const path = require("path");
 
 const xml2js = require("xml2js");
 
-const siteUrl = "https://toolsbyvijay.vercel.app";
+const siteUrl = "https://kabir-ke-dohe-api.vercel.app";
 const key = "91c80f732f4e4e5b80b4c02a7e8c9e9c";
 const keyLocation = `${siteUrl}/${key}.txt`;
-const sitemapPath = path.join(__dirname, "..", "public", "next-sitemap-0.xml");
+const sitemapPath = path.join(__dirname, "..", "public", "sitemap-0.xml");
 
 /**
  * Reads a sitemap XML file and extracts all URLs.
