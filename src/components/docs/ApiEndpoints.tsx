@@ -2,9 +2,9 @@
  * Component that displays the available API endpoints.
  * Shows information about GET and POST endpoints for couplets.
  *
- * @returns {JSX.Element} - The rendered API endpoints documentation.
+ * @returns {React.JSX.Element} - The rendered API endpoints documentation.
  */
-export function ApiEndpoints() {
+export function ApiEndpoints(): React.JSX.Element {
   return (
     <div className="mb-8">
       <h3 className="mb-4">API Endpoints</h3>

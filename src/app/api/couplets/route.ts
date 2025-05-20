@@ -1,7 +1,44 @@
 import { NextResponse } from "next/server";
 
 import { getData } from "@/lib/data";
-import { checkRateLimit } from "@/lib/rateLimiter";
+
+/**
+ * Inferface for the parameters used in the couplets API.
+ */
+interface CoupletParams {
+  s: string;
+  exactMatch: boolean;
+  searchWithin: string;
+  tags: string;
+  popular: boolean;
+  orderBy: string;
+  order: string;
+  page: number;
+  perPage: number;
+  pagination: boolean;
+}
+
+/**
+ * Interface for the success result of the processRequest function.
+ */
+interface ProcessResultSuccess {
+  success: true;
+  data: any;
+}
+
+/**
+ * Interface for the error result of the processRequest function.
+ */
+interface ProcessResultError {
+  success: false;
+  message: string;
+  status: number;
+}
+
+/**
+ * Union type for the result of the processRequest function.
+ */
+type ProcessResult = ProcessResultSuccess | ProcessResultError;
 
 /**
  * Default parameter values for the API
@@ -17,7 +54,7 @@ import { checkRateLimit } from "@/lib/rateLimiter";
  * @property {number} perPage - Number of records per page
  * @property {boolean} pagination - Whether to enable pagination
  */
-const DEFAULT_PARAMS = {
+const DEFAULT_PARAMS: CoupletParams = {
   s: "",
   exactMatch: false,
   searchWithin: "all",
@@ -31,20 +68,17 @@ const DEFAULT_PARAMS = {
 };
 
 /**
- * Secret hash value for skipping rate limiting
- * In production, this should be stored in environment variables
- */
-const BYPASS_RATE_LIMIT_HASH = "r>9c%sW9Pd`vaQ3n^Jn_ApP>1.xgwP50.=i]Dym823B^;nID";
-
-/**
  * Extracts and normalizes request parameters with default values
  *
  * @param {URLSearchParams|Object} requestData - Request data (search params for GET, body for POST)
  * @param {string} requestType - Request type: "GET" or "POST"
  * @returns {Object} Normalized parameters with defaults applied
  */
-function getParamsWithDefaults(requestData, requestType) {
-  const params = {};
+function getParamsWithDefaults(
+  requestData: URLSearchParams | Record<string, any>,
+  requestType: "GET" | "POST"
+): CoupletParams {
+  const params: Partial<CoupletParams> = {};
 
   // Apply defaults based on request type
   for (const [key, defaultValue] of Object.entries(DEFAULT_PARAMS)) {
@@ -52,20 +86,26 @@ function getParamsWithDefaults(requestData, requestType) {
       // For GET requests, we need to handle 'false' string for boolean values
       if (typeof defaultValue === "boolean") {
         if (key === "pagination") {
-          params[key] = requestData.get(key) !== "false"; // Default to true
+          (params as any)[key] = (requestData as URLSearchParams).get(key) !== "false"; // Default to true
         } else {
-          params[key] = requestData.get(key) === "true" || defaultValue;
+          (params as any)[key] = (requestData as URLSearchParams).get(key) === "true" || defaultValue;
         }
+      } else if (typeof defaultValue === "number") {
+        const value = (requestData as URLSearchParams).get(key);
+        (params as any)[key] = value !== null ? Number(value) : defaultValue;
       } else {
-        params[key] = requestData.get(key) || defaultValue;
+        (params as any)[key] = (requestData as URLSearchParams).get(key) || defaultValue;
       }
     } else {
       // POST
-      params[key] = requestData[key] !== undefined ? requestData[key] : defaultValue;
+      (params as any)[key] =
+        (requestData as Record<string, any>)[key] !== undefined
+          ? (requestData as Record<string, any>)[key]
+          : defaultValue;
     }
   }
 
-  return params;
+  return params as CoupletParams;
 }
 
 /**
@@ -84,13 +124,13 @@ function getParamsWithDefaults(requestData, requestType) {
  * @param {number} params.page - Page number for pagination
  * @param {number} params.perPage - Number of records per page
  * @param {boolean} params.pagination - Whether to enable pagination
- * @returns {Promise<Object>} Result object with success status and either data or error message
+ * @returns {Promise<ProcessResult>} Result object with success status and either data or error message
  * @returns {boolean} result.success - Indicates if the request was successful
  * @returns {Object} [result.data] - The requested couplets data if successful
  * @returns {string} [result.message] - Error message if not successful
  * @returns {number} [result.status] - HTTP status code if not successful
  */
-async function processRequest(params) {
+async function processRequest(params: CoupletParams): Promise<ProcessResult> {
   // Validate 'orderBy' parameter
   if (params.orderBy && !["id", "random", "popular", "couplet_english", "couplet_hindi"].includes(params.orderBy)) {
     return {
@@ -139,7 +179,7 @@ async function processRequest(params) {
  * @param {NextResponse} response - The response object to modify
  * @returns {NextResponse} Response with CORS headers
  */
-function addCorsHeaders(response) {
+function addCorsHeaders(response: NextResponse): NextResponse {
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.headers.set("Access-Control-Allow-Methods", "GET, POST");
   response.headers.set("Access-Control-Allow-Headers", "Content-Type");
@@ -154,32 +194,22 @@ function addCorsHeaders(response) {
  * @param {Request} request - The incoming HTTP request object
  * @returns {NextResponse} JSON response with couplets data or error message
  */
-export async function GET(request) {
+export async function GET(request: Request): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
-    const skipHash = searchParams.get("skipHash");
-
-    // Skip rate limiting if valid hash is provided
-    if (skipHash !== BYPASS_RATE_LIMIT_HASH) {
-      const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
-      const { allowed } = await checkRateLimit({
-        ip,
-        endpoint: "/api/hello",
-      });
-
-      if (!allowed) {
-        return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
-      }
-    }
 
     // Extract parameters from URL
-    const params = getParamsWithDefaults(searchParams, "GET");
+    const params: CoupletParams = getParamsWithDefaults(searchParams, "GET");
 
-    const result = await processRequest(params);
+    const result: ProcessResult = await processRequest(params);
 
     if (!result.success) {
+      // Use a type guard to narrow result to ProcessResultError
       return addCorsHeaders(
-        NextResponse.json({ success: result.success, message: result.message }, { status: result.status })
+        NextResponse.json(
+          { success: false, message: (result as ProcessResultError).message },
+          { status: (result as ProcessResultError).status }
+        )
       );
     }
 
@@ -197,37 +227,27 @@ export async function GET(request) {
  * @param {Request} request - The incoming HTTP request object
  * @returns {NextResponse} JSON response with couplets data or error message
  */
-export async function POST(request) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
     // Extract parameters from request body
-    const body = await request.json();
-    const skipHash = body.skipHash;
+    const body: Record<string, any> = await request.json();
 
-    // Skip rate limiting if valid hash is provided
-    if (skipHash !== BYPASS_RATE_LIMIT_HASH) {
-      const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "unknown";
-      const { allowed } = await checkRateLimit({
-        ip,
-        endpoint: "/api/hello",
-      });
+    const params: CoupletParams = getParamsWithDefaults(body, "POST");
 
-      if (!allowed) {
-        return addCorsHeaders(NextResponse.json({ success: false, message: "Too many requests" }, { status: 429 }));
-      }
-    }
-
-    const params = getParamsWithDefaults(body, "POST");
-
-    const result = await processRequest(params);
+    const result: ProcessResult = await processRequest(params);
 
     if (!result.success) {
+      // Use a type guard to narrow result to ProcessResultError
       return addCorsHeaders(
-        NextResponse.json({ success: result.success, message: result.message }, { status: result.status })
+        NextResponse.json(
+          { success: false, message: (result as ProcessResultError).message },
+          { status: (result as ProcessResultError).status }
+        )
       );
     }
 
     return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-  } catch (error) {
+  } catch (error: any) {
     return addCorsHeaders(NextResponse.json({ success: false, message: error.message }, { status: 500 }));
   }
 }

@@ -1,7 +1,15 @@
 import { CodeBlock } from "@/components/CodeBlock";
 
-export function Examples() {
-  const examples = [
+/**
+ * Interface representing an example API request.
+ */
+interface IExample {
+  title: string;
+  code: string;
+}
+
+export function Examples(): React.JSX.Element {
+  const examples: IExample[] = [
     {
       title: "1. Fetch All Couplets",
       code: "GET /api/couplets",
@@ -33,13 +41,13 @@ export function Examples() {
   ];
 
   // Function to extract the API path from the code example
-  const getApiUrl = (code) => {
+  const getApiUrl = (code: string): string => {
     // Extract everything after "GET " and construct the full URL
     const path = code.replace("GET ", "");
     return path;
   };
 
-  const actionElement = (example) => (
+  const actionElement = (example: IExample) => (
     <a
       href={getApiUrl(example.code)}
       target="_blank"

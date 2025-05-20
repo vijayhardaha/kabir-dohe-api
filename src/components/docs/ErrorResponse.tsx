@@ -4,9 +4,9 @@ import { CodeBlock } from "@/components/CodeBlock";
  * Component that displays API error response documentation.
  * Shows error response format with an example and a table of common error responses.
  *
- * @returns {JSX.Element} - The rendered error response documentation.
+ * @returns {React.JSX.Element} - The rendered error response documentation.
  */
-export function ErrorResponse() {
+export function ErrorResponse(): React.JSX.Element {
   const errorExample = `{
   "success": false,
   "message": "A descriptive error message"

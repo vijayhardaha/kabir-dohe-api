@@ -1,7 +1,25 @@
-import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateData } from "./filters";
+import { ICouplet } from "@/types/couplet";
+import { PaginatedResult } from "@/types/paginated-result";
+
 import coupletData from "../data/couplets.json";
 
-// A more Vercel-friendly approach
+import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateData } from "./filters";
+
+/**
+ * Interface for the parameters used in the getData function.
+ */
+interface IGetDataParams {
+  s?: string;
+  exactMatch?: boolean;
+  searchWithin?: string;
+  tags?: string;
+  popular?: boolean;
+  orderBy?: string;
+  order?: string;
+  page?: number;
+  perPage?: number;
+  pagination?: boolean;
+}
 
 /**
  * Loads couplets data from a JSON file.
@@ -12,7 +30,8 @@ import coupletData from "../data/couplets.json";
  *
  * @returns {Array<Object>} Array of couplets where each couplet is an object containing its data.
  */
-export function loadData() {
+export function loadData(): ICouplet[] {
+  // @ts-ignore
   return coupletData; // Already loaded at build time
 }
 
@@ -43,8 +62,9 @@ export function getData({
   page = 1,
   perPage = 10,
   pagination = true,
-}) {
-  let data = loadData(); // Load the initial dataset
+}: IGetDataParams = {}): PaginatedResult {
+  // Load the initial dataset
+  let data = loadData();
 
   // Apply sorting
   data = sortData(data, orderBy, order);

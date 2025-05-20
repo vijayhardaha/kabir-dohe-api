@@ -4,9 +4,9 @@ import { LuArrowUpRight } from "react-icons/lu";
  * Header component for the documentation page.
  * Displays the title and main heading for the Kabir Ke Dohe API documentation.
  *
- * @returns {JSX.Element} - The rendered header for the documentation page
+ * @returns {React.JSX.Element} - The rendered header for the documentation page
  */
-export function DocsHeader() {
+export function DocsHeader(): React.JSX.Element {
   return (
     <header className="mb-12 text-center">
       <h1 className="mb-4 text-4xl font-bold">Kabir Ke Dohe API</h1>

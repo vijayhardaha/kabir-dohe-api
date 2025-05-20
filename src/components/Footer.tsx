@@ -3,9 +3,9 @@ import { LuArrowUpRight } from "react-icons/lu";
 /**
  * Footer component displaying copyright information, credits and tech stack.
  *
- * @returns {JSX.Element} The rendered footer component
+ * @returns {React.JSX.Element} The rendered footer component
  */
-export default function Footer() {
+export default function Footer(): React.JSX.Element {
   return (
     <footer className="border-t border-slate-200 bg-slate-100 py-8">
       <div className="container">

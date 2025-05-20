@@ -3,9 +3,18 @@
 import { useRef } from "react";
 
 import { Highlight, themes } from "prism-react-renderer";
-import PropTypes from "prop-types";
 
 import { CopyButton } from "./CopyButton";
+
+/**
+ * Interface for the CodeBlock component props.
+ */
+interface ICodeBlockProps {
+  code: string;
+  language: string;
+  usePrism?: boolean;
+  actionElement?: React.ReactNode;
+}
 
 /**
  * CodeBlock component displays code snippets with syntax highlighting
@@ -18,7 +27,7 @@ import { CopyButton } from "./CopyButton";
  * @param {string} props.language - The programming language for syntax highlighting (e.g., 'javascript', 'css', 'html')
  * @param {boolean} [props.usePrism=true] - Whether to use Prism syntax highlighting or display plain text
  * @param {React.ReactNode} [props.actionElement] - Optional additional action element to display alongside the copy button
- * @returns {JSX.Element} A styled code block with copy functionality
+ * @returns {React.JSX.Element} A styled code block with copy functionality
  * @example
  * ```jsx
  * <CodeBlock code="console.log('Hello World');" language="javascript" />
@@ -26,8 +35,8 @@ import { CopyButton } from "./CopyButton";
  * <CodeBlock code="console.log('Hello');" language="javascript" actionElement={<button>Custom Action</button>} />
  * ```
  */
-export function CodeBlock({ code, language, usePrism = false, actionElement }) {
-  const codeRef = useRef(null);
+export function CodeBlock({ code, language, usePrism = false, actionElement }: ICodeBlockProps): React.JSX.Element {
+  const codeRef = useRef<HTMLElement | null>(null);
 
   return (
     <div className="relative overflow-hidden rounded-md border border-slate-300">
@@ -68,10 +77,3 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }) {
     </div>
   );
 }
-
-CodeBlock.propTypes = {
-  code: PropTypes.string.isRequired,
-  language: PropTypes.string.isRequired,
-  usePrism: PropTypes.bool,
-  actionElement: PropTypes.node,
-};

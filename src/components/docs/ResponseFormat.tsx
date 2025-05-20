@@ -4,9 +4,9 @@ import { CodeBlock } from "@/components/CodeBlock";
  * Component that displays the API response format.
  * Shows the structure of a successful API response with an example.
  *
- * @returns {JSX.Element} - The rendered response format documentation
+ * @returns {React.JSX.Element} - The rendered response format documentation
  */
-export function ResponseFormat() {
+export function ResponseFormat(): React.JSX.Element {
   const responseExample = `{
   "couplets": [
     {

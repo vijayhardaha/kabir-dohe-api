@@ -1,7 +1,18 @@
 /**
+ * Interface for the API query parameters.
+ */
+export interface ApiQueryParam {
+  name: string;
+  type: "string" | "boolean" | "number";
+  description: string;
+  defaultValue: string | boolean | number;
+  possibleValues: string;
+}
+
+/**
  * Query parameters for the Kabir Ke Dohe API
  */
-export const API_QUERY_PARAMS = [
+export const API_QUERY_PARAMS: ApiQueryParam[] = [
   {
     name: "s",
     type: "string",

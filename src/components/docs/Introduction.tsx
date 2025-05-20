@@ -2,9 +2,9 @@
  * Component that provides an introduction to the Kabir Ke Dohe API.
  * Explains the purpose and features of the API.
  *
- * @returns {JSX.Element} - The rendered introduction section
+ * @returns {React.JSX.Element} - The rendered introduction section
  */
-export function Introduction() {
+export function Introduction(): React.JSX.Element {
   return (
     <div className="mb-8">
       <h3 className="mb-4">Introduction</h3>

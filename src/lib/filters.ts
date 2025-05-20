@@ -1,4 +1,6 @@
-import { toBool } from "./utils";
+import { toBool } from "@/lib/utils";
+import { ICouplet } from "@/types/couplet";
+import { PaginatedResult } from "@/types/paginated-result";
 
 /**
  * Filters data based on search terms and specified fields.
@@ -8,7 +10,12 @@ import { toBool } from "./utils";
  * @param {string} searchWithin - Fields to search within (comma-separated list).
  * @returns {Array<Object>} The filtered data.
  */
-export const filterBySearch = (data, search, exactMatch, searchWithin) => {
+export const filterBySearch = (
+  data: ICouplet[],
+  search: string,
+  exactMatch: boolean,
+  searchWithin: string
+): ICouplet[] => {
   if (!search) return data;
 
   const searchLower = search.toLowerCase();
@@ -90,7 +97,7 @@ export const filterBySearch = (data, search, exactMatch, searchWithin) => {
  * @param {string} tags - Comma-separated list of tags to filter by.
  * @returns {Array<Object>} The filtered data.
  */
-export const filterByTags = (data, tags) => {
+export const filterByTags = (data: ICouplet[], tags: string): ICouplet[] => {
   if (!tags) return data;
 
   const tagsArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
@@ -103,7 +110,7 @@ export const filterByTags = (data, tags) => {
  * @param {boolean} popular - Whether to filter by popularity status.
  * @returns {Array<Object>} The filtered data.
  */
-export const filterByPopularity = (data, popular) => {
+export const filterByPopularity = (data: ICouplet[], popular: boolean): ICouplet[] => {
   if (toBool(popular) === false) return data;
   return data.filter((post) => toBool(post.popular) === toBool(popular));
 };
@@ -115,7 +122,7 @@ export const filterByPopularity = (data, popular) => {
  * @param {string} order - The sort order ("ASC" or "DESC", in uppercase).
  * @returns {Array<Object>} The sorted data.
  */
-export const sortData = (data, orderBy, order) => {
+export const sortData = (data: ICouplet[], orderBy: string, order: string): ICouplet[] => {
   // Normalize orderBy to lowercase and order to uppercase
   const normalizedOrderBy = orderBy?.toLowerCase() || "id";
   const normalizedOrder = order?.toUpperCase() || "ASC";
@@ -168,7 +175,7 @@ export const sortData = (data, orderBy, order) => {
  * @param {boolean} pagination - Whether to include pagination info.
  * @returns {Object} The paginated data along with pagination details.
  */
-export const paginateData = (data, page, perPage, pagination) => {
+export const paginateData = (data: ICouplet[], page: number, perPage: number, pagination: boolean): PaginatedResult => {
   const isPaginationEnabled = toBool(pagination);
 
   let limit = Number(perPage);

@@ -4,9 +4,9 @@ import { LuArrowUpRight } from "react-icons/lu";
  * Component that displays contribution information for the Kabir Ke Dohe API project.
  * Explains how users can help improve the project.
  *
- * @returns {JSX.Element} - The rendered contribution section
+ * @returns {React.JSX.Element} - The rendered contribution section
  */
-export function Contribution() {
+export function Contribution(): React.JSX.Element {
   return (
     <div className="mb-8">
       <div className="rounded-lg border border-slate-300 p-6">

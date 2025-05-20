@@ -4,9 +4,9 @@ import { CodeBlock } from "@/components/CodeBlock";
  * Component that displays example API usage.
  * Shows code examples in different programming languages.
  *
- * @returns {JSX.Element} - The rendered examples section
+ * @returns {React.JSX.Element} - The rendered examples section
  */
-export function UsageExamples() {
+export function UsageExamples(): React.JSX.Element {
   const curlExample = `curl -X GET "https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5"`;
 
   const jsExample = `fetch("https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5")

@@ -1,4 +1,20 @@
-import PropTypes from "prop-types";
+/**
+ * Interface for paginated results.
+ */
+interface IQueryParameter {
+  name: string;
+  type: string;
+  description: string;
+  defaultValue?: string | boolean | number;
+  possibleValues: string;
+}
+
+/**
+ * Interface for the QueryParameters component props.
+ */
+interface IQueryParametersProps {
+  parameters: IQueryParameter[];
+}
 
 /**
  * Component that displays the available query parameters for the API.
@@ -6,10 +22,10 @@ import PropTypes from "prop-types";
  *
  * @param {Object} props - The component props
  * @param {Array<Object>} props.parameters - Array of parameter objects with details
- * @returns {JSX.Element} - The rendered query parameters documentation
+ * @returns {React.JSX.Element} - The rendered query parameters documentation
  */
-export function QueryParameters({ parameters }) {
-  const isLastItem = (index) => index === parameters.length - 1;
+export function QueryParameters({ parameters }: IQueryParametersProps): React.JSX.Element {
+  const isLastItem = (index: number) => index === parameters.length - 1;
 
   return (
     <div className="mb-8">
@@ -45,14 +61,3 @@ export function QueryParameters({ parameters }) {
     </div>
   );
 }
-
-QueryParameters.propTypes = {
-  parameters: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      example: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};

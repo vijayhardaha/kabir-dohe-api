@@ -11,21 +11,6 @@ import {
   Contribution,
 } from "@/components/docs";
 import { API_QUERY_PARAMS } from "@/constants/api-params";
-import { SITE_CONFIG } from "@/constants/seo";
-
-/**
- * Metadata for the Kabir Ke Dohe API documentation page.
- * Includes SEO-related information and social media previews.
- * @type {Object}
- */
-export const metadata = {
-  title: SITE_CONFIG.name,
-  description: SITE_CONFIG.description,
-  canonical: SITE_CONFIG.url,
-  alternates: {
-    canonical: SITE_CONFIG.url,
-  },
-};
 
 /**
  * Home page component that renders the API documentation.
@@ -34,7 +19,7 @@ export const metadata = {
  *
  * @returns {React.ReactElement} The rendered documentation page
  */
-export default function Home() {
+export default function Home(): React.ReactElement {
   return (
     <div className="container p-4">
       <DocsHeader />

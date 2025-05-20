@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-import PropTypes from "prop-types";
+/**
+ * Interface for the CopyButton component props.
+ */
+interface ICopyButtonProps {
+  textToCopy: string;
+}
 
 /**
  * Client-side component that provides copy-to-clipboard functionality
@@ -10,11 +15,16 @@ import PropTypes from "prop-types";
  * @component
  * @param {Object} props - Component props
  * @param {string} props.textToCopy - The text to be copied to clipboard
- * @returns {JSX.Element} A button with copy functionality
+ * @returns {React.JSX.Element} A button with copy functionality
  */
-export function CopyButton({ textToCopy }) {
+export function CopyButton({ textToCopy }: ICopyButtonProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState(false);
 
+  /**
+   * Handles the copy action when the button is clicked.
+   * It copies the text to the clipboard and updates the state to show a "Copied!" message.
+   * The message disappears after 500 milliseconds.
+   */
   const handleCopy = async () => {
     await navigator.clipboard.writeText(textToCopy);
     setIsCopied(true);
@@ -31,10 +41,3 @@ export function CopyButton({ textToCopy }) {
     </button>
   );
 }
-
-CopyButton.propTypes = {
-  /**
-   * The text to be copied to clipboard
-   */
-  textToCopy: PropTypes.string.isRequired,
-};
