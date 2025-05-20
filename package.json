@@ -10,7 +10,10 @@
     "lint": "next lint",
     "fix": "next lint --fix",
     "build-data": "node src/scripts/build.mjs",
-    "prebuild": "npm run build-data"
+    "prebuild": "npm run build-data",
+    "typecheck": "tsc --noEmit",
+    "postbuild": "next-sitemap",
+    "indexnow": "node scripts/indexnow.js"
   },
   "keywords": [
     "Kabir",
