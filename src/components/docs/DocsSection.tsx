@@ -16,9 +16,9 @@ interface IDocsSectionProps {
  */
 export function DocsSection({ title, children }: IDocsSectionProps): React.JSX.Element {
   return (
-    <section>
+    <div className="mb-10">
       <h2 className="mb-6 font-bold">{title}</h2>
-      <div>{children}</div>
-    </section>
+      <div className="space-y-10">{children}</div>
+    </div>
   );
 }

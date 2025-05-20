@@ -8,3 +8,4 @@ export { Examples } from "./Examples";
 export { UsageExamples } from "./UsageExamples";
 export { DocsSection } from "./DocsSection";
 export { Contribution } from "./Contribution";
+export { SEOContent } from "./SEOContent";

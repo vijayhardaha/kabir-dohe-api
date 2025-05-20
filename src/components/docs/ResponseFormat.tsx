@@ -42,7 +42,7 @@ export function ResponseFormat(): React.JSX.Element {
 }`;
 
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">Response Format</h3>
       <p className="mb-4">Successful API requests return JSON with the following structure:</p>
       <CodeBlock code={responseExample} language="json" usePrism={true} />
@@ -97,6 +97,6 @@ export function ResponseFormat(): React.JSX.Element {
           </table>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

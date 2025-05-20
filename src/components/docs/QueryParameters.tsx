@@ -28,7 +28,7 @@ export function QueryParameters({ parameters }: IQueryParametersProps): React.JS
   const isLastItem = (index: number) => index === parameters.length - 1;
 
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">Query Parameters</h3>
       <p className="mb-4">The following parameters can be used to filter and paginate results:</p>
 
@@ -58,6 +58,6 @@ export function QueryParameters({ parameters }: IQueryParametersProps): React.JS
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }

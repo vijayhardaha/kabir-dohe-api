@@ -9,6 +9,7 @@ import {
   Examples,
   DocsSection,
   Contribution,
+  SEOContent,
 } from "@/components/docs";
 import { API_QUERY_PARAMS } from "@/constants/api-params";
 
@@ -33,6 +34,7 @@ export default function Home(): React.ReactElement {
         <UsageExamples />
         <Examples />
         <Contribution />
+        <SEOContent />
       </DocsSection>
     </div>
   );

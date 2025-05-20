@@ -13,7 +13,7 @@ export function ErrorResponse(): React.JSX.Element {
 }`;
 
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">Error Response Format</h3>
       <p className="mb-4">When an error occurs, the API will return a JSON response with the following structure:</p>
       <CodeBlock code={errorExample} language="json" usePrism={true} />
@@ -61,6 +61,6 @@ export function ErrorResponse(): React.JSX.Element {
           </table>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

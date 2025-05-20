@@ -25,7 +25,7 @@ data = response.json()
 print(data)`;
 
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">Usage Examples</h3>
 
       <div className="mb-6">
@@ -42,6 +42,6 @@ print(data)`;
         <h4 className="mb-2 text-lg font-semibold">Python</h4>
         <CodeBlock code={pythonExample} language="python" usePrism={true} />
       </div>
-    </div>
+    </section>
   );
 }

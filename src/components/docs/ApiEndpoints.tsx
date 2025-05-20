@@ -6,20 +6,12 @@
  */
 export function ApiEndpoints(): React.JSX.Element {
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">API Endpoints</h3>
       <div className="bg-primary-50 border-primary-300 mb-4 rounded-lg border p-4">
         <h4 className="mb-2 text-lg font-bold">GET /api/couplets</h4>
         <p>Fetch filtered and paginated couplets based on query parameters.</p>
       </div>
-
-      <div className="mb-4 rounded-lg border border-blue-300 bg-blue-50 p-4">
-        <h4 className="mb-2 text-lg font-bold">POST /api/couplets</h4>
-        <p>
-          We also accept POST requests with the same parameters in the request body for more complex queries or when the
-          query string would be too long.
-        </p>
-      </div>
-    </div>
+    </section>
   );
 }

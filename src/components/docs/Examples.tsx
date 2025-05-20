@@ -59,7 +59,7 @@ export function Examples(): React.JSX.Element {
   );
 
   return (
-    <div className="mb-8">
+    <section>
       <h3 className="mb-4">Examples</h3>
       {examples.map((example, index) => (
         <div className="mb-6" key={index}>
@@ -70,6 +70,6 @@ export function Examples(): React.JSX.Element {
           </div>
         </div>
       ))}
-    </div>
+    </section>
   );
 }

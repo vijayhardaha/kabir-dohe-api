@@ -8,7 +8,7 @@ import { LuArrowUpRight } from "react-icons/lu";
  */
 export function Contribution(): React.JSX.Element {
   return (
-    <div className="mb-8">
+    <section>
       <div className="rounded-lg border border-slate-300 p-6">
         <h3 className="mb-4 text-3xl">Contribute to the Project</h3>
 
@@ -44,6 +44,6 @@ export function Contribution(): React.JSX.Element {
           </a>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
