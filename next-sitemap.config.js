@@ -1,8 +1,8 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: "https://toolsbyvijay.vercel.app",
+  siteUrl: "https://kabir-ke-dohe-api.vercel.app",
   generateRobotsTxt: true,
-  sitemapBaseFileName: "next-sitemap",
+  sitemapBaseFileName: "sitemap",
   changefreq: "weekly",
   priority: 0.7,
   trailingSlash: false,
