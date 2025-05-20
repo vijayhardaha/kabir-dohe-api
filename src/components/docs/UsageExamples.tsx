@@ -1,4 +1,5 @@
 import { CodeBlock } from "@/components/CodeBlock";
+import { getBaseUrl } from "@/lib/seoUtils";
 
 /**
  * Component that displays example API usage.
@@ -7,16 +8,16 @@ import { CodeBlock } from "@/components/CodeBlock";
  * @returns {React.JSX.Element} - The rendered examples section
  */
 export function UsageExamples(): React.JSX.Element {
-  const curlExample = `curl -X GET "https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5"`;
+  const curlExample = `curl -X GET "${getBaseUrl()}/api/couplets?tags=devotion&perPage=5"`;
 
-  const jsExample = `fetch("https://kabir-ke-dohe-api.vercel.app/api/couplets?tags=devotion&perPage=5")
+  const jsExample = `fetch("${getBaseUrl()}/api/couplets?tags=devotion&perPage=5")
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));`;
 
   const pythonExample = `import requests
 
-response = requests.get("https://kabir-ke-dohe-api.vercel.app/api/couplets", params={
+response = requests.get("${getBaseUrl()}/api/couplets", params={
   "category": "devotion",
   "limit": 5
 })

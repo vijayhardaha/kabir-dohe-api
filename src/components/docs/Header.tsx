@@ -10,12 +10,13 @@ export function DocsHeader(): React.JSX.Element {
   return (
     <header className="mb-12 text-center">
       <h1 className="mb-4 text-4xl font-bold">Kabir Ke Dohe API</h1>
-      <p className="text-lg text-slate-600">
-        A comprehensive API with 2500+ Kabir’s dohas (couplets), designed to fetch and filter Kabir’s timeless spiritual
-        wisdom.
+      <p className="text-lg text-gray-700">
+        Access over 2500 authentic couplets (dohe) by Sant Kabir, one of India’s greatest spiritual poets and
+        philosophers. This RESTful API offers seamless integration to fetch, search, and filter Kabir’s timeless wisdom
+        in your web or mobile apps, educational platforms, and AI projects.
       </p>
       <div className="mt-8 flex justify-center space-x-4">
-        <a href="/api/couplets" className="btn btn-primary">
+        <a href="/api/couplets" className="btn btn-primary" aria-label="Try the API">
           Try the API
         </a>
         <a
@@ -23,6 +24,7 @@ export function DocsHeader(): React.JSX.Element {
           className="btn btn-secondary"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="View on GitHub"
         >
           View on GitHub
           <LuArrowUpRight className="ml-1" />

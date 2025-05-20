@@ -1,4 +1,5 @@
 import { CodeBlock } from "@/components/CodeBlock";
+import { getBaseUrl } from "@/lib/seoUtils";
 
 /**
  * Interface representing an example API request.
@@ -12,31 +13,31 @@ export function Examples(): React.JSX.Element {
   const examples: IExample[] = [
     {
       title: "1. Fetch All Couplets",
-      code: "GET /api/couplets",
+      code: `GET ${getBaseUrl()}/api/couplets`,
     },
     {
       title: "2. Search for a Couplet",
-      code: "GET /api/couplets?s=love&exactMatch=false",
+      code: `GET ${getBaseUrl()}/api/couplets?s=love&exactMatch=false`,
     },
     {
       title: "3. Filter by Tags",
-      code: "GET /api/couplets?tags=spiritual,life",
+      code: `GET ${getBaseUrl()}/api/couplets?tags=spiritual,life`,
     },
     {
       title: "4. Filter by Popularity",
-      code: "GET /api/couplets?popular=true",
+      code: `GET ${getBaseUrl()}/api/couplets?popular=true`,
     },
     {
       title: "5. Sort by Couplet in Hindi",
-      code: "GET /api/couplets?orderBy=couplet_hindi&order=ASC",
+      code: `GET ${getBaseUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC`,
     },
     {
       title: "6. Paginate Results",
-      code: "GET /api/couplets?page=2&perPage=5",
+      code: `GET ${getBaseUrl()}/api/couplets?page=2&perPage=5`,
     },
     {
       title: "7. Combining Multiple Filters",
-      code: "GET /api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10",
+      code: `GET ${getBaseUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
     },
   ];
 

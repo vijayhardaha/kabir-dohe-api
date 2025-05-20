@@ -25,7 +25,7 @@ export default function Home(): React.ReactElement {
     <div className="container p-4">
       <DocsHeader />
 
-      <DocsSection title="API Documentation">
+      <DocsSection>
         <Introduction />
         <ApiEndpoints />
         <QueryParameters parameters={API_QUERY_PARAMS} />
