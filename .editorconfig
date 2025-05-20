@@ -1,37 +1,36 @@
-# This .editorconfig file defines coding style rules for various file types in the project.
-# It ensures consistent formatting across different editors and IDEs.
+# Root EditorConfig file to maintain consistent coding style across editors and IDEs
+root = true
 
-root=true
-
-# General settings for all files
+# Default settings for all files
 [*]
-charset=utf-8
-end_of_line=lf
-indent_style=tab
-indent_size=2
-insert_final_newline=true
-trim_trailing_whitespace=true
+charset = utf-8                 # Set character encoding to UTF-8
+end_of_line = lf                # Use LF (Unix-style) for line endings
+indent_style = tab              # Use tabs for indentation
+indent_size = 2                 # Set indentation size to 2 spaces
+insert_final_newline = true     # Ensure a newline is present at end of files
+trim_trailing_whitespace = true # Remove trailing whitespace
 
-# Disable trimming trailing whitespace for text files
+# Override for text files (preserve trailing whitespace)
 [*.txt]
-trim_trailing_whitespace=false
+trim_trailing_whitespace = false
+insert_final_newline = false
 
-# Use spaces for indentation in Markdown and YAML files
+# Override for Markdown, YAML files
 [*.{md,yml}]
-indent_style=space
-indent_size=2
+indent_style = space
+indent_size = 2
 
-# Use tabs for indentation in JSON files
+# Override for JSON files (use tabs but keep indent size as 2)
 [*.json]
-indent_style=tab
-indent_size=2
+indent_style = tab
+indent_size = 2
 
-# Use spaces for indentation in JavaScript and TypeScript files
+# Override for JavaScript, TypeScript, and JSX/TSX files
 [*.{js,mjs,cjs,jsx,ts,tsx}]
-indent_style=space
-indent_size=2
+indent_style = space
+indent_size = 2
 
-# Use spaces for indentation in CSS, SCSS, and LESS files
+# Override for CSS, SCSS, and LESS files
 [*.{css,scss,less}]
-indent_style=space
-indent_size=2
+indent_style = space
+indent_size = 2
