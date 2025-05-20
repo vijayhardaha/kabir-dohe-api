@@ -8,13 +8,13 @@ export function SEOContent(): React.JSX.Element {
     <>
       <section>
         <h2 className="mb-6 text-2xl font-bold">Unlock the Wisdom of Kabir with Our Dohe API</h2>
-        <p className="mb-6 text-lg">
+        <p className="mb-6">
           <strong>Kabir ke Dohe API</strong> is a robust and easy-to-use RESTful API providing structured access to over
           2500 timeless dohas (couplets) of Sant Kabir, one of India’s most revered spiritual poets. Each couplet is
           delivered with the original Hindi text, precise meanings, and fluent English translations, making it ideal for
           developers, educators, spiritual seekers, and content creators.
         </p>
-        <p className="mb-6 text-lg">
+        <p className="mb-6">
           Whether you are building educational platforms, mobile apps, AI chatbots, or cultural websites, this API
           empowers you to seamlessly integrate Kabir’s profound spiritual wisdom, promoting inner awakening and
           universal harmony through technology.
