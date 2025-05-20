@@ -214,8 +214,9 @@ export async function GET(request: Request): Promise<NextResponse> {
     }
 
     return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-  } catch (error) {
-    return addCorsHeaders(NextResponse.json({ success: false, message: error.message }, { status: 500 }));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
   }
 }
 
@@ -247,7 +248,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-  } catch (error: any) {
-    return addCorsHeaders(NextResponse.json({ success: false, message: error.message }, { status: 500 }));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
   }
 }

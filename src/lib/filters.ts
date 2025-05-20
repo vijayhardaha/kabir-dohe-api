@@ -24,7 +24,7 @@ export const filterBySearch = (
     .map((st) => st.trim())
     .filter((term) => term.length > 0);
 
-  let fieldsToSearch = [];
+  let fieldsToSearch: string[] = [];
 
   // Define fields to search in
   if (searchWithin === "all" || !searchWithin) {
@@ -51,14 +51,14 @@ export const filterBySearch = (
 
   // Filter data based on the whole search string
   const exactMatchResults = data.filter((item) =>
-    fieldsToSearch.some((field) => searchTerms.every((term) => item[field]?.toLowerCase().includes(term)))
+    fieldsToSearch.some((field) => searchTerms.every((term) => (item as any)[field]?.toLowerCase().includes(term)))
   );
 
   // If exactMatch is false, filter based on individual search terms
-  let partialMatchResults = [];
+  let partialMatchResults: ICouplet[] = [];
   if (!toBool(exactMatch)) {
     partialMatchResults = data.filter((item) =>
-      searchTerms.some((term) => fieldsToSearch.some((field) => item[field]?.toLowerCase().includes(term)))
+      searchTerms.some((term) => fieldsToSearch.some((field) => (item as any)[field]?.toLowerCase().includes(term)))
     );
   }
 
@@ -78,8 +78,8 @@ export const filterBySearch = (
 
   // Sort filtered data: exact matches first, then partial matches
   return mergedUniqueResults.sort((a, b) => {
-    const aMatchesExact = fieldsToSearch.some((field) => a[field]?.toLowerCase().includes(searchLower));
-    const bMatchesExact = fieldsToSearch.some((field) => b[field]?.toLowerCase().includes(searchLower));
+    const aMatchesExact = fieldsToSearch.some((field) => (a as any)[field]?.toLowerCase().includes(searchLower));
+    const bMatchesExact = fieldsToSearch.some((field) => (b as any)[field]?.toLowerCase().includes(searchLower));
 
     if (aMatchesExact && !bMatchesExact) {
       return -1; // `a` should come before `b`
@@ -101,7 +101,9 @@ export const filterByTags = (data: ICouplet[], tags: string): ICouplet[] => {
   if (!tags) return data;
 
   const tagsArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
-  return data.filter((post) => post.tags.some((tag) => tagsArray.includes(tag.slug.toLowerCase())));
+  return data.filter(
+    (post: ICouplet) => Array.isArray(post.tags) && post.tags.some((tag) => tagsArray.includes(tag.slug.toLowerCase()))
+  );
 };
 
 /**
