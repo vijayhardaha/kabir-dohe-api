@@ -9,6 +9,11 @@ const config = {
   exclude: ["/404", "/500"],
   robotsTxtOptions: {
     policies: [{ userAgent: "*", allow: "/" }],
+    transformRobotsTxt: async (_, robotsTxt) => {
+      const withoutHost = robotsTxt.replace(`# Host\nHost: https://kabir-ke-dohe-api.vercel.app\n\n`, "");
+
+      return withoutHost;
+    },
   },
 };
 
