@@ -1,137 +1,137 @@
+/**
+ * ###############################################################################
+ * ______  _____ _      _____ _   _ _______
+ * |  ____|/ ____| |    |_   _| \ | |__   __|
+ * | |__  | (___ | |      | | |  \| |  | |
+ * |  __|  \___ \| |      | | | . ` |  | |
+ * | |____ ____) | |____ _| |_| |\  |  | |
+ * |______|_____/|______|_____|_| \_|  |_|
+ * * THE CODE GUARDIAN (Flat Config)
+ * ###############################################################################
+ * * PURPOSE:
+ * Static analysis for Next.js, TypeScript, and React. It catches bugs,
+ * enforces accessibility (a11y), and keeps imports tidy.
+ * * WORKFLOW:
+ * - Check: `npx eslint .`
+ * - Fix:   `npx eslint . --fix`
+ * * ###############################################################################
+ */
+
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-
-import { fixupPluginRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
-import pluginNext from "@next/eslint-plugin-next";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
-import importPlugin from "eslint-plugin-import";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import prettier from "eslint-plugin-prettier";
-import react from "eslint-plugin-react";
 import globals from "globals";
 
+// --- Context Setup ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
+	baseDirectory: __dirname,
+	recommendedConfig: js.configs.recommended,
 });
 
 export default defineConfig([
-  globalIgnores([
-    "**/.git/",
-    "**/node_modules/",
-    "**/build/",
-    "**/dist/",
-    "**/.env",
-    "**/.env.local",
-    "**/*.log",
-    "**/*.tsbuildinfo",
-  ]),
-  { files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"] },
-  {
-    ...compat.extends(
-      "next",
-      "next/core-web-vitals",
-      "next/typescript",
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:jsx-a11y/recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:prettier/recommended"
-    )[0],
+	// ==========================================
+	// 🚫 GLOBAL IGNORES
+	// ==========================================
+	// Files that should never be touched by the linter
+	globalIgnores([
+		"**/.next/",
+		"**/node_modules/",
+		"**/build/",
+		"**/dist/",
+		"**/.env*",
+		"**/*.log",
+		"**/*.tsbuildinfo",
+		"**/public/",
+	]),
 
-    plugins: {
-      "@next/next": fixupPluginRules(pluginNext),
-      react: fixupPluginRules(react),
-      "jsx-a11y": fixupPluginRules(jsxA11y),
-      "@typescript-eslint": fixupPluginRules(tsPlugin),
-      import: fixupPluginRules(importPlugin),
-      prettier: fixupPluginRules(prettier),
-    },
+	// ==========================================
+	// 🏗️ BASE EXTENSIONS & PLUGINS
+	// ==========================================
+	...compat.extends(
+		"next",
+		"next/core-web-vitals",
+		"next/typescript",
+		"plugin:react/recommended",
+		"plugin:jsx-a11y/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended" // Must be last to override formatting rules
+	),
 
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
+	{
+		// ==========================================
+		// 📂 TARGET FILES
+		// ==========================================
+		files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
 
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        ecmaFeatures: {
-          jsx: true,
-        },
-        tsconfigRootDir: __dirname,
-      },
-    },
+		// ==========================================
+		// ⚙️ LANGUAGE & PARSER OPTIONS
+		// ==========================================
+		languageOptions: {
+			ecmaVersion: "latest",
+			sourceType: "module",
+			globals: {
+				...globals.browser,
+				...globals.node,
+			},
+			parser: tsParser,
+			parserOptions: {
+				ecmaFeatures: { jsx: true },
+				tsconfigRootDir: __dirname,
+			},
+		},
 
-    settings: {
-      react: {
-        version: "detect",
-      },
-    },
+		// ==========================================
+		// 🛠️ SHARED SETTINGS
+		// ==========================================
+		settings: {
+			react: { version: "detect" },
+		},
 
-    rules: {
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": ["warn", {}, { usePrettierrc: true }],
+		// ==========================================
+		// 📏 CUSTOM RULES
+		// ==========================================
+		rules: {
+			// --- React Specific ---
+			"react/react-in-jsx-scope": "off", // Not needed in Next.js
+			"react/no-unknown-property": ["error", { ignore: ["jsx", "global"] }],
 
-      "react/no-unknown-property": [
-        "error",
-        {
-          ignore: ["jsx", "global"],
-        },
-      ],
+			// --- Prettier Integration ---
+			"prettier/prettier": "warn",
 
-      "import/order": [
-        "error",
-        {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "object"],
+			// --- Import Organization ---
+			"import/order": [
+				"error",
+				{
+					groups: ["builtin", "external", "internal", ["parent", "sibling"], "index", "object"],
+					pathGroups: [
+						{ pattern: "react", group: "external", position: "before" },
+						{ pattern: "@/**", group: "internal", position: "after" },
+					],
+					pathGroupsExcludedImportTypes: ["react"],
+					alphabetize: { order: "asc", caseInsensitive: true },
+					"newlines-between": "always",
+					warnOnUnassignedImports: true,
+				},
+			],
 
-          pathGroups: [
-            {
-              pattern: "react",
-              group: "external",
-              position: "before",
-            },
-            {
-              pattern: "@/**",
-              group: "internal",
-              position: "after",
-            },
-          ],
-
-          pathGroupsExcludedImportTypes: ["react"],
-
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-
-          "newlines-between": "always",
-          warnOnUnassignedImports: true,
-        },
-      ],
-
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          vars: "all",
-          varsIgnorePattern: "^_", // Keep ignoring variables starting with "_"
-          args: "after-used",
-          argsIgnorePattern: "^_",
-          ignoreRestSiblings: true,
-          caughtErrors: "all", // Ensure caught errors are also checked
-        },
-      ],
-    },
-  },
+			// --- TypeScript Quality Control ---
+			"@typescript-eslint/no-unused-vars": [
+				"error",
+				{
+					vars: "all",
+					args: "after-used",
+					varsIgnorePattern: "^_",
+					argsIgnorePattern: "^_",
+					ignoreRestSiblings: true,
+					caughtErrors: "all",
+				},
+			],
+		},
+	},
 ]);
