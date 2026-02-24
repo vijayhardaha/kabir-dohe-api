@@ -1,9 +1,41 @@
 {
-  "compilerOptions": {
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+	// ==============================================================================
+	//        _  _____  _____  ____  _   _ ______ _____ _____
+	//       | |/ ____|/ ____|/ __ \| \ | |  ____|_   _/ ____|
+	//       | | (___ | |    | |  | |  \| | |__    | || |  __
+	//   _   | |\___ \| |    | |  | | . ` |  __|   | || | |_ |
+	//  | |__| |____) | |____| |__| | |\  | |     _| || |__| |
+	//   \____/|_____/ \_____|\____/|_| \_|_|    |_____\_____|
+	//
+	//  JAVASCRIPT INTELLIGENCE CONFIG
+	// ==============================================================================
+	// Purpose: Improves editor features (auto-imports, path alias resolution)
+	// for JavaScript files within the project.
+	// ==============================================================================
+
+	"compilerOptions": {
+		// ==========================================
+		// 🧠 EDITOR INTELLIGENCE
+		// ==========================================
+		// Tells the editor how to handle JSX syntax (React 17+ transform)
+		"jsx": "react-jsx",
+
+		// Enables auto-imports and navigation for .json files
+		"resolveJsonModule": true,
+
+		// ==========================================
+		// 🔗 PATH ALIASES
+		// ==========================================
+		// Matches tsconfig.json to ensure VS Code/WebStorm
+		// resolves '@/components/...' correctly.
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+
+	// ==========================================
+	// 📂 SCOPE CONTROL
+	// ==========================================
+	"exclude": ["node_modules", ".next", "out"]
 }
