@@ -31,6 +31,9 @@
 	// ==========================================
 	// 🔍 LINTER INTEGRATION
 	// ==========================================
+	// Allow ESLint to handle formatting (via Prettier plugin)
+	"eslint.enable": true,
+	"eslint.format.enable": true,
 	"eslint.validate": [
 		"javascript",
 		"javascriptreact",
