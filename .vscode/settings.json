@@ -1,8 +1,50 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+	// ==============================================================================
+	// __      __  _____  _____  ____  _____  ______
+	// \ \    / / / ____|/ ____/ __ \|  __ \|  ____|
+	//  \ \  / / | (___ | |   | |  | | |  | | |__
+	//   \ \/ /   \___ \| |   | |  | | |  | |  __|
+	//    \  /    ____) | |___| |__| | |__| | |____
+	//     \/    |_____/ \_____\____/|_____/|______|
+	//
+	// VS CODE WORKSPACE PREFERENCES
+	// ==============================================================================
+	// Purpose: Configures the editor behavior to automate linting and
+	// formatting, ensuring a seamless "save-to-fix" development loop.
+	// ==============================================================================
+
+	// ==========================================
+	// ✨ FORMATTING & SAVING
+	// ==========================================
+	// Use Prettier as the master formatter for this project
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	// We disable standard formatOnSave because we use ESLint Code Actions
+	// below to handle both linting and formatting (via prettier-plugin)
+	"editor.formatOnSave": false,
+
+	"editor.codeActionsOnSave": {
+		// Automatically fix lint errors and trigger Prettier on every save
+		"source.fixAll.eslint": "explicit"
+	},
+
+	// ==========================================
+	// 🔍 LINTER INTEGRATION
+	// ==========================================
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact"
+	],
+
+	// ==========================================
+	// ✍️ SPELL CHECKER (CSpell)
+	// ==========================================
+	// Whitelist for project-specific terms to avoid annoying red squiggles
+	"cSpell.words": [
+		"vijayhardaha",
+		"Vijay",
+		"Hardaha"
+	]
 }
