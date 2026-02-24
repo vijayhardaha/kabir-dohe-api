@@ -1,9 +1,9 @@
-import { ITag } from "./tag";
+import { Tag } from "./tag";
 
 /**
  * Interface representing a couplet.
  */
-export interface ICouplet {
+export interface Couplet {
 	id: number;
 	unique_slug: string;
 	couplet_hindi: string;
@@ -13,5 +13,5 @@ export interface ICouplet {
 	explanation_hindi: string;
 	explanation_english: string;
 	popular: boolean;
-	tags: ITag[];
+	tags: Tag[];
 }

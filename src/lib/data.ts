@@ -1,4 +1,4 @@
-import { ICouplet } from "@/types/couplet";
+import { Couplet } from "@/types/couplet";
 import { PaginatedResult } from "@/types/paginated-result";
 
 import {
@@ -35,8 +35,8 @@ interface IGetDataParams {
  *
  * @returns {Array<Object>} Array of couplets where each couplet is an object containing its data.
  */
-export function loadData(): ICouplet[] {
-	return coupletData as ICouplet[]; // Already loaded at build time
+export function loadData(): Couplet[] {
+	return coupletData as Couplet[]; // Already loaded at build time
 }
 
 /**

@@ -126,8 +126,8 @@ export function SEOContent(): React.JSX.Element {
 					</li>
 					<li>
 						<strong>Cultural organizations and nonprofits</strong> promoting Indian
-						heritage, spiritual awareness, and interfaith harmony through digital
-						content and community engagement.
+						herTage, spiritual awareness, and interfaith harmony through digital content
+						and community engagement.
 					</li>
 				</ul>
 			</section>
@@ -184,7 +184,7 @@ export function SEOContent(): React.JSX.Element {
 					</li>
 					<li>
 						Social media automation tools or bots that share Kabir&apos;s dohas to
-						inspire followers and promote cultural heritage through scheduled posts on
+						inspire followers and promote cultural herTage through scheduled posts on
 						platforms like Twitter, Instagram, or Facebook.
 					</li>
 					<li>

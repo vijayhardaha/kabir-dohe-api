@@ -1,10 +1,10 @@
-import { ICouplet } from "./couplet";
+import { Couplet } from "./couplet";
 
 /**
  * Interface for a Paginated Result.
  */
 export interface PaginatedResult {
-	couplets: ICouplet[];
+	couplets: Couplet[];
 	total: number;
 	totalPages: number;
 	page: number;

@@ -1,5 +1,5 @@
 import { toBool } from "@/lib/utils";
-import { ICouplet } from "@/types/couplet";
+import { Couplet } from "@/types/couplet";
 import { PaginatedResult } from "@/types/paginated-result";
 
 /**
@@ -11,11 +11,11 @@ import { PaginatedResult } from "@/types/paginated-result";
  * @returns {Array<Object>} The filtered data.
  */
 export const filterBySearch = (
-	data: ICouplet[],
+	data: Couplet[],
 	search: string,
 	exactMatch: boolean,
 	searchWithin: string
-): ICouplet[] => {
+): Couplet[] => {
 	if (!search) return data;
 
 	const searchLower = search.toLowerCase();
@@ -52,21 +52,21 @@ export const filterBySearch = (
 	}
 
 	// Filter data based on the whole search string
-	const exactMatchResults = data.filter((item: ICouplet) =>
+	const exactMatchResults = data.filter((item: Couplet) =>
 		fieldsToSearch.some((field: string) =>
 			searchTerms.every((term: string) =>
-				(item[field as keyof ICouplet] as string)?.toLowerCase().includes(term)
+				(item[field as keyof Couplet] as string)?.toLowerCase().includes(term)
 			)
 		)
 	);
 
 	// If exactMatch is false, filter based on individual search terms
-	let partialMatchResults: ICouplet[] = [];
+	let partialMatchResults: Couplet[] = [];
 	if (!toBool(exactMatch)) {
-		partialMatchResults = data.filter((item: ICouplet) =>
+		partialMatchResults = data.filter((item: Couplet) =>
 			searchTerms.some((term: string) =>
 				fieldsToSearch.some((field: string) =>
-					(item[field as keyof ICouplet] as string)?.toLowerCase().includes(term)
+					(item[field as keyof Couplet] as string)?.toLowerCase().includes(term)
 				)
 			)
 		);
@@ -89,10 +89,10 @@ export const filterBySearch = (
 	// Sort filtered data: exact matches first, then partial matches
 	return mergedUniqueResults.sort((a, b) => {
 		const aMatchesExact = fieldsToSearch.some((field: string) =>
-			(a[field as keyof ICouplet] as string)?.toLowerCase().includes(searchLower)
+			(a[field as keyof Couplet] as string)?.toLowerCase().includes(searchLower)
 		);
 		const bMatchesExact = fieldsToSearch.some((field: string) =>
-			(b[field as keyof ICouplet] as string)?.toLowerCase().includes(searchLower)
+			(b[field as keyof Couplet] as string)?.toLowerCase().includes(searchLower)
 		);
 
 		if (aMatchesExact && !bMatchesExact) {
@@ -111,12 +111,12 @@ export const filterBySearch = (
  * @param {string} tags - Comma-separated list of tags to filter by.
  * @returns {Array<Object>} The filtered data.
  */
-export const filterByTags = (data: ICouplet[], tags: string): ICouplet[] => {
+export const filterByTags = (data: Couplet[], tags: string): Couplet[] => {
 	if (!tags) return data;
 
 	const tagsArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
 	return data.filter(
-		(post: ICouplet) =>
+		(post: Couplet) =>
 			Array.isArray(post.tags)
 			&& post.tags.some((tag) => tagsArray.includes(tag.slug.toLowerCase()))
 	);
@@ -128,7 +128,7 @@ export const filterByTags = (data: ICouplet[], tags: string): ICouplet[] => {
  * @param {boolean} popular - Whether to filter by popularity status.
  * @returns {Array<Object>} The filtered data.
  */
-export const filterByPopularity = (data: ICouplet[], popular: boolean): ICouplet[] => {
+export const filterByPopularity = (data: Couplet[], popular: boolean): Couplet[] => {
 	if (toBool(popular) === false) return data;
 	return data.filter((post) => toBool(post.popular) === toBool(popular));
 };
@@ -140,7 +140,7 @@ export const filterByPopularity = (data: ICouplet[], popular: boolean): ICouplet
  * @param {string} order - The sort order ("ASC" or "DESC", in uppercase).
  * @returns {Array<Object>} The sorted data.
  */
-export const sortData = (data: ICouplet[], orderBy: string, order: string): ICouplet[] => {
+export const sortData = (data: Couplet[], orderBy: string, order: string): Couplet[] => {
 	// Normalize orderBy to lowercase and order to uppercase
 	const normalizedOrderBy = orderBy?.toLowerCase() || "id";
 	const normalizedOrder = order?.toUpperCase() || "ASC";
@@ -177,8 +177,8 @@ export const sortData = (data: ICouplet[], orderBy: string, order: string): ICou
 			return normalizedOrder === "ASC" ? aId - bId : bId - aId;
 		}
 
-		const valA = a[normalizedOrderBy as keyof ICouplet];
-		const valB = b[normalizedOrderBy as keyof ICouplet];
+		const valA = a[normalizedOrderBy as keyof Couplet];
+		const valB = b[normalizedOrderBy as keyof Couplet];
 		if (valA < valB) return normalizedOrder === "DESC" ? 1 : -1;
 		if (valA > valB) return normalizedOrder === "DESC" ? -1 : 1;
 		return 0;
@@ -194,7 +194,7 @@ export const sortData = (data: ICouplet[], orderBy: string, order: string): ICou
  * @returns {Object} The paginated data along with pagination details.
  */
 export const paginateData = (
-	data: ICouplet[],
+	data: Couplet[],
 	page: number,
 	perPage: number,
 	pagination: boolean
