@@ -10,10 +10,10 @@ import { CopyButton } from "./CopyButton";
  * Interface for the CodeBlock component props.
  */
 interface ICodeBlockProps {
-  code: string;
-  language: string;
-  usePrism?: boolean;
-  actionElement?: React.ReactNode;
+	code: string;
+	language: string;
+	usePrism?: boolean;
+	actionElement?: React.ReactNode;
 }
 
 /**
@@ -35,45 +35,50 @@ interface ICodeBlockProps {
  * <CodeBlock code="console.log('Hello');" language="javascript" actionElement={<button>Custom Action</button>} />
  * ```
  */
-export function CodeBlock({ code, language, usePrism = false, actionElement }: ICodeBlockProps): React.JSX.Element {
-  const codeRef = useRef<HTMLElement | null>(null);
+export function CodeBlock({
+	code,
+	language,
+	usePrism = false,
+	actionElement,
+}: ICodeBlockProps): React.JSX.Element {
+	const codeRef = useRef<HTMLElement | null>(null);
 
-  return (
-    <div className="relative overflow-hidden rounded-md border border-slate-300">
-      <div className="flex items-center justify-between border-b border-slate-300 bg-slate-100 px-4 py-2">
-        <span className="font-mono text-sm font-semibold text-slate-600">{language}</span>
-        <div className="flex items-center gap-2">
-          {actionElement}
-          <CopyButton textToCopy={code} />
-        </div>
-      </div>
-      {usePrism ? (
-        <Highlight theme={themes.github} code={code} language={language}>
-          {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre className="m-0 overflow-auto bg-slate-50 p-4" style={style}>
-              <code ref={codeRef} className={`${className} font-mono`}>
-                {tokens.map((line, i) => {
-                  const lineProps = getLineProps({ line });
-                  return (
-                    <span key={i} {...lineProps} className="block">
-                      {line.map((token, key) => {
-                        const tokenProps = getTokenProps({ token });
-                        return <span key={key} {...tokenProps} />;
-                      })}
-                    </span>
-                  );
-                })}
-              </code>
-            </pre>
-          )}
-        </Highlight>
-      ) : (
-        <pre className="m-0 overflow-auto bg-slate-50 p-4">
-          <code ref={codeRef} className="font-mono">
-            {code}
-          </code>
-        </pre>
-      )}
-    </div>
-  );
+	return (
+		<div className="relative overflow-hidden rounded-md border border-slate-300">
+			<div className="flex items-center justify-between border-b border-slate-300 bg-slate-100 px-4 py-2">
+				<span className="font-mono text-sm font-semibold text-slate-600">{language}</span>
+				<div className="flex items-center gap-2">
+					{actionElement}
+					<CopyButton textToCopy={code} />
+				</div>
+			</div>
+			{usePrism ? (
+				<Highlight theme={themes.github} code={code} language={language}>
+					{({ className, style, tokens, getLineProps, getTokenProps }) => (
+						<pre className="m-0 overflow-auto bg-slate-50 p-4" style={style}>
+							<code ref={codeRef} className={`${className} font-mono`}>
+								{tokens.map((line, i) => {
+									const lineProps = getLineProps({ line });
+									return (
+										<span key={i} {...lineProps} className="block">
+											{line.map((token, key) => {
+												const tokenProps = getTokenProps({ token });
+												return <span key={key} {...tokenProps} />;
+											})}
+										</span>
+									);
+								})}
+							</code>
+						</pre>
+					)}
+				</Highlight>
+			) : (
+				<pre className="m-0 overflow-auto bg-slate-50 p-4">
+					<code ref={codeRef} className="font-mono">
+						{code}
+					</code>
+				</pre>
+			)}
+		</div>
+	);
 }

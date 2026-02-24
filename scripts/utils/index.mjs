@@ -15,7 +15,8 @@ export const padIndex = (index) => index.toString().padStart(3, "0");
  * @param {string} text - The text to hash.
  * @returns {string} - The 6-character hash.
  */
-export const generateShortHash = (text) => crypto.createHash("sha256").update(text).digest("hex").substring(0, 6);
+export const generateShortHash = (text) =>
+	crypto.createHash("sha256").update(text).digest("hex").substring(0, 6);
 
 /**
  * Collapses multiple spaces into a single space and trims whitespace.
@@ -31,12 +32,7 @@ export const cleanString = (str) => str.replace(/[^\S\r\n]+/g, " ").trim();
  * @returns {string} - The generated slug.
  */
 export const createSlug = (text, replacement = "-") =>
-  slugify(latinize(text), {
-    lower: true,
-    replacement,
-    strict: true,
-    trim: true,
-  });
+	slugify(latinize(text), { lower: true, replacement, strict: true, trim: true });
 
 /**
  * Converts an array of header names to slugified keys.
@@ -44,11 +40,11 @@ export const createSlug = (text, replacement = "-") =>
  * @returns {Record<string, string>} - An object mapping original header names to their slugified versions.
  */
 export const createSlugifiedKeys = (headers) =>
-  headers.reduce((acc, header) => {
-    const slugifiedHeader = createSlug(header, "_");
-    acc[header] = slugifiedHeader;
-    return acc;
-  }, {});
+	headers.reduce((acc, header) => {
+		const slugifiedHeader = createSlug(header, "_");
+		acc[header] = slugifiedHeader;
+		return acc;
+	}, {});
 
 /**
  * Maps CSV data to JSON format with optional slugified keys.
@@ -57,20 +53,17 @@ export const createSlugifiedKeys = (headers) =>
  * @returns {Array<Record<string, any>>} - The mapped JSON data with slugified keys.
  */
 export const mapCsvDataToJson = (data) => {
-  const [header, ...rows] = data.values;
-  const jsonData = rows.map((row) => header.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+	const [header, ...rows] = data.values;
+	const jsonData = rows.map((row) => header.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
 
-  const columnMapping = createSlugifiedKeys(header);
+	const columnMapping = createSlugifiedKeys(header);
 
-  return jsonData.map((row) =>
-    Object.keys(row).reduce(
-      (newRow, key) => ({
-        ...newRow,
-        [columnMapping[key] || key]: row[key],
-      }),
-      {}
-    )
-  );
+	return jsonData.map((row) =>
+		Object.keys(row).reduce(
+			(newRow, key) => ({ ...newRow, [columnMapping[key] || key]: row[key] }),
+			{}
+		)
+	);
 };
 
 /**
@@ -79,11 +72,11 @@ export const mapCsvDataToJson = (data) => {
  * @returns {string} - The title-cased string.
  */
 export const toTitleCase = (str) =>
-  str
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+	str
+		.toLowerCase()
+		.split(" ")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
 
 /**
  * Splits a comma-separated string into an array of title-cased, trimmed, unique, non-empty values.
@@ -91,9 +84,9 @@ export const toTitleCase = (str) =>
  * @returns {string[]} - An array of title-cased, unique, trimmed, non-empty values.
  */
 export const parseAndUniqueList = (data) =>
-  data
-    .split(",")
-    .map((item) => item.trim())
-    .filter((item) => item !== "")
-    .map(toTitleCase)
-    .filter((item, index, self) => self.indexOf(item) === index);
+	data
+		.split(",")
+		.map((item) => item.trim())
+		.filter((item) => item !== "")
+		.map(toTitleCase)
+		.filter((item, index, self) => self.indexOf(item) === index);

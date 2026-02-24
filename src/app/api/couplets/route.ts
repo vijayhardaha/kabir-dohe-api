@@ -6,33 +6,33 @@ import { getData } from "@/lib/data";
  * Inferface for the parameters used in the couplets API.
  */
 interface CoupletParams {
-  s: string;
-  exactMatch: boolean;
-  searchWithin: string;
-  tags: string;
-  popular: boolean;
-  orderBy: string;
-  order: string;
-  page: number;
-  perPage: number;
-  pagination: boolean;
+	s: string;
+	exactMatch: boolean;
+	searchWithin: string;
+	tags: string;
+	popular: boolean;
+	orderBy: string;
+	order: string;
+	page: number;
+	perPage: number;
+	pagination: boolean;
 }
 
 /**
  * Interface for the success result of the processRequest function.
  */
 interface ProcessResultSuccess {
-  success: true;
-  data: any;
+	success: true;
+	data: any;
 }
 
 /**
  * Interface for the error result of the processRequest function.
  */
 interface ProcessResultError {
-  success: false;
-  message: string;
-  status: number;
+	success: false;
+	message: string;
+	status: number;
 }
 
 /**
@@ -55,16 +55,16 @@ type ProcessResult = ProcessResultSuccess | ProcessResultError;
  * @property {boolean} pagination - Whether to enable pagination
  */
 const DEFAULT_PARAMS: CoupletParams = {
-  s: "",
-  exactMatch: false,
-  searchWithin: "all",
-  tags: "",
-  popular: false,
-  orderBy: "id",
-  order: "ASC",
-  page: 1,
-  perPage: 10,
-  pagination: true,
+	s: "",
+	exactMatch: false,
+	searchWithin: "all",
+	tags: "",
+	popular: false,
+	orderBy: "id",
+	order: "ASC",
+	page: 1,
+	perPage: 10,
+	pagination: true,
 };
 
 /**
@@ -75,37 +75,38 @@ const DEFAULT_PARAMS: CoupletParams = {
  * @returns {Object} Normalized parameters with defaults applied
  */
 function getParamsWithDefaults(
-  requestData: URLSearchParams | Record<string, any>,
-  requestType: "GET" | "POST"
+	requestData: URLSearchParams | Record<string, any>,
+	requestType: "GET" | "POST"
 ): CoupletParams {
-  const params: Partial<CoupletParams> = {};
+	const params: Partial<CoupletParams> = {};
 
-  // Apply defaults based on request type
-  for (const [key, defaultValue] of Object.entries(DEFAULT_PARAMS)) {
-    if (requestType === "GET") {
-      // For GET requests, we need to handle 'false' string for boolean values
-      if (typeof defaultValue === "boolean") {
-        if (key === "pagination") {
-          (params as any)[key] = (requestData as URLSearchParams).get(key) !== "false"; // Default to true
-        } else {
-          (params as any)[key] = (requestData as URLSearchParams).get(key) === "true" || defaultValue;
-        }
-      } else if (typeof defaultValue === "number") {
-        const value = (requestData as URLSearchParams).get(key);
-        (params as any)[key] = value !== null ? Number(value) : defaultValue;
-      } else {
-        (params as any)[key] = (requestData as URLSearchParams).get(key) || defaultValue;
-      }
-    } else {
-      // POST
-      (params as any)[key] =
-        (requestData as Record<string, any>)[key] !== undefined
-          ? (requestData as Record<string, any>)[key]
-          : defaultValue;
-    }
-  }
+	// Apply defaults based on request type
+	for (const [key, defaultValue] of Object.entries(DEFAULT_PARAMS)) {
+		if (requestType === "GET") {
+			// For GET requests, we need to handle 'false' string for boolean values
+			if (typeof defaultValue === "boolean") {
+				if (key === "pagination") {
+					(params as any)[key] = (requestData as URLSearchParams).get(key) !== "false"; // Default to true
+				} else {
+					(params as any)[key] =
+						(requestData as URLSearchParams).get(key) === "true" || defaultValue;
+				}
+			} else if (typeof defaultValue === "number") {
+				const value = (requestData as URLSearchParams).get(key);
+				(params as any)[key] = value !== null ? Number(value) : defaultValue;
+			} else {
+				(params as any)[key] = (requestData as URLSearchParams).get(key) || defaultValue;
+			}
+		} else {
+			// POST
+			(params as any)[key] =
+				(requestData as Record<string, any>)[key] !== undefined
+					? (requestData as Record<string, any>)[key]
+					: defaultValue;
+		}
+	}
 
-  return params as CoupletParams;
+	return params as CoupletParams;
 }
 
 /**
@@ -131,46 +132,51 @@ function getParamsWithDefaults(
  * @returns {number} [result.status] - HTTP status code if not successful
  */
 async function processRequest(params: CoupletParams): Promise<ProcessResult> {
-  // Validate 'orderBy' parameter
-  if (params.orderBy && !["id", "random", "popular", "couplet_english", "couplet_hindi"].includes(params.orderBy)) {
-    return {
-      success: false,
-      message:
-        "Bad Request: The 'orderBy' value provided is invalid. Accepted values are 'id', 'random', 'popular', 'couplet_english', or 'couplet_hindi'.",
-      status: 400,
-    };
-  }
+	// Validate 'orderBy' parameter
+	if (
+		params.orderBy
+		&& !["id", "random", "popular", "couplet_english", "couplet_hindi"].includes(params.orderBy)
+	) {
+		return {
+			success: false,
+			message:
+				"Bad Request: The 'orderBy' value provided is invalid. Accepted values are 'id', 'random', 'popular', 'couplet_english', or 'couplet_hindi'.",
+			status: 400,
+		};
+	}
 
-  // Validate 'order' parameter
-  if (params.order && !["ASC", "DESC"].includes(params.order)) {
-    return {
-      success: false,
-      message:
-        "Bad Request: The 'order' value provided is invalid. Accepted values are 'ASC' (ascending) or 'DESC' (descending).",
-      status: 400,
-    };
-  }
+	// Validate 'order' parameter
+	if (params.order && !["ASC", "DESC"].includes(params.order)) {
+		return {
+			success: false,
+			message:
+				"Bad Request: The 'order' value provided is invalid. Accepted values are 'ASC' (ascending) or 'DESC' (descending).",
+			status: 400,
+		};
+	}
 
-  // Validate 'searchWithin' parameter
-  if (params.searchWithin && params.searchWithin !== "all") {
-    const allowedFields = ["couplet", "translation", "explanation"];
-    const searchWithinArray = params.searchWithin.split(",").map((field) => field.trim().toLowerCase());
+	// Validate 'searchWithin' parameter
+	if (params.searchWithin && params.searchWithin !== "all") {
+		const allowedFields = ["couplet", "translation", "explanation"];
+		const searchWithinArray = params.searchWithin
+			.split(",")
+			.map((field) => field.trim().toLowerCase());
 
-    // Validate each field in searchWithinArray
-    const invalidFields = searchWithinArray.filter((field) => !allowedFields.includes(field));
+		// Validate each field in searchWithinArray
+		const invalidFields = searchWithinArray.filter((field) => !allowedFields.includes(field));
 
-    if (invalidFields.length > 0) {
-      return {
-        success: false,
-        message: `Bad Request: The 'searchWithin' value(s) provided are invalid. Accepted values are 'couplet', 'translation', or 'explanation'. Invalid values: ${invalidFields.join(", ")}.`,
-        status: 400,
-      };
-    }
-  }
+		if (invalidFields.length > 0) {
+			return {
+				success: false,
+				message: `Bad Request: The 'searchWithin' value(s) provided are invalid. Accepted values are 'couplet', 'translation', or 'explanation'. Invalid values: ${invalidFields.join(", ")}.`,
+				status: 400,
+			};
+		}
+	}
 
-  // Fetch data using the provided parameters
-  const result = getData(params);
-  return { success: true, data: result };
+	// Fetch data using the provided parameters
+	const result = getData(params);
+	return { success: true, data: result };
 }
 
 /**
@@ -180,10 +186,10 @@ async function processRequest(params: CoupletParams): Promise<ProcessResult> {
  * @returns {NextResponse} Response with CORS headers
  */
 function addCorsHeaders(response: NextResponse): NextResponse {
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST");
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
-  return response;
+	response.headers.set("Access-Control-Allow-Origin", "*");
+	response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+	response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+	return response;
 }
 
 /**
@@ -195,29 +201,29 @@ function addCorsHeaders(response: NextResponse): NextResponse {
  * @returns {NextResponse} JSON response with couplets data or error message
  */
 export async function GET(request: Request): Promise<NextResponse> {
-  try {
-    const { searchParams } = new URL(request.url);
+	try {
+		const { searchParams } = new URL(request.url);
 
-    // Extract parameters from URL
-    const params: CoupletParams = getParamsWithDefaults(searchParams, "GET");
+		// Extract parameters from URL
+		const params: CoupletParams = getParamsWithDefaults(searchParams, "GET");
 
-    const result: ProcessResult = await processRequest(params);
+		const result: ProcessResult = await processRequest(params);
 
-    if (!result.success) {
-      // Use a type guard to narrow result to ProcessResultError
-      return addCorsHeaders(
-        NextResponse.json(
-          { success: false, message: (result as ProcessResultError).message },
-          { status: (result as ProcessResultError).status }
-        )
-      );
-    }
+		if (!result.success) {
+			// Use a type guard to narrow result to ProcessResultError
+			return addCorsHeaders(
+				NextResponse.json(
+					{ success: false, message: (result as ProcessResultError).message },
+					{ status: (result as ProcessResultError).status }
+				)
+			);
+		}
 
-    return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
-  }
+		return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
+	} catch (error: unknown) {
+		const message = error instanceof Error ? error.message : "Internal Server Error";
+		return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
+	}
 }
 
 /**
@@ -229,27 +235,27 @@ export async function GET(request: Request): Promise<NextResponse> {
  * @returns {NextResponse} JSON response with couplets data or error message
  */
 export async function POST(request: Request): Promise<NextResponse> {
-  try {
-    // Extract parameters from request body
-    const body: Record<string, any> = await request.json();
+	try {
+		// Extract parameters from request body
+		const body: Record<string, any> = await request.json();
 
-    const params: CoupletParams = getParamsWithDefaults(body, "POST");
+		const params: CoupletParams = getParamsWithDefaults(body, "POST");
 
-    const result: ProcessResult = await processRequest(params);
+		const result: ProcessResult = await processRequest(params);
 
-    if (!result.success) {
-      // Use a type guard to narrow result to ProcessResultError
-      return addCorsHeaders(
-        NextResponse.json(
-          { success: false, message: (result as ProcessResultError).message },
-          { status: (result as ProcessResultError).status }
-        )
-      );
-    }
+		if (!result.success) {
+			// Use a type guard to narrow result to ProcessResultError
+			return addCorsHeaders(
+				NextResponse.json(
+					{ success: false, message: (result as ProcessResultError).message },
+					{ status: (result as ProcessResultError).status }
+				)
+			);
+		}
 
-    return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
-  }
+		return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
+	} catch (error: unknown) {
+		const message = error instanceof Error ? error.message : "Internal Server Error";
+		return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
+	}
 }

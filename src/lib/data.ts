@@ -1,24 +1,29 @@
 import { ICouplet } from "@/types/couplet";
 import { PaginatedResult } from "@/types/paginated-result";
 
+import {
+	filterBySearch,
+	filterByTags,
+	filterByPopularity,
+	sortData,
+	paginateData,
+} from "./filters";
 import coupletData from "../data/couplets.json";
-
-import { filterBySearch, filterByTags, filterByPopularity, sortData, paginateData } from "./filters";
 
 /**
  * Interface for the parameters used in the getData function.
  */
 interface IGetDataParams {
-  s?: string;
-  exactMatch?: boolean;
-  searchWithin?: string;
-  tags?: string;
-  popular?: boolean;
-  orderBy?: string;
-  order?: string;
-  page?: number;
-  perPage?: number;
-  pagination?: boolean;
+	s?: string;
+	exactMatch?: boolean;
+	searchWithin?: string;
+	tags?: string;
+	popular?: boolean;
+	orderBy?: string;
+	order?: string;
+	page?: number;
+	perPage?: number;
+	pagination?: boolean;
 }
 
 /**
@@ -31,8 +36,7 @@ interface IGetDataParams {
  * @returns {Array<Object>} Array of couplets where each couplet is an object containing its data.
  */
 export function loadData(): ICouplet[] {
-  // @ts-ignore
-  return coupletData; // Already loaded at build time
+	return coupletData as ICouplet[]; // Already loaded at build time
 }
 
 /**
@@ -52,32 +56,32 @@ export function loadData(): ICouplet[] {
  * @returns {Object} - Object containing filtered and paginated couplets.
  */
 export function getData({
-  s = "",
-  exactMatch = false,
-  searchWithin = "all",
-  tags = "",
-  popular = false,
-  orderBy = "id",
-  order = "ASC",
-  page = 1,
-  perPage = 10,
-  pagination = true,
+	s = "",
+	exactMatch = false,
+	searchWithin = "all",
+	tags = "",
+	popular = false,
+	orderBy = "id",
+	order = "ASC",
+	page = 1,
+	perPage = 10,
+	pagination = true,
 }: IGetDataParams = {}): PaginatedResult {
-  // Load the initial dataset
-  let data = loadData();
+	// Load the initial dataset
+	let data = loadData();
 
-  // Apply sorting
-  data = sortData(data, orderBy, order);
+	// Apply sorting
+	data = sortData(data, orderBy, order);
 
-  // Apply search filtering
-  data = filterBySearch(data, s, exactMatch, searchWithin);
+	// Apply search filtering
+	data = filterBySearch(data, s, exactMatch, searchWithin);
 
-  // Apply tag filtering
-  data = filterByTags(data, tags);
+	// Apply tag filtering
+	data = filterByTags(data, tags);
 
-  // Apply popularity filtering
-  data = filterByPopularity(data, popular);
+	// Apply popularity filtering
+	data = filterByPopularity(data, popular);
 
-  // Apply pagination
-  return paginateData(data, page, perPage, pagination);
+	// Apply pagination
+	return paginateData(data, page, perPage, pagination);
 }

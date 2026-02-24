@@ -1,15 +1,15 @@
 import {
-  DocsHeader,
-  Introduction,
-  ApiEndpoints,
-  QueryParameters,
-  ResponseFormat,
-  ErrorResponse,
-  UsageExamples,
-  Examples,
-  DocsSection,
-  Contribution,
-  SEOContent,
+	DocsHeader,
+	Introduction,
+	ApiEndpoints,
+	QueryParameters,
+	ResponseFormat,
+	ErrorResponse,
+	UsageExamples,
+	Examples,
+	DocsSection,
+	Contribution,
+	SEOContent,
 } from "@/components/docs";
 import { API_QUERY_PARAMS } from "@/constants/api-params";
 
@@ -21,21 +21,21 @@ import { API_QUERY_PARAMS } from "@/constants/api-params";
  * @returns {React.ReactElement} The rendered documentation page
  */
 export default function Home(): React.ReactElement {
-  return (
-    <div className="container p-4">
-      <DocsHeader />
+	return (
+		<div className="container p-4">
+			<DocsHeader />
 
-      <DocsSection>
-        <Introduction />
-        <ApiEndpoints />
-        <QueryParameters parameters={API_QUERY_PARAMS} />
-        <ResponseFormat />
-        <ErrorResponse />
-        <UsageExamples />
-        <Examples />
-        <Contribution />
-        <SEOContent />
-      </DocsSection>
-    </div>
-  );
+			<DocsSection>
+				<Introduction />
+				<ApiEndpoints />
+				<QueryParameters parameters={API_QUERY_PARAMS} />
+				<ResponseFormat />
+				<ErrorResponse />
+				<UsageExamples />
+				<Examples />
+				<Contribution />
+				<SEOContent />
+			</DocsSection>
+		</div>
+	);
 }

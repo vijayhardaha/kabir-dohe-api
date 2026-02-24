@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
  * Interface for the API response.
  */
 interface ApiResponse {
-  success: boolean;
-  message: string;
+	success: boolean;
+	message: string;
 }
 
 /**
@@ -17,8 +17,9 @@ interface ApiResponse {
  * and instructions for using the API.
  */
 export async function GET(): Promise<NextResponse<ApiResponse>> {
-  return NextResponse.json({
-    success: true,
-    message: "Welcome to the Kabir Ke Dohe API! Use the /api/couplets endpoint to retrieve and filter couplets.",
-  });
+	return NextResponse.json({
+		success: true,
+		message:
+			"Welcome to the Kabir Ke Dohe API! Use the /api/couplets endpoint to retrieve and filter couplets.",
+	});
 }
