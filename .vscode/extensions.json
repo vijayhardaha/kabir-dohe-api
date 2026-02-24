@@ -1,0 +1,32 @@
+{
+	// ==============================================================================
+	//  ________   _________ ______ _   _  _____ _____ ____  _   _  _____
+	// |  ____\ \ / /__   __|  ____| \ | |/ ____|_   _/ __ \\| \ | |/ ____|
+	// | |__   \ V /   | |  | |__  |  \| | (___   | || |  | |  \| | (___
+	// |  __|   > <    | |  |  __| | . ` |\___ \  | || |  | | . ` |\___ \
+	// | |____ / . \   | |  | |____| |\  |____) |_| || |__| | |\  |____) |
+	// |______/_/ \_\  |_|  |______|_| \_|_____/|_____\____/|_| \_|_____/
+	//
+	// WORKSPACE RECOMMENDED EXTENSIONS
+	// ==============================================================================
+	// Purpose: Ensures every contributor has the same toolset installed to
+	// maintain the linting, formatting, and intelligence rules of the project.
+	// ==============================================================================
+
+	"recommendations": [
+		// 🛡️ Linter: The brain behind the code rules
+		"dbaeumer.vscode-eslint",
+
+		// ✨ Formatter: The architect of the code style
+		"esbenp.prettier-vscode",
+
+		// 🎨 Tailwind CSS: Intelligent class sorting and autocomplete
+		"bradlc.vscode-tailwindcss",
+
+		// 🛠️ EditorConfig: Overrides editor settings for consistency
+		"editorconfig.editorconfig",
+
+		// ✍️ CSpell: Catching typos in code and comments
+		"streetsidesoftware.code-spell-checker"
+	]
+}
