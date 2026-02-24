@@ -19,6 +19,7 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
