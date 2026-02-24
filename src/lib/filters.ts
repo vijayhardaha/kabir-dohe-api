@@ -52,18 +52,22 @@ export const filterBySearch = (
 	}
 
 	// Filter data based on the whole search string
-	const exactMatchResults = data.filter((item) =>
-		fieldsToSearch.some((field) =>
-			searchTerms.every((term) => (item as any)[field]?.toLowerCase().includes(term))
+	const exactMatchResults = data.filter((item: ICouplet) =>
+		fieldsToSearch.some((field: string) =>
+			searchTerms.every((term: string) =>
+				(item[field as keyof ICouplet] as string)?.toLowerCase().includes(term)
+			)
 		)
 	);
 
 	// If exactMatch is false, filter based on individual search terms
 	let partialMatchResults: ICouplet[] = [];
 	if (!toBool(exactMatch)) {
-		partialMatchResults = data.filter((item) =>
-			searchTerms.some((term) =>
-				fieldsToSearch.some((field) => (item as any)[field]?.toLowerCase().includes(term))
+		partialMatchResults = data.filter((item: ICouplet) =>
+			searchTerms.some((term: string) =>
+				fieldsToSearch.some((field: string) =>
+					(item[field as keyof ICouplet] as string)?.toLowerCase().includes(term)
+				)
 			)
 		);
 	}
@@ -84,11 +88,11 @@ export const filterBySearch = (
 
 	// Sort filtered data: exact matches first, then partial matches
 	return mergedUniqueResults.sort((a, b) => {
-		const aMatchesExact = fieldsToSearch.some((field) =>
-			(a as any)[field]?.toLowerCase().includes(searchLower)
+		const aMatchesExact = fieldsToSearch.some((field: string) =>
+			(a[field as keyof ICouplet] as string)?.toLowerCase().includes(searchLower)
 		);
-		const bMatchesExact = fieldsToSearch.some((field) =>
-			(b as any)[field]?.toLowerCase().includes(searchLower)
+		const bMatchesExact = fieldsToSearch.some((field: string) =>
+			(b[field as keyof ICouplet] as string)?.toLowerCase().includes(searchLower)
 		);
 
 		if (aMatchesExact && !bMatchesExact) {
@@ -173,8 +177,8 @@ export const sortData = (data: ICouplet[], orderBy: string, order: string): ICou
 			return normalizedOrder === "ASC" ? aId - bId : bId - aId;
 		}
 
-		const valA = a[normalizedOrderBy];
-		const valB = b[normalizedOrderBy];
+		const valA = a[normalizedOrderBy as keyof ICouplet];
+		const valB = b[normalizedOrderBy as keyof ICouplet];
 		if (valA < valB) return normalizedOrder === "DESC" ? 1 : -1;
 		if (valA > valB) return normalizedOrder === "DESC" ? -1 : 1;
 		return 0;

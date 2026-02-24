@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getData } from "@/lib/data";
+import { PaginatedResult } from "@/types/paginated-result";
 
 /**
  * Inferface for the parameters used in the couplets API.
@@ -23,7 +24,7 @@ interface CoupletParams {
  */
 interface ProcessResultSuccess {
 	success: true;
-	data: any;
+	data: PaginatedResult;
 }
 
 /**
@@ -75,7 +76,7 @@ const DEFAULT_PARAMS: CoupletParams = {
  * @returns {Object} Normalized parameters with defaults applied
  */
 function getParamsWithDefaults(
-	requestData: URLSearchParams | Record<string, any>,
+	requestData: URLSearchParams | Record<string, unknown>,
 	requestType: "GET" | "POST"
 ): CoupletParams {
 	const params: Partial<CoupletParams> = {};
@@ -86,22 +87,25 @@ function getParamsWithDefaults(
 			// For GET requests, we need to handle 'false' string for boolean values
 			if (typeof defaultValue === "boolean") {
 				if (key === "pagination") {
-					(params as any)[key] = (requestData as URLSearchParams).get(key) !== "false"; // Default to true
+					(params as Record<string, unknown>)[key] =
+						(requestData as URLSearchParams).get(key) !== "false"; // Default to true
 				} else {
-					(params as any)[key] =
+					(params as Record<string, unknown>)[key] =
 						(requestData as URLSearchParams).get(key) === "true" || defaultValue;
 				}
 			} else if (typeof defaultValue === "number") {
 				const value = (requestData as URLSearchParams).get(key);
-				(params as any)[key] = value !== null ? Number(value) : defaultValue;
+				(params as Record<string, unknown>)[key] =
+					value !== null ? Number(value) : defaultValue;
 			} else {
-				(params as any)[key] = (requestData as URLSearchParams).get(key) || defaultValue;
+				(params as Record<string, unknown>)[key] =
+					(requestData as URLSearchParams).get(key) || defaultValue;
 			}
 		} else {
 			// POST
-			(params as any)[key] =
-				(requestData as Record<string, any>)[key] !== undefined
-					? (requestData as Record<string, any>)[key]
+			(params as Record<string, unknown>)[key] =
+				(requestData as Record<string, unknown>)[key] !== undefined
+					? (requestData as Record<string, unknown>)[key]
 					: defaultValue;
 		}
 	}
@@ -237,7 +241,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 export async function POST(request: Request): Promise<NextResponse> {
 	try {
 		// Extract parameters from request body
-		const body: Record<string, any> = await request.json();
+		const body: Record<string, unknown> = await request.json();
 
 		const params: CoupletParams = getParamsWithDefaults(body, "POST");
 
