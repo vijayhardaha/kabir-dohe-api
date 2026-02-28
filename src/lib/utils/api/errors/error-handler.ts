@@ -3,26 +3,28 @@ import type { NextResponse } from "next/server";
 import { ApiError, failure } from "@/lib/utils/api";
 
 /**
- * Centralized error handler for API routes.
- * Logs the error and returns a structured JSON response with appropriate status code.
+ * Handles API route errors consistently and returns standardized JSON failure responses.
  *
- * @param {Error} error - The error object thrown in the API route
- * @returns {NextResponse} JSON response with error message and status code
+ * @param {Error} error - Error instance thrown from route handlers or service layers.
+ * @returns {NextResponse} Structured error response with safe message and HTTP status.
+ * @example
+ * return handleError(new ApiError("Invalid token", 401));
+ * // Responds with a typed 401 failure payload.
  */
 export function handleError(error: Error): NextResponse {
-	// Log full error for debugging (but don’t leak internals)
+	// Capture diagnostic fields while avoiding stack traces in production logs.
 	console.error("❌ Error:", {
 		name: error.name,
 		message: error.message,
 		stack: process.env.NODE_ENV === "production" ? undefined : error.stack,
 	});
 
-	// If it's an instance of ApiError and is operational, return its message and status code
+	// Operational ApiError instances carry intentional status codes for client responses.
 	if (error instanceof ApiError && error.isOperational) {
 		return failure(error.message, error.statusCode);
 	}
 
-	// If it's an unexpected error (e.g., TypeError, unhandled promise), treat as 500
+	// Treat generic Error instances as internal failures when no richer type is available.
 	if (error.name === "Error" || error.constructor.name === "Error") {
 		return failure(
 			error.message || "Internal Server Error: Something went wrong. Please try again later.",
@@ -30,11 +32,11 @@ export function handleError(error: Error): NextResponse {
 		);
 	}
 
-	// Log full error for debugging (but don’t leak internals in production)
+	// Emit extra debugging context in non-production to speed up local troubleshooting.
 	if (process.env.NODE_ENV !== "production") {
 		console.error("UNEXPECTED ERROR:", error);
 	}
 
-	// Fallback (e.g., unexpected objects)
+	// Fallback for non-Error throwables and unknown runtime exception shapes.
 	return failure("Unexpected error occurred during sync process", 500);
 }

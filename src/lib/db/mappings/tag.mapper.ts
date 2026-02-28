@@ -1,30 +1,36 @@
 import { SheetData } from "@/lib/integrations/gsheet";
+import { ApiError } from "@/lib/utils/api";
+import { findDuplicates } from "@/lib/utils/array/duplicates";
 import { sanitizeTitle } from "@/lib/utils/string";
 
-// Define database tag type
+/**
+ * Represents a normalized tag row with a canonical slug and display name.
+ */
 export type DbTag = { slug: string; name: string };
 
 /**
- * Prepares tag data for database insertion by extracting unique tags from the sheet data and ensuring proper formatting.
+ * Extracts, normalizes, and validates unique tags from spreadsheet rows for database insertion.
  *
- * @param {SheetData} data - Array of couplet data with tags included
- * @returns {DbTag[]} Array of tag data formatted for database insertion (unique tags with slug and name)
+ * @param {SheetData} data - Spreadsheet rows containing user-entered tag arrays per couplet.
+ * @returns {DbTag[]} Unique tag rows with sanitized slugs and original display names.
  * @example
- * const sheetData: SheetData = [
- *   { tags: ["love", "nature"] },
- *   { tags: ["nature", "peace"] }
- * ];
- * const dbTags = prepareDbTags(sheetData);
- * // Returns: [{ slug: "love", name: "love" }, { slug: "nature", name: "nature" }, { slug: "peace", name: "peace" }]
+ * prepareDbTags([{ tags: [" Love ", "Nature"] }, { tags: ["nature", "Peace"] }] as SheetData);
+ * // [{ slug: "love", name: "Love" }, { slug: "nature", name: "Nature" }, { slug: "peace", name: "Peace" }]
+ * @example
+ * prepareDbTags([{ tags: [""] }] as SheetData);
+ * // []
  */
 export function prepareDbTags(data: SheetData): DbTag[] {
 	const seenSlugs = new Set();
 	const uniqueTags = data
-		.flatMap((row) => row.tags) // Extract tags from each couplet
-		.filter(Boolean) // Remove empty or falsy tags
-		.map((tag) => tag.trim()) // Trim whitespace from tags
+		// Flatten all tag arrays into a single list for normalization.
+		.flatMap((row) => row.tags)
+		// Ignore blank values to avoid storing meaningless tag records.
+		.filter(Boolean)
+		// Trim user input so accidental spacing does not change uniqueness.
+		.map((tag) => tag.trim())
 		.filter((tag) => {
-			// Ensure uniqueness based on slug
+			// Deduplicate by slug instead of display text to prevent semantic duplicates.
 			const slug = sanitizeTitle(tag);
 			if (seenSlugs.has(slug)) {
 				return false;
@@ -32,8 +38,15 @@ export function prepareDbTags(data: SheetData): DbTag[] {
 			seenSlugs.add(slug);
 			return true;
 		})
-		.sort((a, b) => a.localeCompare(b)) // Sort tags alphabetically
-		.map((tag) => ({ slug: sanitizeTitle(tag), name: tag })); // Map to DbTag format
+		// Keep output deterministic for stable diffs and predictable inserts.
+		.sort((a, b) => a.localeCompare(b))
+		.map((tag) => ({ slug: sanitizeTitle(tag), name: tag }));
+
+	// Guard against unexpected mapper regressions before hitting the database.
+	const duplicateTags = findDuplicates(uniqueTags.map((t) => t.slug));
+	if (duplicateTags.length > 0) {
+		throw new ApiError(`Duplicate tags: ${duplicateTags.join(", ")}`, 422);
+	}
 
 	return uniqueTags;
 }

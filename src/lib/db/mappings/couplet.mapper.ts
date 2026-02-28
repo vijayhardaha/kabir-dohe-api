@@ -1,17 +1,23 @@
 import type { SheetData } from "@/lib/integrations/gsheet";
 
-// Define database couplet type
+/**
+ * Defines the couplet payload stored in the database without spreadsheet tag arrays.
+ */
 export type DbCouplet = Omit<SheetData[number], "tags">;
 
 /**
- * Prepares couplet data for database insertion by separating tags and ensuring proper types.
+ * Transforms spreadsheet rows into database-ready couplet rows by removing tag collections safely.
  *
- * @param {SheetData} data - Array of couplet data with tags included
- * @returns { DbCouplet[]} Array of couplet data formatted for database insertion (tags removed)
+ * @param {SheetData} data - Spreadsheet rows that include both couplet fields and tags.
+ * @returns {DbCouplet[]} Couplet rows ready for insertion without tag metadata.
  * @example
- * const sheetData: SheetData = [{ couplet_number: 1, tags: ["tag1", "tag2"], ... }];
- * const dbCouplets = prepareDbCouplet(sheetData);
+ * prepareDbCouplets([{ id: "1", tags: ["bhakti"], doha: "..." }] as SheetData);
+ * // [{ id: "1", doha: "..." }]
+ * @example
+ * prepareDbCouplets([] as SheetData);
+ * // []
  */
 export function prepareDbCouplets(data: SheetData): DbCouplet[] {
+	// Persist only couplet columns because tags are inserted through separate relation tables.
 	return data.map(({ tags, ...rest }) => rest);
 }

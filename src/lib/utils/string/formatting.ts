@@ -1,41 +1,43 @@
 /**
- * Normalizes whitespace in a string by collapsing multiple spaces (excluding newlines)
- * into a single space and trims leading/trailing whitespace.
+ * Collapses redundant inline whitespace while preserving line breaks in multiline text values.
  *
- * @param {string} string - The input string to normalize.
- * @returns {string} - The normalized string.
+ * @param {string} string - Raw text input containing inconsistent spacing.
+ * @returns {string} Text with normalized spacing and trimmed boundaries.
+ * @example
+ * normalizeWhitespace("  Kabir    Doha  "); // "Kabir Doha"
  */
 export function normalizeWhitespace(string: string): string {
 	return string.replace(/[^\S\r\n]+/g, " ").trim();
 }
 
 /**
- * Parses a string into an integer, returning 0 if the conversion fails.
+ * Parses an input value into an integer and safely defaults to zero.
  *
- * @param {string|number} string - The string to convert to a number
- * @returns {number} The parsed integer, or 0 if invalid
+ * @param {string | number} string - Numeric-like string or number to parse.
+ * @returns {number} Parsed integer value, or zero when parsing fails.
  * @example
- * stringToNumber("42") // 42
- * stringToNumber("3.14") // 3
- * stringToNumber("abc") // 0
- * stringToNumber("") // 0
+ * stringToNumber("42"); // 42
+ * @example
+ * stringToNumber("abc"); // 0
  */
 export function stringToNumber(string: string | number): number {
+	// Use base-10 parsing to avoid octal-like interpretation edge cases.
 	const num = parseInt(string.toString(), 10);
 	return isNaN(num) ? 0 : num;
 }
 
 /**
- * Converts a string to sentence case (first letter uppercase, rest lowercase).
+ * Converts text into sentence-like casing by capitalizing each normalized word segment.
  *
- * @param {string} string - The string to convert to sentence case
- * @returns {string} The string in sentence case format
+ * @param {string} string - Input text that may contain mixed casing and spacing.
+ * @returns {string} Text converted to title-style sentence casing.
  * @example
- * toSentenceCase("HELLO WORLD") // "Hello world"
- * toSentenceCase("hELLO wORLD") // "Hello world"
- * toSentenceCase("the quick brown fox") // "The quick brown fox"
+ * toSentenceCase("HELLO WORLD"); // "Hello World"
+ * @example
+ * toSentenceCase("the quick brown fox"); // "The Quick Brown Fox"
  */
 export function toSentenceCase(string: string): string {
+	// Normalize first so output remains deterministic across inconsistent user input.
 	return string
 		.toLowerCase()
 		.split(" ")

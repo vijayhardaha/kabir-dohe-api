@@ -2,16 +2,18 @@ import latinize from "latinize";
 import slugify from "slugify";
 
 /**
- * Slugifies a string by converting it to lowercase, replacing spaces and special characters
+ * Converts arbitrary text into a normalized slug using configurable word separators.
  *
- * @param {string} string - Text to convert
- * @param {string} [separator="-"] - Character used between words
- * @returns {string} Slugified text
+ * @param {string} string - Source text that may include accents and symbols.
+ * @param {string} [separator="-"] - Replacement character inserted between slug segments.
+ * @returns {string} Lowercase slug stripped to URL-safe characters.
  * @example
- * slug("Hello World!") // "hello-world"
- * slug("Hello World!", "_") // "hello_world"
+ * sanitize("Hello World!"); // "hello-world"
+ * @example
+ * sanitize("Hello World!", "_"); // "hello_world"
  */
 export function sanitize(string: string, separator: string = "-"): string {
+	// Transliterate before slugging so accented characters produce stable ASCII output.
 	return slugify(latinize(string), {
 		lower: true,
 		replacement: separator,
@@ -21,28 +23,28 @@ export function sanitize(string: string, separator: string = "-"): string {
 }
 
 /**
- * Converts a string into a valid object key using underscores as separators.
+ * Converts free-form text into a predictable snake_case key for object usage.
  *
- * @param {string} string - The text to convert to an object key
- * @returns {string} The sanitized key in snake_case format
+ * @param {string} string - Human-readable key text requiring normalization.
+ * @returns {string} Sanitized identifier using underscores between normalized words.
  * @example
- * sanitizeKey("Hello World") // "hello_world"
- * sanitizeKey("user name") // "user_name"
- * sanitizeKey("is-valid") // "is_valid"
+ * sanitizeKey("Hello World"); // "hello_world"
+ * @example
+ * sanitizeKey("is-valid"); // "is_valid"
  */
 export function sanitizeKey(string: string): string {
 	return sanitize(string, "_");
 }
 
 /**
- * Converts a string into a URL-friendly title format using hyphens as separators.
+ * Converts title-like text into a URL-friendly kebab-case slug representation.
  *
- * @param {string} string - The title text to convert
- * @returns {string} The sanitized title in slug format (kebab-case)
+ * @param {string} string - Title text that will become part of route paths.
+ * @returns {string} Sanitized kebab-case slug for URL and identifier usage.
  * @example
- * sanitizeTitle("Hello World") // "hello-world"
- * sanitizeTitle("My Blog Post") // "my-blog-post"
- * sanitizeTitle("  Spaces  ") // "spaces"
+ * sanitizeTitle("My Blog Post"); // "my-blog-post"
+ * @example
+ * sanitizeTitle("  Spaces  "); // "spaces"
  */
 export function sanitizeTitle(string: string): string {
 	return sanitize(string, "-");

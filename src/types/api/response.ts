@@ -1,5 +1,5 @@
 /**
- * Interface of API success response
+ * Defines the standardized successful API response envelope carrying typed response payloads.
  */
 export interface ApiSuccess<T> {
 	success: true;
@@ -7,7 +7,7 @@ export interface ApiSuccess<T> {
 }
 
 /**
- * Interface of API error response
+ * Defines the standardized error API response envelope for predictable client handling.
  */
 export interface ApiError {
 	code: number;

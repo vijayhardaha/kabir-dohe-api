@@ -1,12 +1,14 @@
 import crypto from "crypto";
 
 /**
- * Hashes a passkey using SHA-256 algorithm.
+ * Generates a deterministic SHA-256 hexadecimal hash for secure passkey comparisons.
  *
- * @param {string} passkey - The plain text passkey to hash
- * @returns {string} The hashed passkey as a hexadecimal string
+ * @param {string} passkey - Plain text secret value provided for hashing.
+ * @returns {string} Lowercase hexadecimal digest suitable for storage and equality checks.
  * @example
- * generateHash("mySecretPass") // "e5e9fa1ba31ecd1ae84f75ca3f1ef10b7d1c2f2a2c2e5..."
+ * generateHash("mySecretPass"); // "e5e9fa..."
+ * @example
+ * generateHash(""); // SHA-256 digest for empty string
  */
 export function generateHash(passkey: string): string {
 	return crypto.createHash("sha256").update(passkey).digest("hex");

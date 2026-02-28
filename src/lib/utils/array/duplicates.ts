@@ -1,13 +1,14 @@
 /**
- * Finds and returns duplicate values from an array.
+ * Returns values that appear more than once in the provided string array.
  *
- * @param {string[]} values - Array of string values to check for duplicates
- * @returns {string[]} Array of duplicate values (items that appear more than once)
+ * @param {string[]} values - Input array of string values to inspect.
+ * @returns {string[]} Duplicate values preserving repeated discovery order from input.
  * @example
- * findDuplicates(["a", "b", "a", "c", "b"]) // ["a", "b"]
- * findDuplicates(["x", "y", "z"]) // []
- * findDuplicates([]) // []
+ * findDuplicates(["a", "b", "a", "c", "b"]); // ["a", "b"]
+ * @example
+ * findDuplicates(["x", "y", "z"]); // []
  */
 export function findDuplicates(values: string[]): string[] {
+	// Compare first-seen index to current index to identify repeated occurrences.
 	return values.filter((item, index) => values.indexOf(item) !== index);
 }

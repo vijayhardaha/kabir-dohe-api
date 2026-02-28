@@ -1,5 +1,4 @@
 /**
- * Defines types related to cookies used in API routes.
- * This includes the structure for cookies that can be set in API responses.
+ * Represents a cookie mutation payload used when synchronizing auth cookies on responses.
  */
 export type CookieToSet = { name: string; value: string; options?: Record<string, unknown> };

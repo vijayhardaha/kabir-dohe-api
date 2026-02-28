@@ -10,15 +10,20 @@ const supabaseUrl = env.SUPABASE_URL;
 const supabaseKey = env.SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 /**
- * Create a Supabase server client wired to Next.js cookies.
+ * Creates a server-side Supabase client configured with Next.js cookie adapters for authenticated requests.
  *
- * Uses the object-style `createServerClient` signature and provides cookie
- * adapters so Supabase can read and write cookies from server code.
- *
- * @returns A Supabase client instance for server-side usage.
- * @throws If required environment variables are missing.
+ * @param {Record<string, unknown>} [options] - Optional Supabase client options merged with default cookie handlers.
+ * @returns {Promise<SupabaseClient>} A Supabase client configured for server execution contexts.
+ * @throws {ApiError} Throws when required Supabase environment variables are unavailable.
+ * @example
+ * const client = await createClient();
+ * const { data } = await client.from("couplets").select("id");
+ * @example
+ * const client = await createClient({ global: { headers: { "x-source": "api" } } });
+ * const { error } = await client.from("tags").select("slug");
  */
 export async function createClient(options?: Record<string, unknown>): Promise<SupabaseClient> {
+	// Validate core credentials early to fail fast before opening cookie context.
 	if (!supabaseUrl || !supabaseKey) {
 		throw new ApiError("Missing SUPABASE_URL or SUPABASE_PUBLISHABLE_DEFAULT_KEY", 404);
 	}
@@ -32,12 +37,12 @@ export async function createClient(options?: Record<string, unknown>): Promise<S
 			},
 			setAll(cookiesToSet: Array<CookieToSet>) {
 				try {
+					// Apply all cookie mutations so Supabase auth state stays synchronized.
 					cookiesToSet.forEach(({ name, value, options }) =>
 						cookieStore.set(name, value, options as Record<string, unknown>)
 					);
 				} catch {
-					// In some server-render contexts (e.g. pure Server Components)
-					// cookie setting may not be allowed — swallow silently.
+					// Some render-only contexts disallow writes, so reads continue without failing requests.
 				}
 			},
 		},

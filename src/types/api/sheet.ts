@@ -1,16 +1,12 @@
 /**
- * Spreadsheet data type definitions.
- *
- * @type {Record<string, string>} SheetRowObject - Row as an object keyed by column headers.
- * @type {string[]} SheetRowArray - Row as an array of string values.
- * @type {SheetRowArray[]} SheetMatrix - Matrix of spreadsheet rows.
+ * Defines core spreadsheet row representations used while parsing sheet ingestion payloads.
  */
 export type SheetRowObject = Record<string, string>;
 export type SheetRowArray = string[];
 export type SheetMatrix = SheetRowArray[];
 
 /**
- * Interface for a couplet as stored in the database.
+ * Describes a transformed couplet record shape derived from spreadsheet ingestion rows.
  */
 export interface MappedCouplet {
 	couplet_number: number;
