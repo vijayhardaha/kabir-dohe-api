@@ -46,8 +46,24 @@
 	// ==========================================
 	// Whitelist for project-specific terms to avoid annoying red squiggles
 	"cSpell.words": [
-		"vijayhardaha",
+		"dohas",
+		"Dohe",
+		"Hardaha",
+		"indexnow",
+		"Kabir",
+		"Sant",
+		"SUPABASE",
+		"treeify",
+		"Upserted",
+		"upserting",
 		"Vijay",
-		"Hardaha"
-	]
+		"vijayhardaha"
+	],
+	"cSpell.ignorePaths": [
+		".husky/**",
+		".vscode/**",
+		"**/*config*",
+		"dist/**",
+		"public/**",
+	],
 }
