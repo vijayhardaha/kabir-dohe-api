@@ -1,69 +1,75 @@
 {
-	// ==============================================================================
-	//  _______ _____  _____  ____  _   _ ______ _____ _____
-	// |__   __/ ____|/ ____|/ __ \| \ | |  ____|_   _/ ____|
-	//    | | | (___ | |    | |  | |  \| | |__    | || |  __
-	//    | |  \___ \| |    | |  | | . ` |  __|   | || | |_ |
-	//    | |  ____) | |____| |__| | |\  | |     _| || |__| |
-	//    |_| |_____/ \_____|\____/|_| \_|_|    |_____\_____|
-	//
-	// TYPESCRIPT ENGINE CONFIGURATION
-	// ==============================================================================
-	// Purpose: Static type-checking and module resolution strategy for the
-	// entire codebase, ensuring robust and predictable behavior.
-	// ==============================================================================
-
-	"compilerOptions": {
-		// ==========================================
-		// 🎯 TARGET & ENVIRONMENT
-		// ==========================================
-		"target": "ES2024",                    // Latest ECMAScript features supported by modern runtimes
-		"lib": ["dom", "dom.iterable"],        // Standard browser and JS environment types
-		"jsx": "react-jsx",                    // Modern React transform (React 17+)
-
-		// ==========================================
-		// 📦 MODULE RESOLUTION
-		// ==========================================
-		"module": "esnext",                    // Latest ESM module syntax
-		"moduleResolution": "node",            // Resolve modules like Node.js
-		"baseUrl": ".",                        // Base for non-relative imports
-		"paths": {
-			"@/*": ["./src/*"]                   // Clean imports: '@/components/X' -> 'src/components/X'
-		},
-		"resolveJsonModule": true,             // Import .json files directly
-		"esModuleInterop": true,               // Compatibility with CommonJS modules
-
-		// ==========================================
-		// 🛠️ COMPILATION STRATEGY
-		// ==========================================
-		"incremental": true,                   // Speeds up subsequent builds by caching
-		"noEmit": true,                        // Type-check only (Next.js handles transpilation)
-		"isolatedModules": true,               // Requirements for Next.js/Esbuild
-		"allowJs": true,                       // Migrate JS files to TS at your own pace
-
-		// ==========================================
-		// 🛡️ TYPE CHECKING & SAFETY
-		// ==========================================
-		"strict": true,                        // Enable all strict flags (The gold standard)
-		"skipLibCheck": true,                  // Skip checking node_modules (Big speed boost)
-		"forceConsistentCasingInFileNames": true, // Prevents Case-Sensitivity bugs across OSes
-
-		// ==========================================
-		// 🔌 PLUGINS & EXTRAS
-		// ==========================================
-		"plugins": [{ "name": "next" }],       // Next.js specific type-checking logic
-		"downlevelIteration": true             // Support spread/for-of in older environments
-	},
-
-	// ==========================================
-	// 📂 SCOPE CONTROL
-	// ==========================================
-	"include": [
-		"**/*.{js,jsx,ts,tsx,mjs,cjs}",
-		"*.config.mjs",
-		"next-env.d.ts",
-		"*.d.ts",
-		".next/types/**/*.ts"
-	],
-	"exclude": ["node_modules"]
+  // ==============================================================================
+  //  _______ _____  _____  ____  _   _ ______ _____ _____
+  // |__   __/ ____|/ ____|/ __ \| \ | |  ____|_   _/ ____|
+  //    | | | (___ | |    | |  | |  \| | |__    | || |  __
+  //    | |  \___ \| |    | |  | | . ` |  __|   | || | |_ |
+  //    | |  ____) | |____| |__| | |\  | |     _| || |__| |
+  //    |_| |_____/ \_____|\____/|_| \_|_|    |_____\_____|
+  //
+  // TYPESCRIPT ENGINE CONFIGURATION
+  // ==============================================================================
+  // Purpose: Static type-checking and module resolution strategy for the
+  // entire codebase, ensuring robust and predictable behavior.
+  // ==============================================================================
+  "compilerOptions": {
+    // ==========================================
+    // 🎯 TARGET & ENVIRONMENT
+    // ==========================================
+    "target": "ES2024", // Latest ECMAScript features supported by modern runtimes
+    "lib": [
+      "dom",
+      "dom.iterable"
+    ], // Standard browser and JS environment types
+    "jsx": "react-jsx", // Modern React transform (React 17+)
+    // ==========================================
+    // 📦 MODULE RESOLUTION
+    // ==========================================
+    "module": "esnext", // Latest ESM module syntax
+    "moduleResolution": "node", // Resolve modules like Node.js
+    "baseUrl": ".", // Base for non-relative imports
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ] // Clean imports: '@/components/X' -> 'src/components/X'
+    },
+    "resolveJsonModule": true, // Import .json files directly
+    "esModuleInterop": true, // Compatibility with CommonJS modules
+    // ==========================================
+    // 🛠️ COMPILATION STRATEGY
+    // ==========================================
+    "incremental": true, // Speeds up subsequent builds by caching
+    "noEmit": true, // Type-check only (Next.js handles transpilation)
+    "isolatedModules": true, // Requirements for Next.js/Esbuild
+    "allowJs": true, // Migrate JS files to TS at your own pace
+    // ==========================================
+    // 🛡️ TYPE CHECKING & SAFETY
+    // ==========================================
+    "strict": true, // Enable all strict flags (The gold standard)
+    "skipLibCheck": true, // Skip checking node_modules (Big speed boost)
+    "forceConsistentCasingInFileNames": true, // Prevents Case-Sensitivity bugs across OSes
+    // ==========================================
+    // 🔌 PLUGINS & EXTRAS
+    // ==========================================
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ], // Next.js specific type-checking logic
+    "downlevelIteration": true // Support spread/for-of in older environments
+  },
+  // ==========================================
+  // 📂 SCOPE CONTROL
+  // ==========================================
+  "include": [
+    ".next/dev/types/**/*.ts",
+    ".next/types/**/*.ts",
+    "*.config.mjs",
+    "*.d.ts",
+    "**/*.{js,jsx,ts,tsx,mjs,cjs}",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
