@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { getData } from "@/lib/data";
+import { getData } from "@/lib/utils/couplet-data";
 import { PaginatedResult } from "@/types/paginated-result";
 
 /**
- * Inferface for the parameters used in the couplets API.
+ * Interface for the parameters used in the couplets API.
  */
 interface CoupletParams {
 	s: string;

@@ -1,5 +1,5 @@
 import { CodeBlock } from "@/components/CodeBlock";
-import { getBaseUrl } from "@/lib/seoUtils";
+import { getBaseUrl } from "@/lib/utils/base-url";
 
 /**
  * Component that displays example API usage.

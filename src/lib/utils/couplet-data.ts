@@ -1,4 +1,5 @@
 import { Couplet } from "@/types/couplet";
+import { CoupletQueryParams } from "@/types/couplet-query-params";
 import { PaginatedResult } from "@/types/paginated-result";
 
 import {
@@ -7,24 +8,8 @@ import {
 	filterByPopularity,
 	sortData,
 	paginateData,
-} from "./filters";
+} from "./couplet-filters";
 import coupletData from "../data/couplets.json";
-
-/**
- * Interface for the parameters used in the getData function.
- */
-interface IGetDataParams {
-	s?: string;
-	exactMatch?: boolean;
-	searchWithin?: string;
-	tags?: string;
-	popular?: boolean;
-	orderBy?: string;
-	order?: string;
-	page?: number;
-	perPage?: number;
-	pagination?: boolean;
-}
 
 /**
  * Loads couplets data from a JSON file.
@@ -36,7 +21,7 @@ interface IGetDataParams {
  * @returns {Array<Object>} Array of couplets where each couplet is an object containing its data.
  */
 export function loadData(): Couplet[] {
-	return coupletData as Couplet[]; // Already loaded at build time
+	return coupletData as Couplet[];
 }
 
 /**
@@ -66,22 +51,13 @@ export function getData({
 	page = 1,
 	perPage = 10,
 	pagination = true,
-}: IGetDataParams = {}): PaginatedResult {
-	// Load the initial dataset
+}: CoupletQueryParams = {}): PaginatedResult {
 	let data = loadData();
 
-	// Apply sorting
 	data = sortData(data, orderBy, order);
-
-	// Apply search filtering
 	data = filterBySearch(data, s, exactMatch, searchWithin);
-
-	// Apply tag filtering
 	data = filterByTags(data, tags);
-
-	// Apply popularity filtering
 	data = filterByPopularity(data, popular);
 
-	// Apply pagination
 	return paginateData(data, page, perPage, pagination);
 }

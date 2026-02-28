@@ -1,6 +1,6 @@
-import { toBool } from "@/lib/utils";
 import { Couplet } from "@/types/couplet";
 import { PaginatedResult } from "@/types/paginated-result";
+import { toBool } from "@/lib/utils/boolean";
 
 /**
  * Filters data based on search terms and specified fields.
@@ -26,7 +26,6 @@ export const filterBySearch = (
 
 	let fieldsToSearch: string[] = [];
 
-	// Define fields to search in
 	if (searchWithin === "all" || !searchWithin) {
 		fieldsToSearch = [
 			"couplet_hindi",
@@ -51,7 +50,6 @@ export const filterBySearch = (
 		}
 	}
 
-	// Filter data based on the whole search string
 	const exactMatchResults = data.filter((item: Couplet) =>
 		fieldsToSearch.some((field: string) =>
 			searchTerms.every((term: string) =>
@@ -60,7 +58,6 @@ export const filterBySearch = (
 		)
 	);
 
-	// If exactMatch is false, filter based on individual search terms
 	let partialMatchResults: Couplet[] = [];
 	if (!toBool(exactMatch)) {
 		partialMatchResults = data.filter((item: Couplet) =>
@@ -72,21 +69,17 @@ export const filterBySearch = (
 		);
 	}
 
-	// Merge exactMatchResults and partialMatchResults, ensuring uniqueness
 	const uniqueItemsMap = new Map();
 
 	[...exactMatchResults, ...partialMatchResults].forEach((item) => {
-		// Use a unique identifier to ensure uniqueness, e.g., 'id'
-		const itemId = item.id || JSON.stringify(item); // Use `id` if available, otherwise stringify the item
+		const itemId = item.id || JSON.stringify(item);
 		if (!uniqueItemsMap.has(itemId)) {
 			uniqueItemsMap.set(itemId, item);
 		}
 	});
 
-	// Convert the Map values to an array
 	const mergedUniqueResults = Array.from(uniqueItemsMap.values());
 
-	// Sort filtered data: exact matches first, then partial matches
 	return mergedUniqueResults.sort((a, b) => {
 		const aMatchesExact = fieldsToSearch.some((field: string) =>
 			(a[field as keyof Couplet] as string)?.toLowerCase().includes(searchLower)
@@ -96,12 +89,12 @@ export const filterBySearch = (
 		);
 
 		if (aMatchesExact && !bMatchesExact) {
-			return -1; // `a` should come before `b`
+			return -1;
 		}
 		if (!aMatchesExact && bMatchesExact) {
-			return 1; // `b` should come before `a`
+			return 1;
 		}
-		return 0; // Leave the order unchanged if both are either exact matches or both are partial matches
+		return 0;
 	});
 };
 
@@ -141,7 +134,6 @@ export const filterByPopularity = (data: Couplet[], popular: boolean): Couplet[]
  * @returns {Array<Object>} The sorted data.
  */
 export const sortData = (data: Couplet[], orderBy: string, order: string): Couplet[] => {
-	// Normalize orderBy to lowercase and order to uppercase
 	const normalizedOrderBy = orderBy?.toLowerCase() || "id";
 	const normalizedOrder = order?.toUpperCase() || "ASC";
 

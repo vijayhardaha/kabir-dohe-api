@@ -1,5 +1,5 @@
 import { CodeBlock } from "@/components/CodeBlock";
-import { getBaseUrl } from "@/lib/seoUtils";
+import { getBaseUrl } from "@/lib/utils/base-url";
 
 /**
  * Interface representing an example API request.
