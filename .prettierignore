@@ -25,40 +25,40 @@
 # We never want to format external dependencies or compiled code
 node_modules
 .next
-dist
 build
+dist
 out
 
 # ==========================================
 # 🖼️ STATIC ASSETS & PUBLIC DATA
 # ==========================================
 # Public assets (images, fonts, robots.txt) often don't need formatting
-public/
 vendor/
+public/
 
 # ==========================================
 # ⚙️ SYSTEM & VERSION CONTROL
 # ==========================================
 # Let Git manage its own internal metadata
 .git
-.svn
 .hg
+.svn
 
 # ==========================================
 # 📄 MISCELLANEOUS
 # ==========================================
 # Ignore lockfiles to prevent manual merge conflicts
 package-lock.json
-yarn.lock
 pnpm-lock.yaml
+yarn.lock
 
 # Ignore minified files which are intentionally unreadable
 *.min.*
 
 # Ignore config files which may contain complex structures not suited for Prettier
+.vscode/**/*.json
 *.config.*
 *config.*
-.vscode/**/*.json
 
 ###############################################################################
 # END OF PRETTIER IGNORE
