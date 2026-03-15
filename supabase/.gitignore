@@ -1,8 +1,15 @@
-# Supabase
+# ======================================================================
+# SUPABASE GITIGNORE
+# ======================================================================
+# Purpose: Ignore Supabase-specific local files and dotenv variants that contain
+# secrets or local test data.
+# ======================================================================
+
+# Supabase local state
 .branches
 .temp
 
-# dotenvx
+# dotenvx local keys and variants (sensitive)
 .env.keys
 .env.local
 .env.*.local
