@@ -1,41 +1,30 @@
+// =======================================================================
+// Javascript Intelligence Config
+// =======================================================================
+// Purpose: Improves editor features (auto-imports, path alias resolution)
+//          for JavaScript files within the project.
+// Docs: https://code.visualstudio.com/docs/languages/jsconfig
+// =======================================================================
+
 {
-	// ==============================================================================
-	//        _  _____  _____  ____  _   _ ______ _____ _____
-	//       | |/ ____|/ ____|/ __ \| \ | |  ____|_   _/ ____|
-	//       | | (___ | |    | |  | |  \| | |__    | || |  __
-	//   _   | |\___ \| |    | |  | | . ` |  __|   | || | |_ |
-	//  | |__| |____) | |____| |__| | |\  | |     _| || |__| |
-	//   \____/|_____/ \_____|\____/|_| \_|_|    |_____\_____|
-	//
-	//  JAVASCRIPT INTELLIGENCE CONFIG
-	// ==============================================================================
-	// Purpose: Improves editor features (auto-imports, path alias resolution)
-	// for JavaScript files within the project.
-	// ==============================================================================
+  "compilerOptions": {
+    // ---- Editor & JSX ----
+    // Enable the modern React JSX transform so files don't need `import React`.
+    "jsx": "react-jsx",
 
-	"compilerOptions": {
-		// ==========================================
-		// 🧠 EDITOR INTELLIGENCE
-		// ==========================================
-		// Tells the editor how to handle JSX syntax (React 17+ transform)
-		"jsx": "react-jsx",
+    // ---- Module resolution ----
+    // Allow importing JSON files directly: `import data from './data.json'`.
+    "resolveJsonModule": true,
 
-		// Enables auto-imports and navigation for .json files
-		"resolveJsonModule": true,
+    // ---- Path aliases ----
+    // Base directory for non-relative imports (used by editor/tooling).
+    "baseUrl": ".",
 
-		// ==========================================
-		// 🔗 PATH ALIASES
-		// ==========================================
-		// Matches tsconfig.json to ensure VS Code/WebStorm
-		// resolves '@/components/...' correctly.
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["./src/*"]
-		}
-	},
+    // Map `@/` imports to `./src/` so `@/components/X` resolves to `src/components/X`.
+    "paths": { "@/*": ["./src/*"] }
+  },
 
-	// ==========================================
-	// 📂 SCOPE CONTROL
-	// ==========================================
-	"exclude": ["node_modules", ".next", "out"]
+  // ---- Exclusions ----
+  // Files and folders excluded from JS language service and editor features
+  "exclude": ["node_modules", ".next", "out"]
 }
