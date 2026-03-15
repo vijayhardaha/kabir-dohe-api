@@ -1,35 +1,26 @@
 /**
- * ###############################################################################
- * _____           _    _____  _____ _____
- * |  __ \         | |  / ____|/ ____/ ____|
- * | |__) |__  ___ | |_| |    | (___| (___
- * |  ___/ _ \/ __|| __| |     \___ \\___ \
- * | |  | (_) \__ \| |_| |____ ____) |___) |
- * |_|   \___/|___/ \__|\_____|_____/|_____/
- *
- * THE STYLE PROCESSOR
- * ###############################################################################
- * * PURPOSE:
- * Transforms your CSS using JavaScript plugins. It handles the injection of
- * Tailwind CSS and other post-processing tasks.
- * * WORKFLOW:
- * - Local CSS Build: `npx tailwindcss -i ./src/app/globals.css -o ./public/out.css --watch`
- * - Note: Changes to this file require a server restart to take effect.
- * * ###############################################################################
+ * ======================================================================
+ * Postcss Configuration
+ * ======================================================================
+ * Purpose: Configure PostCSS plugins used to transform project styles
+ *          (Tailwind, autoprefixer, etc.). Changes may require
+ *          restarting the dev server.
+ * Docs: https://github.com/postcss/postcss/blob/main/docs/config.md
+ * ======================================================================
  */
 
 /** @type {import('postcss-load-config').Config} */
 const config = {
-	// ==========================================
-	// 🔌 POSTCSS PLUGINS
-	// ==========================================
-	plugins: [
-		// Using the modern @tailwindcss/postcss plugin for lightning-fast builds
-		"@tailwindcss/postcss",
+  // ---- PostCSS plugins ----
+  // List plugins in execution order. Tailwind should run before other
+  // processors that rely on generated utilities.
+  plugins: [
+    // Tailwind PostCSS plugin to transform utility classes
+    '@tailwindcss/postcss',
 
-		// Optional: Add 'autoprefixer' here if your target browsers require it
-		// "autoprefixer": {},
-	],
+    // Optional browser prefixing plugin (enable if targeting older browsers)
+    // "autoprefixer": {},
+  ],
 };
 
 export default config;
