@@ -20,22 +20,47 @@ This document provides agentic coding guidelines for the Kabir Ke Dohe API proje
 ## Project Structure
 
 ```
-app/                  # Next.js App Router - routing only
-
-components/           # Reusable UI components
-└── docs/            # API documentation components
-
-constants/            # SEO metadata and API parameters
-
-lib/                  # Utilities and services
-├── db/              # Database clients
-├── env/             # Environment variables
-├── integrations/    # Third-party integrations
-├── services/        # Business logic
-└── utils/           # Helper functions
-
-types/                # Global TypeScript definitions
-└── api/             # API-related types
+src/
+├── app/                    # Next.js App Router - routing only
+│   ├── api/               # API routes
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   └── globals.css        # Global styles
+│
+├── components/             # Reusable UI components
+│   ├── docs/             # API documentation components
+│   ├── CopyButton.tsx
+│   ├── CodeBlock.tsx
+│   ├── Footer.tsx
+│   └── Header.tsx
+│
+├── constants/             # SEO metadata and API parameters
+│
+├── lib/
+│   ├── server/           # Server-side code (never expose to client)
+│   │   ├── db/           # Database clients & mappers
+│   │   │   ├── mappings/ # Data mappers (post, tag, post-tags)
+│   │   │   ├── supabase.ts
+│   │   │   └── upsert.ts
+│   │   ├── integrations/ # Third-party integrations
+│   │   │   ├── gsheet.ts
+│   │   │   └── jwt.client.ts
+│   │   ├── env/          # Environment variables
+│   │   │   └── server.ts
+│   │   └── utils/        # Server utilities
+│   │       ├── array/    # Array utilities (duplicates)
+│   │       ├── debug/    # Debug utilities (log)
+│   │       ├── errors/   # Error handling (api-error, error-handler)
+│   │       ├── response/# Response helpers (success, failure)
+│   │       └── string/   # String utilities (hash, sanitize, formatting)
+│   │
+│   └── utils/            # Shared utilities (client-safe)
+│       ├── boolean.ts
+│       ├── base-url.ts
+│       └── index.ts
+│
+└── types/                 # Global TypeScript definitions
+    └── api/              # API-related types
 ```
 
 ---
@@ -44,20 +69,20 @@ types/                # Global TypeScript definitions
 
 ```bash
 # Development
-pnpm run dev           # Start development server
-pnpm run build         # Build for production
-pnpm run start         # Start production server
+pnpm run dev              # Start development server
+pnpm run build            # Build for production
+pnpm run start            # Start production server
 
 # Linting & Formatting
-npx eslint .                    # Lint all files
-npx eslint --fix .              # Fix auto-fixable issues
-npx prettier --write .          # Format files
+npx eslint .              # Lint all files
+npx eslint --fix .        # Fix auto-fixable issues
+npx prettier --write .   # Format files
 
 # TypeScript
-npx tsc --noEmit               # Type check only
+npx tsc --noEmit          # Type check only
 
 # Testing
-pnpm test                       # Run Jest tests
+pnpm test                 # Run Jest tests
 ```
 
 ---
@@ -67,7 +92,7 @@ pnpm test                       # Run Jest tests
 ### Naming
 
 - Components: `PascalCase` (`Button.tsx`)
-- Functions: `camelCase` (`fetchPosts`)
+- Functions: `camelCase` (`fetchCouplets`)
 - Files: `kebab-case` (`api-utils.ts`)
 - Constants: `SCREAMING_SNAKE_CASE` (`MAX_RETRIES`)
 
@@ -85,6 +110,12 @@ pnpm test                       # Run Jest tests
 - NO `any` - use `unknown` if uncertain
 - Avoid `!` - use optional chaining
 
+### Server/Client Separation
+
+- Server-only code goes in `src/lib/server/`
+- Never import from `src/lib/server/` in client components
+- Use `src/lib/utils/` for shared utilities that are safe for both
+
 ---
 
 ## API Standards
@@ -98,7 +129,7 @@ pnpm test                       # Run Jest tests
 
 ## Supabase Guidelines
 
-- Import from `@/lib/db/supabase`
+- Import from `@/lib/server/db/supabase`
 - Always select specific columns (avoid `SELECT *`)
 - Use RLS policies for security
 - Never expose Service Role key on client

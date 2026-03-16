@@ -21,40 +21,79 @@ You are an expert Senior Developer in a Next.js 16 environment. Your role is to 
 ## 2. Project Architecture
 
 ```
-app/                  # Next.js App Router - routing only
-
-components/           # Reusable UI components
-└── docs/            # API documentation page components
-
-constants/            # SEO metadata and API parameters
-
-lib/                  # Utilities, services, helpers, integrations
-├── db/              # Database clients & query functions
-├── env/             # Environment variables (server/client)
-├── integrations/    # Third-party integrations (Google Sheets, JWT)
-├── services/        # Business logic (e.g., fetchCouplets)
-└── utils/           # Helper functions
-    ├── api/         # API route helpers (ApiError)
-    ├── string/      # String utilities (toSentenceCase)
-    └── array/      # Array utilities (findDuplicates)
-
-types/                # Global TypeScript definitions
-└── api/             # API-related types
+src/
+├── app/                    # Next.js App Router - routing only
+│   ├── api/               # API routes
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   └── globals.css        # Global styles
+│
+├── components/             # Reusable UI components
+│   ├── docs/             # API documentation components
+│   ├── CopyButton.tsx
+│   ├── CodeBlock.tsx
+│   ├── Footer.tsx
+│   └── Header.tsx
+│
+├── constants/             # SEO metadata and API parameters
+│
+├── lib/
+│   ├── server/           # Server-side code (never expose to client)
+│   │   ├── db/           # Database clients & mappers
+│   │   │   ├── mappings/ # Data mappers (post, tag, post-tags)
+│   │   │   ├── supabase.ts
+│   │   │   └── upsert.ts
+│   │   ├── integrations/ # Third-party integrations
+│   │   │   ├── gsheet.ts
+│   │   │   └── jwt.client.ts
+│   │   ├── env/          # Environment variables
+│   │   │   └── server.ts
+│   │   └── utils/        # Server utilities
+│   │       ├── array/    # Array utilities (duplicates)
+│   │       ├── debug/    # Debug utilities (log)
+│   │       ├── errors/   # Error handling (api-error, error-handler)
+│   │       ├── response/# Response helpers (success, failure)
+│   │       └── string/   # String utilities (hash, sanitize, formatting)
+│   │
+│   └── utils/            # Shared utilities (client-safe)
+│       ├── boolean.ts
+│       ├── base-url.ts
+│       └── index.ts
+│
+└── types/                 # Global TypeScript definitions
+    └── api/              # API-related types
 ```
 
 ---
 
-## 3. Coding Style
+## 3. Server/Client Separation
+
+**IMPORTANT**: Never import server-side code in client components.
+
+- Server-only code: `src/lib/server/**`
+- Shared utilities (client-safe): `src/lib/utils/**`
+
+```typescript
+// Server-side (API routes, Server Actions)
+import { createClient } from "@/lib/server/db/supabase";
+
+// Client-safe utilities
+import { cn } from "@/lib/utils";
+```
+
+---
+
+## 4. Coding Style
 
 ### Naming Conventions
 
-| Type                | Convention           | Example        |
-| ------------------- | -------------------- | -------------- |
-| Components          | PascalCase           | `BlogCard.tsx` |
-| Functions/Variables | camelCase            | `fetchPosts`   |
-| Files               | kebab-case           | `api-utils.ts` |
-| Constants           | SCREAMING_SNAKE_CASE | `MAX_RETRIES`  |
-| React Components    | PascalCase           | `Button.tsx`   |
+| Type                | Convention           | Example         |
+| ------------------- | -------------------- | --------------- |
+| Components          | PascalCase           | `BlogCard.tsx`  |
+| Functions/Variables | camelCase            | `fetchCouplets` |
+| Files               | kebab-case           | `api-utils.ts`  |
+| Constants           | SCREAMING_SNAKE_CASE | `MAX_RETRIES`   |
+| React Components    | PascalCase           | `Button.tsx`    |
 
 ### Import Order
 
@@ -65,7 +104,7 @@ types/                # Global TypeScript definitions
 
 ---
 
-## 4. Formatting (Prettier)
+## 5. Formatting (Prettier)
 
 Follow the project's Prettier configuration. Check `prettier.config.mjs` before generating code.
 
@@ -88,7 +127,7 @@ If unavailable, use these rules:
 
 ---
 
-## 5. TypeScript Standards
+## 6. TypeScript Standards
 
 ### Types vs Interfaces
 
@@ -111,13 +150,13 @@ type Status = "draft" | "published";
 
 ---
 
-## 6. Supabase & Database
+## 7. Supabase & Database
 
 ### Client Usage
 
 ```typescript
 // Server Components / API
-import { createClient } from "@/lib/db/supabase";
+import { createClient } from "@/lib/server/db/supabase";
 ```
 
 ### Query Rules
@@ -128,7 +167,7 @@ import { createClient } from "@/lib/db/supabase";
 
 ---
 
-## 7. Validation (Zod)
+## 8. Validation (Zod)
 
 Validate all inputs from API requests, Server Actions, and Forms.
 
@@ -140,7 +179,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 8. API Routes
+## 9. API Routes
 
 - Handle errors with try/catch
 - Return standardized responses using `success` and `failure` helpers:
@@ -152,7 +191,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 9. React Best Practices
+## 10. React Best Practices
 
 - **Components**: Functional components only
 - **Hooks**: Extract logic to custom hooks (`useDebounce`, `useToggle`)
@@ -161,7 +200,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 10. JSDoc Documentation
+## 11. JSDoc Documentation
 
 Add JSDoc comments for:
 
@@ -189,7 +228,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
 
 ---
 
-## 11. Component Example
+## 12. Component Example
 
 ```tsx
 import { type ReactNode } from "react";
