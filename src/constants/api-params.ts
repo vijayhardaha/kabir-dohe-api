@@ -19,7 +19,7 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     type: 'string',
     description: 'Fields to search within (comma-separated list)',
     defaultValue: 'all',
-    possibleValues: 'all, couplet, translation, explanation',
+    possibleValues: 'all, text, interpretation',
   },
   {
     name: 'tags',
@@ -40,7 +40,7 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     type: 'string',
     description: 'Field to sort by',
     defaultValue: 'id',
-    possibleValues: 'id, popular, couplet_english, couplet_hindi',
+    possibleValues: 'id, is_popular, text_en, text_hi',
   },
   { name: 'sort_order', type: 'string', description: 'Sort order', defaultValue: 'asc', possibleValues: 'asc, desc' },
   {

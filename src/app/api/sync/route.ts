@@ -1,11 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { buildCoupletTagMappings } from '@/server/db/mappings/couplet-tags.mapper';
-import type { DbCouplet } from '@/server/db/mappings/couplet.mapper';
+import { buildPostTagMappings } from '@/server/db/mappings/post-tags.mapper';
+import type { DbPost } from '@/server/db/mappings/post.mapper';
 import type { DbTag } from '@/server/db/mappings/tag.mapper';
 import { createClient } from '@/server/db/supabase';
-import { upsertCouplets, upsertCoupletTags, upsertTags } from '@/server/db/upsert';
+import { upsertPosts, upsertPostTags, upsertTags } from '@/server/db/upsert';
 import { env } from '@/server/env/server';
 import { sheetToJson } from '@/server/integrations/gsheet';
 import { ApiError, handleError, success } from '@/server/lib';
@@ -35,10 +35,10 @@ async function validatePasskey(request: NextRequest): Promise<string> {
 }
 
 /**
- * Pull couplet data from Google Sheets
+ * Pull post data from Google Sheets
  *
  * @param sheetName - name of the sheet to pull from
- * @returns raw couplets, mapped couplets, and tags
+ * @returns raw posts, mapped posts, and tags
  */
 async function pullSheetData(sheetName: string) {
   return sheetToJson(sheetName);
@@ -62,14 +62,14 @@ async function createSupabaseClient(hashedPasskey: string): Promise<SupabaseClie
 }
 
 /**
- * Sync couplets to database
+ * Sync posts to database
  *
  * @param supabase - Supabase client
- * @param couplets - mapped couplets to upsert
+ * @param posts - mapped posts to upsert
  * @returns upsert result with data and count
  */
-async function syncCouplets(supabase: SupabaseClient, couplets: DbCouplet[]) {
-  return upsertCouplets(supabase, couplets);
+async function syncPosts(supabase: SupabaseClient, posts: DbPost[]) {
+  return upsertPosts(supabase, posts);
 }
 
 /**
@@ -84,24 +84,24 @@ async function syncTags(supabase: SupabaseClient, tags: DbTag[]) {
 }
 
 /**
- * Sync couplet-tag mappings to database
+ * Sync post-tag mappings to database
  *
  * @param supabase - Supabase client
- * @param {Array<{ couplet_code: string; tags: string[] }>} rawCouplets - Raw couplets with tag information from the source.
- * @param {Record<string, string>[]} coupletsData - Upserted couplets data with ids.
+ * @param {Array<{ identifier: string; tags: string[] }>} rawPosts - Raw posts with tag information from the source.
+ * @param {Record<string, string>[]} postsData - Upserted posts data with ids.
  * @param {Record<string, string>[]} tagsData - Upserted tags data with ids.
  * @returns upsert result with count
  */
-async function syncCoupletTags(
+async function syncPostTags(
   supabase: SupabaseClient,
-  rawCouplets: Array<{ couplet_code: string; tags: string[] }>,
-  coupletsData: Record<string, string>[],
+  rawPosts: Array<{ identifier: string; tags: string[] }>,
+  postsData: Record<string, string>[],
   tagsData: Record<string, string>[]
 ) {
-  const mappings = buildCoupletTagMappings(rawCouplets, coupletsData ?? [], tagsData ?? []);
+  const mappings = buildPostTagMappings(rawPosts, postsData ?? [], tagsData ?? []);
 
   if (mappings.length > 0) {
-    return upsertCoupletTags(supabase, mappings);
+    return upsertPostTags(supabase, mappings);
   }
 
   return { count: 0 };
@@ -110,7 +110,7 @@ async function syncCoupletTags(
 /**
  * GET handler
  *
- * Checks passkey, syncs couplets from Google Sheets to Supabase.
+ * Checks passkey, syncs posts from Google Sheets to Supabase.
  *
  * @param request - incoming request
  * @returns JSON status
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const hashedPasskey = await validatePasskey(request);
 
     // pull sheet data
-    const { rawCouplets, couplets, tags } = await pullSheetData('kabir-ke-dohe');
+    const { rawPosts, posts, tags } = await pullSheetData('kabir-ke-dohe');
 
     // create supabase client
     const supabase = await createSupabaseClient(hashedPasskey);
@@ -129,19 +129,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // summary
     let message = '';
 
-    // sync couplets
-    const { data: coupletsData, count: coupletsCount } = await syncCouplets(supabase, couplets);
-    message += `Upserted ${coupletsCount ?? 0} couplets.`;
+    // sync posts
+    const { data: postsData, count: postsCount } = await syncPosts(supabase, posts);
+    message += `Upserted ${postsCount ?? 0} posts.`;
 
     // sync tags and mappings
-    if (coupletsCount && coupletsCount > 0 && tags.length > 0) {
+    if (postsCount && postsCount > 0 && tags.length > 0) {
       const { data: tagsData, count: tagsCount } = await syncTags(supabase, tags);
       message += ` Upserted ${tagsCount} tags.`;
 
-      // build and sync couplet-tag mappings
-      const mappingRes = await syncCoupletTags(supabase, rawCouplets, coupletsData ?? [], tagsData ?? []);
+      // build and sync post-tag mappings
+      const mappingRes = await syncPostTags(supabase, rawPosts, postsData ?? [], tagsData ?? []);
       const mappingCount = mappingRes.count || 0;
-      message += ` Upserted ${mappingCount} couplet-tag mappings.`;
+      message += ` Upserted ${mappingCount} post-tag mappings.`;
     }
 
     // success response

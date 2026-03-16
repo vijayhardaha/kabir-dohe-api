@@ -31,9 +31,8 @@ const QuerySchema = z.object({
     .default(DEFAULT_PARAMS.search_fields)
     .refine(
       (val) =>
-        val === 'all'
-        || val.split(',').every((v) => ['couplet', 'translation', 'explanation'].includes(v.trim().toLowerCase())),
-      { message: "Invalid search_fields value. Allowed values: 'all', 'couplet', 'translation', 'explanation'" }
+        val === 'all' || val.split(',').every((v) => ['text', 'interpretation'].includes(v.trim().toLowerCase())),
+      { message: "Invalid search_fields value. Allowed values: 'all', 'text', 'interpretation'" }
     ),
   tags: z.string().optional().default(DEFAULT_PARAMS.tags),
   is_popular: z.boolean().optional().default(DEFAULT_PARAMS.is_popular),
@@ -41,8 +40,8 @@ const QuerySchema = z.object({
     .string()
     .optional()
     .default(DEFAULT_PARAMS.sort_by)
-    .refine((val) => ['id', 'popular', 'couplet_english', 'couplet_hindi'].includes(val), {
-      message: "Invalid sort_by value. Allowed values: 'id', 'popular', 'couplet_english', 'couplet_hindi'",
+    .refine((val) => ['id', 'is_popular', 'text_en', 'text_hi'].includes(val), {
+      message: "Invalid sort_by value. Allowed values: 'id', 'is_popular', 'text_en', 'text_hi'",
     }),
   sort_order: z
     .string()
@@ -58,7 +57,6 @@ const QuerySchema = z.object({
 
 /**
  * Type for a Supabase query builder instance.
- * Accepts both PostgresQueryBuilder and PostgresFilterBuilder.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type QueryBuilder = any;
@@ -69,36 +67,34 @@ type QueryBuilder = any;
 type QueryParams = z.infer<typeof QuerySchema>;
 
 /**
- * Type for transformed couplet data.
+ * Type for transformed post data (simplified public API response).
  */
-interface Couplet {
-  id: number;
-  unique_slug: string;
-  couplet_hindi: string;
-  couplet_english: string;
-  translation_hindi: string;
-  translation_english: string;
-  explanation_hindi: string;
-  explanation_english: string;
+interface Post {
+  number: number;
+  slug: string;
+  text_hi: string;
+  text_en: string;
+  interpretation_hi: string;
+  interpretation_en: string;
   is_popular: boolean;
+  category: string | null;
   tags: Array<{ slug: string; name: string }>;
 }
 
 /**
- * Base select fields for couplets query.
+ * Base select fields for posts query.
  */
-const COUPLET_SELECT_FIELDS = `
+const POST_SELECT_FIELDS = `
   id,
-  couplet_number,
+  post_number,
   slug,
-  hindi_text,
-  english_text,
-  hindi_translation,
-  english_translation,
-  hindi_explanation,
-  english_explanation,
-  popular,
-  tags:couplet_tags!inner(
+  text_hi,
+  text_en,
+  interpretation_hi,
+  interpretation_en,
+  is_popular,
+  category_id,
+  tags:post_tags!inner(
     tag:tags(
       id,
       slug,
@@ -115,30 +111,28 @@ const COUPLET_SELECT_FIELDS = `
  */
 function getSearchFields(search_fields: string): string[] {
   // Define field groups
-  const coupletFields = ['hindi_text', 'english_text'];
-  const translationFields = ['hindi_translation', 'english_translation'];
-  const explanationFields = ['hindi_explanation', 'english_explanation'];
+  const textFields = ['text_hi', 'text_en'];
+  const interpretationFields = ['interpretation_hi', 'interpretation_en'];
 
   if (search_fields === 'all') {
-    return [...coupletFields, ...translationFields, ...explanationFields];
+    return [...textFields, ...interpretationFields];
   }
 
   return search_fields.split(',').flatMap((field) => {
     const trimmed = field.trim().toLowerCase();
-    if (trimmed === 'couplet') return coupletFields;
-    if (trimmed === 'translation') return translationFields;
-    if (trimmed === 'explanation') return explanationFields;
+    if (trimmed === 'text') return textFields;
+    if (trimmed === 'interpretation') return interpretationFields;
     return [];
   });
 }
 
 /**
- * Transform a database row to couplet format.
+ * Transform a database row to post format (simplified public API).
  *
  * @param {Record<string, unknown>} row - Database row
- * @returns {Couplet} Transformed couplet data
+ * @returns {Post} Transformed post data
  */
-function transformCoupletData(row: Record<string, unknown>): Couplet {
+function transformPostData(row: Record<string, unknown>): Post {
   const tagsArray =
     (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
       slug: (t.tag as Record<string, unknown>)?.slug as string,
@@ -146,15 +140,14 @@ function transformCoupletData(row: Record<string, unknown>): Couplet {
     })) ?? [];
 
   return {
-    id: row.couplet_number as number,
-    unique_slug: row.slug as string,
-    couplet_hindi: row.hindi_text as string,
-    couplet_english: row.english_text as string,
-    translation_hindi: row.hindi_translation as string,
-    translation_english: row.english_translation as string,
-    explanation_hindi: row.hindi_explanation as string,
-    explanation_english: row.english_explanation as string,
-    is_popular: row.popular as boolean,
+    number: row.post_number as number,
+    slug: row.slug as string,
+    text_hi: row.text_hi as string,
+    text_en: row.text_en as string,
+    interpretation_hi: row.interpretation_hi as string,
+    interpretation_en: row.interpretation_en as string,
+    is_popular: row.is_popular as boolean,
+    category: row.category_id as string | null,
     tags: tagsArray,
   };
 }
@@ -201,13 +194,13 @@ function applyTagFilter(query: QueryBuilder, tagList: string[]): QueryBuilder {
  * Apply popular filter to a query.
  *
  * @param {QueryBuilder} query - Supabase query builder
- * @param {boolean} is_popular - Whether to filter by popular couplets
+ * @param {boolean} is_popular - Whether to filter by popular posts
  * @returns {QueryBuilder} Query with popular filter applied
  */
 function applyPopularFilter(query: QueryBuilder, is_popular: boolean): QueryBuilder {
   if (!is_popular) return query;
 
-  return query.eq('popular', true);
+  return query.eq('is_popular', true);
 }
 
 /**
@@ -221,17 +214,17 @@ function applyPopularFilter(query: QueryBuilder, is_popular: boolean): QueryBuil
 function applySorting(query: QueryBuilder, sort_by: string, sort_order: string): QueryBuilder {
   const ascending = sort_order === 'asc';
 
-  if (sort_by === 'popular') {
-    return query.order('popular', { ascending: false }).order('couplet_order', { ascending });
+  if (sort_by === 'is_popular') {
+    return query.order('is_popular', { ascending: false }).order('post_order', { ascending });
   }
-  if (sort_by === 'couplet_english') {
-    return query.order('english_text', { ascending });
+  if (sort_by === 'text_en') {
+    return query.order('text_en', { ascending });
   }
-  if (sort_by === 'couplet_hindi') {
-    return query.order('hindi_text', { ascending });
+  if (sort_by === 'text_hi') {
+    return query.order('text_hi', { ascending });
   }
 
-  return query.order('couplet_order', { ascending });
+  return query.order('post_order', { ascending });
 }
 
 /**
@@ -259,7 +252,7 @@ async function getFilteredCount(
   tagList: string[],
   is_popular: boolean
 ): Promise<number> {
-  let countQuery = supabase.from('couplets').select('*', { count: 'exact', head: true });
+  let countQuery = supabase.from('posts').select('*', { count: 'exact', head: true });
 
   countQuery = applySearchFilter(countQuery, search, searchFields);
   countQuery = applyTagFilter(countQuery, tagList);
@@ -270,21 +263,14 @@ async function getFilteredCount(
 }
 
 /**
- * Fetches couplets from Supabase with filtering, sorting, and pagination.
+ * Fetches posts from Supabase with filtering, sorting, and pagination.
  *
  * @param {QueryParams} params - The validated query parameters.
- * @returns {Promise<{ couplets: Couplet[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Paginated couplet results.
+ * @returns {Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Paginated post results.
  */
-async function fetchCoupletsFromSupabase(
+async function fetchPostsFromSupabase(
   params: QueryParams
-): Promise<{
-  couplets: Couplet[];
-  total: number;
-  totalPages: number;
-  page: number;
-  per_page: number;
-  pagination: boolean;
-}> {
+): Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }> {
   const supabase = await createClient();
 
   const { search, search_fields, tags, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
@@ -302,7 +288,7 @@ async function fetchCoupletsFromSupabase(
   const searchFields = getSearchFields(search_fields);
 
   // Build the base query with tags join
-  let query = supabase.from('couplets').select(COUPLET_SELECT_FIELDS);
+  let query = supabase.from('posts').select(POST_SELECT_FIELDS);
 
   // Apply filters using reusable functions
   query = applySearchFilter(query, search ?? '', searchFields);
@@ -324,19 +310,19 @@ async function fetchCoupletsFromSupabase(
   const { data, error } = await query;
 
   if (error) {
-    throw new Error(`Failed to fetch couplets: ${error.message}`);
+    throw new Error(`Failed to fetch posts: ${error.message}`);
   }
 
   // Transform data using reusable function
-  const couplets = (data ?? []).map(transformCoupletData);
+  const posts = (data ?? []).map(transformPostData);
 
   const pageNumber = page ?? 1;
   const perPageNumber = per_page ?? 10;
   const totalPages = perPageNumber > 0 ? Math.ceil(total / perPageNumber) : 1;
 
   return {
-    couplets,
-    total: pagination ? total : couplets.length,
+    posts,
+    total: pagination ? total : posts.length,
     totalPages: pagination ? totalPages : 1,
     page: pageNumber,
     per_page: perPageNumber,
@@ -387,11 +373,11 @@ export function handleRouteError(error: unknown, fallbackMessage: string = 'An e
 }
 
 /**
- * GET route handler for the couplets API.
- * Retrieves couplets from Supabase based on URL query parameters.
+ * GET route handler for the posts API.
+ * Retrieves posts from Supabase based on URL query parameters.
  *
  * @param {Request} request - The incoming HTTP request object.
- * @returns {Promise<NextResponse>} JSON response with couplets data or error message.
+ * @returns {Promise<NextResponse>} JSON response with posts data or error message.
  */
 export async function GET(request: Request): Promise<NextResponse> {
   try {
@@ -400,21 +386,21 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Validate and parse query parameters
     const params = parseQueryParams(searchParams);
 
-    // Fetch couplets from Supabase
-    const result = await fetchCoupletsFromSupabase(params);
+    // Fetch posts from Supabase
+    const result = await fetchPostsFromSupabase(params);
 
     return success(result);
   } catch (error) {
-    return handleRouteError(error, 'Failed to fetch couplets');
+    return handleRouteError(error, 'Failed to fetch posts');
   }
 }
 
 /**
- * POST route handler for the couplets API.
- * Retrieves couplets from Supabase based on request body parameters.
+ * POST route handler for the posts API.
+ * Retrieves posts from Supabase based on request body parameters.
  *
  * @param {Request} request - The incoming HTTP request object.
- * @returns {Promise<NextResponse>} JSON response with couplets data or error message.
+ * @returns {Promise<NextResponse>} JSON response with posts data or error message.
  */
 export async function POST(request: Request): Promise<NextResponse> {
   try {
@@ -423,11 +409,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     // Validate and parse request body
     const params = QuerySchema.parse({ ...DEFAULT_PARAMS, ...body });
 
-    // Fetch couplets from Supabase
-    const result = await fetchCoupletsFromSupabase(params);
+    // Fetch posts from Supabase
+    const result = await fetchPostsFromSupabase(params);
 
     return success(result);
   } catch (error) {
-    return handleRouteError(error, 'Failed to fetch couplets');
+    return handleRouteError(error, 'Failed to fetch posts');
   }
 }
