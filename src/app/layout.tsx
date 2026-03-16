@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
-import { Kumbh_Sans, Fira_Code } from 'next/font/google';
+import { EB_Garamond, Geist_Mono, Nunito } from 'next/font/google';
 
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 import { BaseMetadata, baseMetadata } from '@/constants/seo';
 
-const sansFont = Kumbh_Sans({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-sans' });
-const monoFont = Fira_Code({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-mono' });
+const sansFont = Nunito({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
+const serifFont = EB_Garamond({ subsets: ['latin'], weight: ['400', '700', '800'], variable: '--font-serif' });
+const monoFont = Geist_Mono({ subsets: ['latin'], weight: ['400'], variable: '--font-mono' });
 
 import './globals.css';
 
@@ -29,9 +31,20 @@ const RootLayout = ({ children }: { children: ReactNode }): React.JSX.Element =>
       <head>
         <GoogleAnalytics gaId="G-GM50Y47GMH" />
       </head>
-      <body className={`${sansFont.variable} ${monoFont.variable} font-sans`}>
+      <body className={`${sansFont.variable} ${monoFont.variable} ${serifFont.variable}`}>
+        <script type="application/ld+json">
+          {`{
+      "@context": "https://schema.org",
+      "@type": "WebAPI",
+      "name": "Kabir ke Dohe API",
+      "description": "RESTful API providing access to 2500+ Kabir couplets with translations and interpretations.",
+      "url": "https://kabir-ke-dohe-api.vercel.app/",
+      "provider": { "@type": "Organization", "name": "Kabir ke Dohe" }
+    }`}
+        </script>
         <div className="flex min-h-screen flex-col">
-          <main className="flex-1">{children}</main>
+          <Header />
+          <main className="flex-1 py-12">{children}</main>
           <Footer />
         </div>
       </body>

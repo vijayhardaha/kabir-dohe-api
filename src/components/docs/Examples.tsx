@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+
 import { CodeBlock } from '@/components/CodeBlock';
 import { getBaseUrl } from '@/lib/utils/base-url';
 
@@ -10,6 +14,9 @@ interface IExample {
 }
 
 export function Examples(): React.JSX.Element {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+
   const examples: IExample[] = [
     { title: '1. Fetch All Couplets', code: `GET ${getBaseUrl()}/api/couplets` },
     { title: '2. Search for a Couplet', code: `GET ${getBaseUrl()}/api/couplets?s=love&exactMatch=false` },
@@ -24,35 +31,108 @@ export function Examples(): React.JSX.Element {
   ];
 
   // Function to extract the API path from the code example
-  const getApiUrl = (code: string): string => {
-    // Extract everything after "GET " and construct the full URL
-    const path = code.replace('GET ', '');
-    return path;
-  };
+  const getApiUrl = (code: string): string => code.replace('GET ', '');
+
+  const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
+  const headerRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // Update panel max-heights for smooth slide animation
+  useEffect(() => {
+    panelRefs.current.forEach((el, i) => {
+      if (!el) return;
+      if (openIndex === i) {
+        const scroll = el.scrollHeight;
+        el.style.maxHeight = scroll + 'px';
+        el.style.opacity = '1';
+      } else {
+        el.style.maxHeight = '0px';
+        el.style.opacity = '0';
+      }
+    });
+  }, [openIndex]);
 
   const actionElement = (example: IExample) => (
     <a
       href={getApiUrl(example.code)}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-primary mt-0.75 rounded px-2 py-1 text-xs"
+      className="btn btn-outline-white rounded px-2 py-1 text-xs"
+      aria-label={`Try request: ${getApiUrl(example.code)}`}
     >
-      Try it
+      Try this request
     </a>
   );
 
   return (
     <section>
-      <h3 className="mb-4">Examples</h3>
-      {examples.map((example, index) => (
-        <div className="mb-6" key={index}>
-          <h4 className="mb-2 text-lg font-semibold">{example.title}</h4>
+      <h2>Examples</h2>
+      <p>Browse common API requests. Click a heading to expand an example.</p>
 
-          <div className="mb-4 flex flex-col space-y-3">
-            <CodeBlock code={example.code} language="http" actionElement={actionElement(example)} />
-          </div>
-        </div>
-      ))}
+      <div className="space-y-4">
+        {examples.map((example, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <div key={index} className="">
+              <button
+                id={`example-header-${index}`}
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`example-panel-${index}`}
+                onClick={() => toggle(index)}
+                ref={(el) => {
+                  headerRefs.current[index] = el;
+                }}
+                onKeyDown={(e) => {
+                  const max = examples.length;
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const next = (index + 1) % max;
+                    headerRefs.current[next]?.focus();
+                  } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prev = (index - 1 + max) % max;
+                    headerRefs.current[prev]?.focus();
+                  } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    headerRefs.current[0]?.focus();
+                  } else if (e.key === 'End') {
+                    e.preventDefault();
+                    headerRefs.current[examples.length - 1]?.focus();
+                  }
+                }}
+                className={`flex w-full items-center justify-between rounded-md border px-4 py-3 text-left ${
+                  isOpen
+                    ? 'bg-primary-500 border-primary-600 text-white'
+                    : 'bg-primary-50 border-primary-200 text-primary-700'
+                } `}
+              >
+                <span className="font-semibold">{example.title}</span>
+                <span className="ml-2 text-sm">{isOpen ? '−' : '+'}</span>
+              </button>
+
+              <div
+                id={`example-panel-${index}`}
+                role="region"
+                aria-labelledby={`example-header-${index}`}
+                ref={(el) => {
+                  panelRefs.current[index] = el;
+                }}
+                className="mt-2 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+                style={{ maxHeight: '0px', opacity: 0 }}
+              >
+                <div className="pt-2">
+                  <CodeBlock
+                    code={example.code}
+                    language="http"
+                    actionElement={actionElement(example)}
+                    usePrism={true}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }

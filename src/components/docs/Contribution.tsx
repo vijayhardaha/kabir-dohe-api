@@ -9,40 +9,60 @@ import { LuArrowUpRight } from 'react-icons/lu';
 export function Contribution(): React.JSX.Element {
   return (
     <section>
-      <div className="rounded-lg border border-slate-300 p-6">
-        <h3 className="mb-4 text-3xl">Contribute to the Project</h3>
+      <h2>Contribute to the Project</h2>
 
-        <p className="mb-4">
-          <strong>We need your help!</strong> This project grows through community contributions.
-        </p>
+      <p>
+        <strong>We need your help!</strong> This project grows through{' '}
+        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">
+          community contributions
+        </a>
+        .
+      </p>
 
-        <p className="mb-4">
-          Whether you’re a developer or non-developer, there are many ways to help improve this project:
-        </p>
+      <p>Whether you’re a developer or non-developer, there are many ways to help improve this project:</p>
 
-        <ul className="mb-4 list-inside list-disc space-y-2 pl-4">
-          <li>
-            <strong>Developers</strong>: Fix bugs, improve code, add new features, or enhance API endpoints.
-          </li>
-          <li>
-            <strong>Non-developers</strong>: Help with translations, data verification, and documentation.
-          </li>
-          <li>
-            <strong>Everyone</strong>: We maintain our data in Excel sheets where you can help fix typos, improve
-            translations, and contribute new dohe.
-          </li>
-        </ul>
-
-        <div>
-          <a
-            href="https://github.com/vijayhardaha/kabir-ke-dohe-api"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary-500 hover:bg-primary-600 inline-flex items-center rounded-md px-6 py-3 font-medium text-white"
-          >
-            Contribute on GitHub <LuArrowUpRight className="ml-1" />
+      <ul>
+        <li>
+          <strong>
+            <a href="https://developer.mozilla.org/" target="_blank" rel="noopener noreferrer">
+              Developers
+            </a>
+          </strong>
+          :{' '}
+          <a href="https://en.wikipedia.org/wiki/Software_bug" target="_blank" rel="noopener noreferrer">
+            Fix bugs
           </a>
-        </div>
+          , improve code, add new features, or enhance API endpoints.
+        </li>
+        <li>
+          <strong>Non-developers</strong>: Help with{' '}
+          <a href="https://www.w3.org/International/" target="_blank" rel="noopener noreferrer">
+            translations
+          </a>
+          , data verification, and{' '}
+          <a href="https://en.wikipedia.org/wiki/Documentation" target="_blank" rel="noopener noreferrer">
+            documentation
+          </a>
+          .
+        </li>
+        <li>
+          <strong>Everyone</strong>: We maintain our data in{' '}
+          <a href="https://www.microsoft.com/en-us/microsoft-365/excel" target="_blank" rel="noopener noreferrer">
+            Excel sheets
+          </a>{' '}
+          where you can help fix typos, improve translations, and contribute new dohe.
+        </li>
+      </ul>
+
+      <div>
+        <a
+          href="https://github.com/vijayhardaha/kabir-ke-dohe-api"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-primary px-6 py-3"
+        >
+          Contribute on GitHub <LuArrowUpRight />
+        </a>
       </div>
     </section>
   );

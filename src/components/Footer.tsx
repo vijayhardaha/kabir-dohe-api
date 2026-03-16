@@ -7,8 +7,8 @@ import { LuArrowUpRight } from 'react-icons/lu';
  */
 export default function Footer(): React.JSX.Element {
   return (
-    <footer className="border-t border-slate-200 bg-slate-100 py-8">
-      <div className="container">
+    <footer className="text-primary-100 bg-primary-900 border-t py-8">
+      <div className="box">
         <div className="text-center">
           <p className="mb-2">
             Crafted with ❤️ by{' '}
@@ -16,30 +16,20 @@ export default function Footer(): React.JSX.Element {
               href="https://github.com/vijayhardaha"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary-500 hover:underline"
+              className="text-primary-400"
             >
               Vijay Hardaha
               <LuArrowUpRight className="inline" />
             </a>
           </p>
-          <p className="text-slate-600">
+          <p>
             &copy; {new Date().getFullYear()} Kabir Ke Dohe API. Powered by{' '}
-            <a
-              href="https://nextjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-500 hover:underline"
-            >
+            <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="text-primary-400">
               Next.js
               <LuArrowUpRight className="inline" />
             </a>{' '}
             and deployed on{' '}
-            <a
-              href="https://vercel.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-500 hover:underline"
-            >
+            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-primary-400">
               Vercel
               <LuArrowUpRight className="inline" />
             </a>

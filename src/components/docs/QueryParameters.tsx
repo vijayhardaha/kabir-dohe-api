@@ -1,19 +1,18 @@
 /**
  * Interface for paginated results.
  */
-interface IQueryParameter {
+interface QueryParameter {
   name: string;
   type: string;
+  default?: string | boolean | number;
   description: string;
-  defaultValue?: string | boolean | number;
-  possibleValues: string;
 }
 
 /**
  * Interface for the QueryParameters component props.
  */
-interface IQueryParametersProps {
-  parameters: IQueryParameter[];
+interface QueryParameters {
+  parameters: QueryParameter[];
 }
 
 /**
@@ -24,35 +23,33 @@ interface IQueryParametersProps {
  * @param {Array<Object>} props.parameters - Array of parameter objects with details
  * @returns {React.JSX.Element} - The rendered query parameters documentation
  */
-export function QueryParameters({ parameters }: IQueryParametersProps): React.JSX.Element {
-  const isLastItem = (index: number) => index === parameters.length - 1;
-
+export function QueryParameters({ parameters }: QueryParameters): React.JSX.Element {
   return (
-    <section>
-      <h3 className="mb-4">Query Parameters</h3>
-      <p className="mb-4">The following parameters can be used to filter and paginate results:</p>
+    <section id="query-parameters">
+      <h2>Query Parameters</h2>
+      <p>The following parameters can be used to filter and paginate results:</p>
 
-      <div className="overflow-scroll rounded-lg border border-slate-200">
+      <div className="table-container">
         <table className="table">
           <thead>
-            <tr className="table-header">
-              <th className="table-th">Parameter</th>
-              <th className="table-th">Type</th>
-              <th className="table-th">Description</th>
-              <th className="table-th">Default Value</th>
-              <th className="table-th">Possible Values</th>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Description</th>
             </tr>
           </thead>
           <tbody>
             {parameters.map((param, index) => (
-              <tr key={index} className="table-row-hover">
-                <td className={`table-td ${!isLastItem(index) ? '' : 'border-b-0'}`}>{param.name}</td>
-                <td className={`table-td ${!isLastItem(index) ? '' : 'border-b-0'}`}>{param.type}</td>
-                <td className={`table-td ${!isLastItem(index) ? '' : 'border-b-0'}`}>{param.description}</td>
-                <td className={`table-td ${!isLastItem(index) ? '' : 'border-b-0'}`}>
-                  {param.defaultValue && <code>{param.defaultValue}</code>}
+              <tr key={index}>
+                <td>
+                  <code>{param.name}</code>
                 </td>
-                <td className={`table-td ${!isLastItem(index) ? '' : 'border-b-0'}`}>{param.possibleValues}</td>
+                <td>
+                  <code>{param.type}</code>
+                </td>
+                <td>{param.default && <code>{param.default}</code>}</td>
+                <td>{param.description}</td>
               </tr>
             ))}
           </tbody>

@@ -28,12 +28,12 @@ export function CopyButton({ textToCopy }: ICopyButtonProps): React.JSX.Element 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(textToCopy);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 500);
+    setTimeout(() => setIsCopied(false), 1000);
   };
 
   return (
     <button
-      className="btn btn-secondary cursor-pointer rounded px-2 py-1 text-xs"
+      className="btn btn-white min-w-16 rounded px-2 py-1 text-xs"
       onClick={handleCopy}
       aria-label="Copy code to clipboard"
     >

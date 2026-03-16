@@ -1,117 +1,186 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary colors (replacing GitHub green) */
-  --color-primary-50: #f0fff4;
-  --color-primary-100: #dcffe4;
-  --color-primary-200: #bef5cb;
-  --color-primary-300: #85e89d;
-  --color-primary-400: #34d058;
-  --color-primary-500: #28a745;
-  --color-primary-600: #22863a;
-  --color-primary-700: #176f2c;
-  --color-primary-800: #165c26;
-  --color-primary-900: #144620;
-  --color-primary-950: #0d3419;
+  /* Primary colors */
+  --color-primary-50: #f4f6fb;
+  --color-primary-100: #e8ecf6;
+  --color-primary-200: #ccd7eb;
+  --color-primary-300: #a0b7d9;
+  --color-primary-400: #6d91c3;
+  --color-primary-500: #4a72ad;
+  --color-primary-600: #3b5e98;
+  --color-primary-700: #2e4876;
+  --color-primary-800: #2a3f62;
+  --color-primary-900: #273753;
+  --color-primary-950: #1a2337;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-slate-200, currentcolor);
-  }
-}
-
-@utility container {
-  @apply mx-auto max-w-4xl px-4;
-}
-
-@utility btn {
-  @apply inline-flex items-center rounded-md border px-6 py-2 text-base font-medium transition-colors;
-}
-
-@utility btn-primary {
-  @apply bg-primary-500 hover:bg-primary-600 border-primary-600 text-white;
-}
-
-@utility btn-secondary {
-  @apply border-slate-300 bg-slate-200 text-slate-900 hover:bg-slate-300;
-}
-
-@utility table {
-  @apply min-w-full overflow-hidden rounded-lg bg-white;
-}
-
-@utility table-header {
-  @apply bg-slate-100;
-}
-
-@utility table-th {
-  @apply border-b px-4 py-2 text-left font-medium whitespace-nowrap;
-}
-
-@utility table-td {
-  @apply border-b px-4 py-2;
-}
-
-@utility table-row-hover {
-  @apply hover:bg-slate-50;
-}
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
 
 @layer base {
-  html {
-    font-family: var(--font-sans), sans-serif;
-  }
-
+  /* Typography base */
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-primary-50 text-primary-900 font-sans text-base leading-normal font-normal;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-sans), sans-serif;
+  /* Headings - bold by default */
+  :is(h1, h2, h3, h4, h5, h6) {
+    @apply mb-4 font-serif font-bold;
   }
 
   h1 {
-    @apply text-3xl font-bold md:text-4xl;
+    @apply text-3xl md:text-4xl;
   }
-
   h2 {
-    @apply text-2xl font-bold md:text-3xl;
+    @apply text-2xl md:text-3xl;
   }
-
   h3 {
-    @apply text-xl font-bold md:text-2xl;
+    @apply text-xl md:text-2xl;
   }
 
+  p {
+    @apply not-last:mb-4;
+  }
+
+  a {
+    @apply underline font-semibold;
+  }
+
+  /* Code blocks */
   pre {
-    @apply overflow-auto bg-slate-100 p-4 font-mono text-sm text-slate-900;
+    @apply bg-primary-50 text-primary-900 overflow-auto p-4 font-mono text-sm;
   }
 
   code {
     @apply font-mono text-sm;
   }
 
-  code:not(.prism-code) {
-    @apply rounded-sm border bg-slate-100 p-1 text-sm text-[#e3116c];
+  /* Inline code styling with automatic backticks */
+  code:not(:where(.prism-code, [class*="prism-"])) {
+    @apply font-mono text-[#f81ce5];
+
+    &::before {
+      content: "`";
+    }
+
+    &::after {
+      content: "`";
+    }
   }
 
-  pre code:not(.prism-code) {
-    @apply p-1 px-2;
+  pre code:not(:where(.prism-code, [class*="prism-"])) {
+    @apply bg-transparent p-0;
+  }
+
+  section {
+    @apply rounded-lg bg-white p-4 shadow-sm not-last:mb-12 md:p-8;
+
+    h2 {
+      @apply text-primary-500;
+    }
+
+    h3 {
+      @apply mb-2 text-lg font-semibold;
+    }
+
+    ul {
+      @apply list-disc space-y-4 pl-6 not-last:mb-8;
+    }
+  }
+
+  .box {
+    @apply mx-auto max-w-5xl px-4 md:px-6;
+  }
+
+  .btn {
+    @apply cursor-pointer rounded-lg border px-6 py-2.5 no-underline;
+    @apply inline-flex items-center justify-center gap-0.5;
+    @apply text-sm font-bold transition-all duration-200;
+    @apply active:scale-[0.9]; /* Tactile click effect */
+  }
+
+  /* --- PRIMARY --- */
+  .btn-primary {
+    @apply bg-primary-500 border-primary-500 hover:bg-primary-400 text-white;
+  }
+
+  .btn-outline-primary {
+    @apply border-primary-700 text-primary-700 hover:bg-primary-50 bg-transparent;
+  }
+
+  /* --- WHITE --- */
+  .btn-white {
+    @apply text-primary-900 hover:bg-primary-50 border-white bg-white shadow-sm;
+  }
+
+  .btn-outline-white {
+    @apply border-white bg-transparent text-white hover:border-white hover:bg-white/10;
+  }
+
+  .table-container {
+    @apply border-primary-200 overflow-scroll rounded-lg border bg-white not-last:mb-8 lg:overflow-hidden;
+  }
+
+  .table {
+    @apply w-full border-collapse border-0 text-left indent-0 text-sm;
+
+    thead,
+    tbody {
+      @apply border-0;
+    }
+
+    th {
+      @apply px-4 py-4 text-left font-bold tracking-wide whitespace-nowrap text-white uppercase;
+    }
+
+    td {
+      @apply border-primary-200 border-b px-4 py-5 text-left;
+    }
+
+    tr:last-child td {
+      @apply border-b-0;
+    }
+
+    thead tr {
+      @apply bg-primary-500;
+    }
+
+    tbody tr {
+      @apply hover:bg-primary-100/70 transition-colors;
+    }
+
+    code {
+      @apply text-sm;
+    }
+  }
+
+  /* Tabs */
+  .tabs {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .tab-button {
+    @apply border-primary-700 text-primary-700 cursor-pointer border bg-transparent px-3 py-1;
+    @apply inline-flex items-center justify-center gap-0.5 text-sm font-bold transition-all duration-200;
+    @apply rounded-md active:scale-[0.9];
+  }
+
+  .tab-button:hover,
+  .tab-button:focus {
+    @apply bg-primary-50 border-primary-300;
+  }
+
+  .tab-button.active {
+    @apply bg-primary-500 border-primary-600 text-white;
+  }
+
+  .tab-content {
+    @apply mt-4;
+  }
+
+  .tab-panel {
+    @apply w-full;
   }
 }

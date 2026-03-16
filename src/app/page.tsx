@@ -1,5 +1,4 @@
 import {
-  DocsHeader,
   Introduction,
   ApiEndpoints,
   QueryParameters,
@@ -7,7 +6,6 @@ import {
   ErrorResponse,
   UsageExamples,
   Examples,
-  DocsSection,
   Contribution,
   SEOContent,
 } from '@/components/docs';
@@ -22,20 +20,16 @@ import { API_QUERY_PARAMS } from '@/constants/api-params';
  */
 export default function Home(): React.ReactElement {
   return (
-    <div className="container p-4">
-      <DocsHeader />
-
-      <DocsSection>
-        <Introduction />
-        <ApiEndpoints />
-        <QueryParameters parameters={API_QUERY_PARAMS} />
-        <ResponseFormat />
-        <ErrorResponse />
-        <UsageExamples />
-        <Examples />
-        <Contribution />
-        <SEOContent />
-      </DocsSection>
+    <div className="box">
+      <Introduction />
+      <ApiEndpoints />
+      <QueryParameters parameters={API_QUERY_PARAMS} />
+      <ResponseFormat />
+      <ErrorResponse />
+      <UsageExamples />
+      <Examples />
+      <Contribution />
+      <SEOContent />
     </div>
   );
 }

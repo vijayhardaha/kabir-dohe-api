@@ -45,127 +45,130 @@ export function ResponseFormat(): React.JSX.Element {
 }`;
 
   return (
-    <section>
-      <h3 className="mb-4">Response Format</h3>
-      <p className="mb-4">Successful API requests return JSON with the following structure:</p>
+    <section id="response-format">
+      <h2>Response Format</h2>
+      <p>Successful API requests return JSON with the following structure:</p>
+
       <CodeBlock code={responseExample} language="json" usePrism={true} />
-      <div className="mt-4">
-        <h4 className="mb-2 text-lg font-semibold">Response Fields</h4>
-        <div className="rounded-lg border border-slate-200">
-          <table className="table">
-            <thead>
-              <tr className="table-header">
-                <th className="table-th">Field</th>
-                <th className="table-th">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>success</code>
-                </td>
-                <td className="table-td">Boolean indicating if the request was successful</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.posts</code>
-                </td>
-                <td className="table-td">Array of post objects</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.total</code>
-                </td>
-                <td className="table-td">Total number of records matching the query</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.totalPages</code>
-                </td>
-                <td className="table-td">Total number of pages</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.page</code>
-                </td>
-                <td className="table-td">Current page number</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.per_page</code>
-                </td>
-                <td className="table-td">Number of results per page</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>data.pagination</code>
-                </td>
-                <td className="table-td">Boolean indicating if pagination is enabled</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].number</code>
-                </td>
-                <td className="table-td">Post number/identifier</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].slug</code>
-                </td>
-                <td className="table-td">URL-friendly slug</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].text_hi</code>
-                </td>
-                <td className="table-td">Couplet text in Hindi</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].text_en</code>
-                </td>
-                <td className="table-td">Couplet text in English</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].interpretation_hi</code>
-                </td>
-                <td className="table-td">Interpretation in Hindi</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].interpretation_en</code>
-                </td>
-                <td className="table-td">Interpretation in English</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].category</code>
-                </td>
-                <td className="table-td">Category object with name and slug</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].tags</code>
-                </td>
-                <td className="table-td">Array of tag objects with slug and name</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].created_at</code>
-                </td>
-                <td className="table-td">Timestamp when the post was created</td>
-              </tr>
-              <tr className="table-row-hover">
-                <td className="table-td font-mono">
-                  <code>posts[].updated_at</code>
-                </td>
-                <td className="table-td">Timestamp when the post was last updated</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
+      <h3>Response Fields</h3>
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>success</code>
+              </td>
+              <td>Boolean indicating if the request was successful</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.posts</code>
+              </td>
+              <td>Array of post objects</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.total</code>
+              </td>
+              <td>Total number of records matching the query</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.totalPages</code>
+              </td>
+              <td>Total number of pages</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.page</code>
+              </td>
+              <td>Current page number</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.per_page</code>
+              </td>
+              <td>Number of results per page</td>
+            </tr>
+            <tr>
+              <td>
+                <code>data.pagination</code>
+              </td>
+              <td>Boolean indicating if pagination is enabled</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].number</code>
+              </td>
+              <td>Post number/identifier</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].slug</code>
+              </td>
+              <td>URL-friendly slug</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].text_hi</code>
+              </td>
+              <td>Couplet text in Hindi</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].text_en</code>
+              </td>
+              <td>Couplet text in English</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].interpretation_hi</code>
+              </td>
+              <td>Interpretation in Hindi</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].interpretation_en</code>
+              </td>
+              <td>Interpretation in English</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].category</code>
+              </td>
+              <td>Category object with name and slug</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].tags</code>
+              </td>
+              <td>Array of tag objects with slug and name</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].created_at</code>
+              </td>
+              <td>Timestamp when the post was created</td>
+            </tr>
+            <tr>
+              <td>
+                <code>posts[].updated_at</code>
+              </td>
+              <td>Timestamp when the post was last updated</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+      <p className="mt-4 text-sm">
+        See <a href="#query-parameters">query parameters</a> for how to control pagination and filtering of fields.
+      </p>
     </section>
   );
 }

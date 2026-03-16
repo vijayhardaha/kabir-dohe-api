@@ -5,64 +5,55 @@ export interface ApiQueryParam {
   name: string;
   type: 'string' | 'boolean' | 'number';
   description: string;
-  defaultValue: string | boolean | number;
-  possibleValues: string;
+  default: string;
 }
 
 /**
  * Query parameters for the Kabir Ke Dohe API
  */
 export const API_QUERY_PARAMS: ApiQueryParam[] = [
-  { name: 'search', type: 'string', description: 'Search term', defaultValue: '', possibleValues: 'Any text' },
+  { name: 'search', type: 'string', description: 'Perform a keyword search across available content.', default: '' },
   {
     name: 'search_content',
     type: 'boolean',
-    description:
-      'When true, searches in full content (search_content_hi/en). When false, searches in main text (text_hi/en)',
-    defaultValue: 'false',
-    possibleValues: 'true, false',
+    description: 'When true, extends search to include interpretations and analysis; defaults to primary text only.',
+    default: 'false',
   },
-  {
-    name: 'tags',
-    type: 'string',
-    description: 'Tags to filter by (comma-separated list of tags)',
-    defaultValue: '',
-    possibleValues: 'Any valid tag names',
-  },
+  { name: 'tags', type: 'string', description: 'Filter results by a comma-separated list of tag slugs.', default: '' },
   {
     name: 'is_popular',
     type: 'boolean',
-    description: 'Whether to filter by popularity',
-    defaultValue: 'false',
-    possibleValues: 'true, false',
+    description: 'Filter results to show only popular entries (true/false).',
+    default: 'false',
   },
   {
     name: 'sort_by',
     type: 'string',
-    description: 'Field to sort by',
-    defaultValue: 'id',
-    possibleValues: 'id, is_popular, text_en, text_hi',
+    description: 'Specify the field for ordering results. Supported: number, is_popular, text_en, text_hi.',
+    default: 'number',
   },
-  { name: 'sort_order', type: 'string', description: 'Sort order', defaultValue: 'asc', possibleValues: 'asc, desc' },
+  {
+    name: 'sort_order',
+    type: 'string',
+    description: 'Direction of sorted results: "asc" (ascending) or "desc" (descending).',
+    default: 'asc',
+  },
   {
     name: 'page',
     type: 'number',
-    description: 'Current page number',
-    defaultValue: '1',
-    possibleValues: 'Any positive integer',
+    description: 'The page index for paginated results (positive integer).',
+    default: '1',
   },
   {
     name: 'per_page',
     type: 'number',
-    description: 'Number of items per page',
-    defaultValue: '10',
-    possibleValues: 'Any positive integer',
+    description: 'The maximum number of records to return per request.',
+    default: '10',
   },
   {
     name: 'pagination',
     type: 'boolean',
-    description: 'Whether to include pagination info',
-    defaultValue: 'true',
-    possibleValues: 'true, false',
+    description: 'Toggle the inclusion of pagination metadata in the response object.',
+    default: 'true',
   },
 ];
