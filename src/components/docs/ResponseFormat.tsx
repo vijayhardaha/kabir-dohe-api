@@ -8,37 +8,40 @@ import { CodeBlock } from '@/components/CodeBlock';
  */
 export function ResponseFormat(): React.JSX.Element {
   const responseExample = `{
-  "couplets": [
-    {
-      "id": "1",
-      "slug": "couplet-slug",
-      "unique_slug": "couplet-slug-with-id-and-unique-hash",
-      "couplet_hindi": "हिन्दी में दोहा",
-      "couplet_english": "English couplet",
-      "translation_hindi": "हिन्दी में अनुवाद",
-      "translation_english": "English translation",
-      "explanation_hindi": "हिन्दी में व्याख्या",
-      "explanation_english": "English explanation",
-      "tags": [
-        {
-          "slug": "tag1",
-          "name": "name1",
-          "count": 1
+  "success": true,
+  "data": {
+    "posts": [
+      {
+        "number": 1,
+        "slug": "couplet-slug",
+        "text_hi": "हिन्दी में दोहा",
+        "text_en": "English couplet",
+        "interpretation_hi": "हिन्दी में व्याख्या",
+        "interpretation_en": "English interpretation",
+        "category": {
+          "name": "Category Name",
+          "slug": "category-slug"
         },
-        {
-          "slug": "tag2",
-          "name": "name1",
-          "count": 1
-        }
-      ],
-      "popular": true
-    }
-  ],
-  "total": 100,
-  "totalPages": 10,
-  "page": 1,
-  "perPage": 10,
-  "pagination": true
+        "tags": [
+          {
+            "slug": "tag1",
+            "name": "Tag 1"
+          },
+          {
+            "slug": "tag2",
+            "name": "Tag 2"
+          }
+        ],
+        "created_at": "2024-01-01T00:00:00.000Z",
+        "updated_at": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "total": 100,
+    "totalPages": 10,
+    "page": 1,
+    "per_page": 10,
+    "pagination": true
+  }
 }`;
 
   return (
@@ -59,39 +62,105 @@ export function ResponseFormat(): React.JSX.Element {
             <tbody>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>couplets</code>
+                  <code>success</code>
                 </td>
-                <td className="table-td">Array of couplet objects</td>
+                <td className="table-td">Boolean indicating if the request was successful</td>
               </tr>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>total</code>
+                  <code>data.posts</code>
+                </td>
+                <td className="table-td">Array of post objects</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>data.total</code>
                 </td>
                 <td className="table-td">Total number of records matching the query</td>
               </tr>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>totalPages</code>
+                  <code>data.totalPages</code>
                 </td>
                 <td className="table-td">Total number of pages</td>
               </tr>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>page</code>
+                  <code>data.page</code>
                 </td>
                 <td className="table-td">Current page number</td>
               </tr>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>perPage</code>
+                  <code>data.per_page</code>
                 </td>
                 <td className="table-td">Number of results per page</td>
               </tr>
               <tr className="table-row-hover">
                 <td className="table-td font-mono">
-                  <code>pagination</code>
+                  <code>data.pagination</code>
                 </td>
                 <td className="table-td">Boolean indicating if pagination is enabled</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].number</code>
+                </td>
+                <td className="table-td">Post number/identifier</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].slug</code>
+                </td>
+                <td className="table-td">URL-friendly slug</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].text_hi</code>
+                </td>
+                <td className="table-td">Couplet text in Hindi</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].text_en</code>
+                </td>
+                <td className="table-td">Couplet text in English</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].interpretation_hi</code>
+                </td>
+                <td className="table-td">Interpretation in Hindi</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].interpretation_en</code>
+                </td>
+                <td className="table-td">Interpretation in English</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].category</code>
+                </td>
+                <td className="table-td">Category object with name and slug</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].tags</code>
+                </td>
+                <td className="table-td">Array of tag objects with slug and name</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].created_at</code>
+                </td>
+                <td className="table-td">Timestamp when the post was created</td>
+              </tr>
+              <tr className="table-row-hover">
+                <td className="table-td font-mono">
+                  <code>posts[].updated_at</code>
+                </td>
+                <td className="table-td">Timestamp when the post was last updated</td>
               </tr>
             </tbody>
           </table>
