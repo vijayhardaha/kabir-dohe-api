@@ -1,71 +1,58 @@
-import { CodeBlock } from "@/components/CodeBlock";
-import { getBaseUrl } from "@/lib/utils/base-url";
+import { CodeBlock } from '@/components/CodeBlock';
+import { getBaseUrl } from '@/lib/utils/base-url';
 
 /**
  * Interface representing an example API request.
  */
 interface IExample {
-	title: string;
-	code: string;
+  title: string;
+  code: string;
 }
 
 export function Examples(): React.JSX.Element {
-	const examples: IExample[] = [
-		{ title: "1. Fetch All Couplets", code: `GET ${getBaseUrl()}/api/couplets` },
-		{
-			title: "2. Search for a Couplet",
-			code: `GET ${getBaseUrl()}/api/couplets?s=love&exactMatch=false`,
-		},
-		{
-			title: "3. Filter by Tags",
-			code: `GET ${getBaseUrl()}/api/couplets?tags=spiritual,life`,
-		},
-		{ title: "4. Filter by Popularity", code: `GET ${getBaseUrl()}/api/couplets?popular=true` },
-		{
-			title: "5. Sort by Couplet in Hindi",
-			code: `GET ${getBaseUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC`,
-		},
-		{ title: "6. Paginate Results", code: `GET ${getBaseUrl()}/api/couplets?page=2&perPage=5` },
-		{
-			title: "7. Combining Multiple Filters",
-			code: `GET ${getBaseUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
-		},
-	];
+  const examples: IExample[] = [
+    { title: '1. Fetch All Couplets', code: `GET ${getBaseUrl()}/api/couplets` },
+    { title: '2. Search for a Couplet', code: `GET ${getBaseUrl()}/api/couplets?s=love&exactMatch=false` },
+    { title: '3. Filter by Tags', code: `GET ${getBaseUrl()}/api/couplets?tags=spiritual,life` },
+    { title: '4. Filter by Popularity', code: `GET ${getBaseUrl()}/api/couplets?popular=true` },
+    { title: '5. Sort by Couplet in Hindi', code: `GET ${getBaseUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC` },
+    { title: '6. Paginate Results', code: `GET ${getBaseUrl()}/api/couplets?page=2&perPage=5` },
+    {
+      title: '7. Combining Multiple Filters',
+      code: `GET ${getBaseUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
+    },
+  ];
 
-	// Function to extract the API path from the code example
-	const getApiUrl = (code: string): string => {
-		// Extract everything after "GET " and construct the full URL
-		const path = code.replace("GET ", "");
-		return path;
-	};
+  // Function to extract the API path from the code example
+  const getApiUrl = (code: string): string => {
+    // Extract everything after "GET " and construct the full URL
+    const path = code.replace('GET ', '');
+    return path;
+  };
 
-	const actionElement = (example: IExample) => (
-		<a
-			href={getApiUrl(example.code)}
-			target="_blank"
-			rel="noopener noreferrer"
-			className="btn btn-primary mt-0.75 rounded px-2 py-1 text-xs"
-		>
-			Try it
-		</a>
-	);
+  const actionElement = (example: IExample) => (
+    <a
+      href={getApiUrl(example.code)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn btn-primary mt-0.75 rounded px-2 py-1 text-xs"
+    >
+      Try it
+    </a>
+  );
 
-	return (
-		<section>
-			<h3 className="mb-4">Examples</h3>
-			{examples.map((example, index) => (
-				<div className="mb-6" key={index}>
-					<h4 className="mb-2 text-lg font-semibold">{example.title}</h4>
+  return (
+    <section>
+      <h3 className="mb-4">Examples</h3>
+      {examples.map((example, index) => (
+        <div className="mb-6" key={index}>
+          <h4 className="mb-2 text-lg font-semibold">{example.title}</h4>
 
-					<div className="mb-4 flex flex-col space-y-3">
-						<CodeBlock
-							code={example.code}
-							language="http"
-							actionElement={actionElement(example)}
-						/>
-					</div>
-				</div>
-			))}
-		</section>
-	);
+          <div className="mb-4 flex flex-col space-y-3">
+            <CodeBlock code={example.code} language="http" actionElement={actionElement(example)} />
+          </div>
+        </div>
+      ))}
+    </section>
+  );
 }

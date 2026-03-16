@@ -1,265 +1,387 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
-import { getData } from "@/lib/utils/couplet-data";
-import { PaginatedResult } from "@/types/paginated-result";
-
-/**
- * Interface for the parameters used in the couplets API.
- */
-interface CoupletParams {
-	s: string;
-	exactMatch: boolean;
-	searchWithin: string;
-	tags: string;
-	popular: boolean;
-	orderBy: string;
-	order: string;
-	page: number;
-	perPage: number;
-	pagination: boolean;
-}
+import { createClient } from '@/server/db/supabase';
+import { handleError } from '@/server/lib/errors/error-handler';
+import { success } from '@/server/lib/response/response';
 
 /**
- * Interface for the success result of the processRequest function.
+ * Zod schema for validating couplet query parameters.
  */
-interface ProcessResultSuccess {
-	success: true;
-	data: PaginatedResult;
-}
+const CoupletQuerySchema = z.object({
+  s: z.string().optional().default(''),
+  exactMatch: z.boolean().optional().default(false),
+  searchWithin: z
+    .string()
+    .optional()
+    .default('all')
+    .refine(
+      (val) =>
+        val === 'all'
+        || val.split(',').every((v) => ['couplet', 'translation', 'explanation'].includes(v.trim().toLowerCase())),
+      { message: "Invalid searchWithin value. Allowed values: 'all', 'couplet', 'translation', 'explanation'" }
+    ),
+  tags: z.string().optional().default(''),
+  popular: z.boolean().optional().default(false),
+  orderBy: z
+    .string()
+    .optional()
+    .default('id')
+    .refine((val) => ['id', 'popular', 'couplet_english', 'couplet_hindi'].includes(val), {
+      message: "Invalid orderBy value. Allowed values: 'id', 'popular', 'couplet_english', 'couplet_hindi'",
+    }),
+  order: z
+    .string()
+    .optional()
+    .default('ASC')
+    .refine((val) => ['ASC', 'DESC'].includes(val), { message: "Invalid order value. Allowed values: 'ASC', 'DESC'" }),
+  page: z.number().int().positive().optional().default(1),
+  perPage: z.number().int().positive().optional().default(10),
+  pagination: z.boolean().optional().default(true),
+});
 
 /**
- * Interface for the error result of the processRequest function.
+ * Type for validated query parameters.
  */
-interface ProcessResultError {
-	success: false;
-	message: string;
-	status: number;
-}
+type CoupletQueryParams = z.infer<typeof CoupletQuerySchema>;
 
 /**
- * Union type for the result of the processRequest function.
+ * Default parameter values for the API.
  */
-type ProcessResult = ProcessResultSuccess | ProcessResultError;
-
-/**
- * Default parameter values for the API
- * @constant {Object} DEFAULT_PARAMS
- * @property {string} s - Search query string
- * @property {boolean} exactMatch - Whether to perform exact match for search
- * @property {string} searchWithin - Where to search: "all", "couplet", "translation", "explanation" or combinations
- * @property {string} tags - Comma-separated list of tags to filter by
- * @property {boolean} popular - Whether to filter by popularity
- * @property {string} orderBy - Field to sort by: "id", "random", "popular", "couplet_english", "couplet_hindi"
- * @property {string} order - Sort order: "ASC" or "DESC"
- * @property {number} page - Page number for pagination
- * @property {number} perPage - Number of records per page
- * @property {boolean} pagination - Whether to enable pagination
- */
-const DEFAULT_PARAMS: CoupletParams = {
-	s: "",
-	exactMatch: false,
-	searchWithin: "all",
-	tags: "",
-	popular: false,
-	orderBy: "id",
-	order: "ASC",
-	page: 1,
-	perPage: 10,
-	pagination: true,
+const DEFAULT_PARAMS: CoupletQueryParams = {
+  s: '',
+  exactMatch: false,
+  searchWithin: 'all',
+  tags: '',
+  popular: false,
+  orderBy: 'id',
+  order: 'ASC',
+  page: 1,
+  perPage: 10,
+  pagination: true,
 };
 
 /**
- * Extracts and normalizes request parameters with default values
+ * Helper to convert order string to boolean.
  *
- * @param {URLSearchParams|Object} requestData - Request data (search params for GET, body for POST)
- * @param {string} requestType - Request type: "GET" or "POST"
- * @returns {Object} Normalized parameters with defaults applied
+ * @param {string} order - 'ASC' or 'DESC'
+ * @returns {boolean} true for ascending, false for descending
  */
-function getParamsWithDefaults(
-	requestData: URLSearchParams | Record<string, unknown>,
-	requestType: "GET" | "POST"
-): CoupletParams {
-	const params: Partial<CoupletParams> = {};
-
-	// Apply defaults based on request type
-	for (const [key, defaultValue] of Object.entries(DEFAULT_PARAMS)) {
-		if (requestType === "GET") {
-			// For GET requests, we need to handle 'false' string for boolean values
-			if (typeof defaultValue === "boolean") {
-				if (key === "pagination") {
-					(params as Record<string, unknown>)[key] =
-						(requestData as URLSearchParams).get(key) !== "false"; // Default to true
-				} else {
-					(params as Record<string, unknown>)[key] =
-						(requestData as URLSearchParams).get(key) === "true" || defaultValue;
-				}
-			} else if (typeof defaultValue === "number") {
-				const value = (requestData as URLSearchParams).get(key);
-				(params as Record<string, unknown>)[key] =
-					value !== null ? Number(value) : defaultValue;
-			} else {
-				(params as Record<string, unknown>)[key] =
-					(requestData as URLSearchParams).get(key) || defaultValue;
-			}
-		} else {
-			// POST
-			(params as Record<string, unknown>)[key] =
-				(requestData as Record<string, unknown>)[key] !== undefined
-					? (requestData as Record<string, unknown>)[key]
-					: defaultValue;
-		}
-	}
-
-	return params as CoupletParams;
+function getAscending(order: string): boolean {
+  return order === 'ASC';
 }
 
 /**
- * Processes and validates API request parameters and returns the corresponding data
+ * Get search fields based on searchWithin parameter.
  *
- * @async
- * @function processRequest
- * @param {Object} params - The normalized request parameters
- * @param {string} params.s - Search query string
- * @param {boolean} params.exactMatch - Whether to perform exact match for search
- * @param {string} params.searchWithin - Where to search: "all", "couplet", "translation", "explanation" or combinations
- * @param {string} params.tags - Comma-separated list of tags to filter by
- * @param {boolean} params.popular - Whether to filter by popularity
- * @param {string} params.orderBy - Field to sort by: "id", "random", "popular", "couplet_english", "couplet_hindi"
- * @param {string} params.order - Sort order: "ASC" or "DESC"
- * @param {number} params.page - Page number for pagination
- * @param {number} params.perPage - Number of records per page
- * @param {boolean} params.pagination - Whether to enable pagination
- * @returns {Promise<ProcessResult>} Result object with success status and either data or error message
- * @returns {boolean} result.success - Indicates if the request was successful
- * @returns {Object} [result.data] - The requested couplets data if successful
- * @returns {string} [result.message] - Error message if not successful
- * @returns {number} [result.status] - HTTP status code if not successful
+ * @param {string} searchWithin - The searchWithin parameter value
+ * @returns {string[]} Array of field names to search within
  */
-async function processRequest(params: CoupletParams): Promise<ProcessResult> {
-	// Validate 'orderBy' parameter
-	if (
-		params.orderBy
-		&& !["id", "random", "popular", "couplet_english", "couplet_hindi"].includes(params.orderBy)
-	) {
-		return {
-			success: false,
-			message:
-				"Bad Request: The 'orderBy' value provided is invalid. Accepted values are 'id', 'random', 'popular', 'couplet_english', or 'couplet_hindi'.",
-			status: 400,
-		};
-	}
+function getSearchFields(searchWithin: string): string[] {
+  if (searchWithin === 'all') {
+    return [
+      'hindi_text',
+      'english_text',
+      'hindi_translation',
+      'english_translation',
+      'hindi_explanation',
+      'english_explanation',
+    ];
+  }
 
-	// Validate 'order' parameter
-	if (params.order && !["ASC", "DESC"].includes(params.order)) {
-		return {
-			success: false,
-			message:
-				"Bad Request: The 'order' value provided is invalid. Accepted values are 'ASC' (ascending) or 'DESC' (descending).",
-			status: 400,
-		};
-	}
-
-	// Validate 'searchWithin' parameter
-	if (params.searchWithin && params.searchWithin !== "all") {
-		const allowedFields = ["couplet", "translation", "explanation"];
-		const searchWithinArray = params.searchWithin
-			.split(",")
-			.map((field) => field.trim().toLowerCase());
-
-		// Validate each field in searchWithinArray
-		const invalidFields = searchWithinArray.filter((field) => !allowedFields.includes(field));
-
-		if (invalidFields.length > 0) {
-			return {
-				success: false,
-				message: `Bad Request: The 'searchWithin' value(s) provided are invalid. Accepted values are 'couplet', 'translation', or 'explanation'. Invalid values: ${invalidFields.join(", ")}.`,
-				status: 400,
-			};
-		}
-	}
-
-	// Fetch data using the provided parameters
-	const result = getData(params);
-	return { success: true, data: result };
+  return searchWithin.split(',').flatMap((field) => {
+    const trimmed = field.trim().toLowerCase();
+    if (trimmed === 'couplet') return ['hindi_text', 'english_text'];
+    if (trimmed === 'translation') return ['hindi_translation', 'english_translation'];
+    if (trimmed === 'explanation') return ['hindi_explanation', 'english_explanation'];
+    return [];
+  });
 }
 
 /**
- * Helper function to add CORS headers to response
- *
- * @param {NextResponse} response - The response object to modify
- * @returns {NextResponse} Response with CORS headers
+ * Build a count query with the same filters as the main query.
  */
-function addCorsHeaders(response: NextResponse): NextResponse {
-	response.headers.set("Access-Control-Allow-Origin", "*");
-	response.headers.set("Access-Control-Allow-Methods", "GET, POST");
-	response.headers.set("Access-Control-Allow-Headers", "Content-Type");
-	return response;
+async function getFilteredCount(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  searchFields: string[],
+  s: string,
+  exactMatch: boolean,
+  tagList: string[],
+  popular: boolean
+): Promise<number> {
+  let countQuery = supabase.from('couplets').select('*', { count: 'exact', head: true });
+
+  // Apply search filters
+  if (s) {
+    const searchTerms = s.trim().split(/\s+/).filter(Boolean);
+
+    if (exactMatch) {
+      // Exact match: search full string in any field (OR condition)
+      const orConditions = searchFields.map((field) => `${field}.ilike.%${s}%`).join(',');
+      countQuery = countQuery.or(orConditions);
+    } else {
+      // Non-exact match: any of the split words match any field (OR condition)
+      const orConditions = searchTerms
+        .flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`))
+        .join(',');
+      countQuery = countQuery.or(orConditions);
+    }
+  }
+
+  // Apply tags filter
+  if (tagList.length > 0) {
+    const tagConditions = tagList
+      .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
+      .join(',');
+    countQuery = countQuery.or(tagConditions);
+  }
+
+  // Apply popularity filter
+  if (popular) {
+    countQuery = countQuery.eq('popular', true);
+  }
+
+  const { count } = await countQuery;
+  return count ?? 0;
 }
 
 /**
- * GET route handler for the couplets API
- * Retrieves couplets based on URL query parameters
+ * Fetches couplets from Supabase with filtering, sorting, and pagination.
  *
- * @async
- * @param {Request} request - The incoming HTTP request object
- * @returns {NextResponse} JSON response with couplets data or error message
+ * @param {CoupletQueryParams} params - The validated query parameters.
+ * @returns {Promise<{ couplets: unknown[]; total: number; totalPages: number; page: number; perPage: number; pagination: boolean }>} Paginated couplet results.
+ */
+async function fetchCoupletsFromSupabase(
+  params: CoupletQueryParams
+): Promise<{
+  couplets: unknown[];
+  total: number;
+  totalPages: number;
+  page: number;
+  perPage: number;
+  pagination: boolean;
+}> {
+  const supabase = await createClient();
+
+  const { s, exactMatch, searchWithin, tags, popular, orderBy, order, page, perPage, pagination } = params;
+
+  const normalizedOrder = order?.toUpperCase() || 'ASC';
+
+  // Parse tags for filtering
+  const tagList = tags
+    ? tags
+        .split(',')
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean)
+    : [];
+
+  const searchFields = getSearchFields(searchWithin);
+
+  // Build the base query with tags join
+  let query = supabase.from('couplets').select(
+    `
+    id,
+    couplet_number,
+    slug,
+    hindi_text,
+    english_text,
+    hindi_translation,
+    english_translation,
+    hindi_explanation,
+    english_explanation,
+    popular,
+    tags:couplet_tags!inner(
+      tag:tags(
+        id,
+        slug,
+        name
+      )
+    )
+  `
+  );
+
+  // Apply search filter
+  if (s) {
+    const searchTerms = s.trim().split(/\s+/).filter(Boolean);
+
+    if (exactMatch) {
+      // Exact match: search full string in any field (OR condition)
+      const orConditions = searchFields.map((field) => `${field}.ilike.%${s}%`).join(',');
+      query = query.or(orConditions);
+    } else {
+      // Non-exact match: any of the split words match any field (OR condition)
+      const orConditions = searchTerms
+        .flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`))
+        .join(',');
+      query = query.or(orConditions);
+    }
+  }
+
+  // Apply tags filter in Supabase query
+  // Match couplets that have ANY of the provided tags (by slug OR name)
+  if (tagList.length > 0) {
+    const tagConditions = tagList
+      .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
+      .join(',');
+    query = query.or(tagConditions);
+  }
+
+  // Apply popularity filter
+  if (popular) {
+    query = query.eq('popular', true);
+  }
+
+  // Get total count with all filters applied
+  const total = pagination
+    ? await getFilteredCount(supabase, searchFields, s ?? '', exactMatch ?? false, tagList, popular ?? false)
+    : 0;
+
+  // Apply sorting
+  const ascending = getAscending(normalizedOrder);
+  if (orderBy === 'popular') {
+    query = query.order('popular', { ascending: false }).order('couplet_order', { ascending });
+  } else if (orderBy === 'couplet_english') {
+    query = query.order('english_text', { ascending });
+  } else if (orderBy === 'couplet_hindi') {
+    query = query.order('hindi_text', { ascending });
+  } else {
+    query = query.order('couplet_order', { ascending });
+  }
+
+  // Apply pagination
+  const pageNumber = page ?? 1;
+  const perPageNumber = perPage ?? 10;
+  const from = (pageNumber - 1) * perPageNumber;
+  const to = from + perPageNumber - 1;
+
+  query = query.range(from, to);
+
+  // Execute query
+  const { data, error } = await query;
+
+  if (error) {
+    throw new Error(`Failed to fetch couplets: ${error.message}`);
+  }
+
+  // Transform data to match expected format
+  const couplets = (data ?? []).map((row: Record<string, unknown>) => {
+    // Extract tags from the nested structure
+    const tagsArray =
+      (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
+        slug: (t.tag as Record<string, unknown>)?.slug as string,
+        name: (t.tag as Record<string, unknown>)?.name as string,
+      })) ?? [];
+
+    return {
+      id: row.couplet_number,
+      unique_slug: row.slug,
+      couplet_hindi: row.hindi_text,
+      couplet_english: row.english_text,
+      translation_hindi: row.hindi_translation,
+      translation_english: row.english_translation,
+      explanation_hindi: row.hindi_explanation,
+      explanation_english: row.english_explanation,
+      popular: row.popular,
+      tags: tagsArray,
+    };
+  });
+
+  const totalPages = perPageNumber > 0 ? Math.ceil(total / perPageNumber) : 1;
+
+  return {
+    couplets,
+    total: pagination ? total : couplets.length,
+    totalPages: pagination ? totalPages : 1,
+    page: pageNumber,
+    perPage: perPageNumber,
+    pagination,
+  };
+}
+
+/**
+ * Validates and parses query parameters from URL search params.
+ *
+ * @param {URLSearchParams} searchParams - URL search parameters.
+ * @returns {CoupletQueryParams} Validated query parameters.
+ */
+function parseQueryParams(searchParams: URLSearchParams): CoupletQueryParams {
+  const params: Record<string, unknown> = {};
+
+  for (const [key, value] of searchParams.entries()) {
+    if (key === 'exactMatch' || key === 'popular' || key === 'pagination') {
+      params[key] = value === 'true';
+    } else if (key === 'page' || key === 'perPage') {
+      const num = Number(value);
+      params[key] = isNaN(num) ? undefined : num;
+    } else {
+      params[key] = value;
+    }
+  }
+
+  return CoupletQuerySchema.parse({ ...DEFAULT_PARAMS, ...params });
+}
+
+/**
+ * Handles errors in API route handlers, including Zod validation errors.
+ *
+ * @param {unknown} error - Error thrown from route handlers.
+ * @param {string} [fallbackMessage='An error occurred'] - Fallback message for unknown errors.
+ * @returns {NextResponse} Structured error response with safe message and HTTP status.
+ * @example
+ * return handleRouteError(error);
+ * // Returns validation error for ZodError, or generic error response.
+ */
+export function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
+  if (error instanceof z.ZodError) {
+    const message = error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ');
+    return handleError(new Error(`Validation error: ${message}`));
+  }
+
+  return handleError(error instanceof Error ? error : new Error(fallbackMessage));
+}
+
+/**
+ * GET route handler for the couplets API.
+ * Retrieves couplets from Supabase based on URL query parameters.
+ *
+ * @param {Request} request - The incoming HTTP request object.
+ * @returns {Promise<NextResponse>} JSON response with couplets data or error message.
  */
 export async function GET(request: Request): Promise<NextResponse> {
-	try {
-		const { searchParams } = new URL(request.url);
+  try {
+    const { searchParams } = new URL(request.url);
 
-		// Extract parameters from URL
-		const params: CoupletParams = getParamsWithDefaults(searchParams, "GET");
+    // Validate and parse query parameters
+    const params = parseQueryParams(searchParams);
 
-		const result: ProcessResult = await processRequest(params);
+    // Fetch couplets from Supabase
+    const result = await fetchCoupletsFromSupabase(params);
 
-		if (!result.success) {
-			// Use a type guard to narrow result to ProcessResultError
-			return addCorsHeaders(
-				NextResponse.json(
-					{ success: false, message: (result as ProcessResultError).message },
-					{ status: (result as ProcessResultError).status }
-				)
-			);
-		}
-
-		return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-	} catch (error: unknown) {
-		const message = error instanceof Error ? error.message : "Internal Server Error";
-		return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
-	}
+    return success(result);
+  } catch (error) {
+    return handleRouteError(error, 'Failed to fetch couplets');
+  }
 }
 
 /**
- * POST route handler for the couplets API
- * Retrieves couplets based on request body parameters
+ * POST route handler for the couplets API.
+ * Retrieves couplets from Supabase based on request body parameters.
  *
- * @async
- * @param {Request} request - The incoming HTTP request object
- * @returns {NextResponse} JSON response with couplets data or error message
+ * @param {Request} request - The incoming HTTP request object.
+ * @returns {Promise<NextResponse>} JSON response with couplets data or error message.
  */
 export async function POST(request: Request): Promise<NextResponse> {
-	try {
-		// Extract parameters from request body
-		const body: Record<string, unknown> = await request.json();
+  try {
+    const body = await request.json();
 
-		const params: CoupletParams = getParamsWithDefaults(body, "POST");
+    // Validate and parse request body
+    const params = CoupletQuerySchema.parse({ ...DEFAULT_PARAMS, ...body });
 
-		const result: ProcessResult = await processRequest(params);
+    // Fetch couplets from Supabase
+    const result = await fetchCoupletsFromSupabase(params);
 
-		if (!result.success) {
-			// Use a type guard to narrow result to ProcessResultError
-			return addCorsHeaders(
-				NextResponse.json(
-					{ success: false, message: (result as ProcessResultError).message },
-					{ status: (result as ProcessResultError).status }
-				)
-			);
-		}
-
-		return addCorsHeaders(NextResponse.json({ success: true, data: result.data }));
-	} catch (error: unknown) {
-		const message = error instanceof Error ? error.message : "Internal Server Error";
-		return addCorsHeaders(NextResponse.json({ success: false, message }, { status: 500 }));
-	}
+    return success(result);
+  } catch (error) {
+    return handleRouteError(error, 'Failed to fetch couplets');
+  }
 }

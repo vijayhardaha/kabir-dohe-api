@@ -6,5 +6,5 @@
  * @returns {React.JSX.Element} - The rendered documentation section
  */
 export function DocsSection({ children }: { children: React.ReactNode }): React.JSX.Element {
-	return <div className="mb-10 space-y-10">{children}</div>;
+  return <div className="mb-10 space-y-10">{children}</div>;
 }

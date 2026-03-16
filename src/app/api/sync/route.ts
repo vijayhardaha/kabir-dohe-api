@@ -1,19 +1,111 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { env } from "@/lib/env/server";
-import { createClient } from "@/lib/db/supabase";
-import {
-	prepareCoupletsForDb,
-	prepareTagsForDb,
-	transformSheetToDb,
-	uniqueMappings,
-	upsertCouplets,
-	upsertCoupletTags,
-	upsertTags,
-} from "@/lib/db/upsert";
-import { sheetToJson } from "@/lib/integrations/gsheet";
-import { ApiError, handleError, success } from "@/lib/utils/api";
-import { generateHash, sanitizeTitle } from "@/lib/utils/string";
+import { buildCoupletTagMappings } from '@/server/db/mappings/couplet-tags.mapper';
+import type { DbCouplet } from '@/server/db/mappings/couplet.mapper';
+import type { DbTag } from '@/server/db/mappings/tag.mapper';
+import { createClient } from '@/server/db/supabase';
+import { upsertCouplets, upsertCoupletTags, upsertTags } from '@/server/db/upsert';
+import { env } from '@/server/env/server';
+import { sheetToJson } from '@/server/integrations/gsheet';
+import { ApiError, handleError, success } from '@/server/lib';
+import { generateHash } from '@/server/lib/string';
+
+/**
+ * Validate the passkey from request parameters
+ *
+ * @param request - incoming request
+ * @returns validated passkey hash
+ * @throws ApiError if passkey is missing or invalid
+ */
+async function validatePasskey(request: NextRequest): Promise<string> {
+  const { searchParams } = new URL(request.url);
+  const passkey = searchParams.get('passkey');
+
+  if (!passkey) {
+    throw new ApiError('Passkey required', 400);
+  }
+
+  const hashedPasskey = generateHash(passkey);
+  if (hashedPasskey !== env.SUPABASE_PASSKEY_HASH) {
+    throw new ApiError('Unauthorized Access', 401);
+  }
+
+  return hashedPasskey;
+}
+
+/**
+ * Pull couplet data from Google Sheets
+ *
+ * @param sheetName - name of the sheet to pull from
+ * @returns raw couplets, mapped couplets, and tags
+ */
+async function pullSheetData(sheetName: string) {
+  return sheetToJson(sheetName);
+}
+
+/**
+ * Create Supabase client with hash key header
+ *
+ * @param hashedPasskey - the hashed passkey for authorization
+ * @returns Supabase client instance
+ * @throws ApiError if client creation fails
+ */
+async function createSupabaseClient(hashedPasskey: string): Promise<SupabaseClient> {
+  const supabase = await createClient({ global: { headers: { 'x-hash-key': hashedPasskey } } });
+
+  if (!supabase) {
+    throw new ApiError('Supabase error', 500);
+  }
+
+  return supabase;
+}
+
+/**
+ * Sync couplets to database
+ *
+ * @param supabase - Supabase client
+ * @param couplets - mapped couplets to upsert
+ * @returns upsert result with data and count
+ */
+async function syncCouplets(supabase: SupabaseClient, couplets: DbCouplet[]) {
+  return upsertCouplets(supabase, couplets);
+}
+
+/**
+ * Sync tags to database
+ *
+ * @param supabase - Supabase client
+ * @param tags - tags to upsert
+ * @returns upsert result with data and count
+ */
+async function syncTags(supabase: SupabaseClient, tags: DbTag[]) {
+  return upsertTags(supabase, tags);
+}
+
+/**
+ * Sync couplet-tag mappings to database
+ *
+ * @param supabase - Supabase client
+ * @param {Array<{ couplet_code: string; tags: string[] }>} rawCouplets - Raw couplets with tag information from the source.
+ * @param {Record<string, string>[]} coupletsData - Upserted couplets data with ids.
+ * @param {Record<string, string>[]} tagsData - Upserted tags data with ids.
+ * @returns upsert result with count
+ */
+async function syncCoupletTags(
+  supabase: SupabaseClient,
+  rawCouplets: Array<{ couplet_code: string; tags: string[] }>,
+  coupletsData: Record<string, string>[],
+  tagsData: Record<string, string>[]
+) {
+  const mappings = buildCoupletTagMappings(rawCouplets, coupletsData ?? [], tagsData ?? []);
+
+  if (mappings.length > 0) {
+    return upsertCoupletTags(supabase, mappings);
+  }
+
+  return { count: 0 };
+}
 
 /**
  * GET handler
@@ -24,104 +116,38 @@ import { generateHash, sanitizeTitle } from "@/lib/utils/string";
  * @returns JSON status
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-	// main logic
-	try {
-		// get passkey
-		const { searchParams } = new URL(request.url);
-		const passkey = searchParams.get("passkey");
+  try {
+    // validate passkey
+    const hashedPasskey = await validatePasskey(request);
 
-		// require passkey
-		if (!passkey) {
-			throw new ApiError("Passkey required", 400);
-		}
+    // pull sheet data
+    const { rawCouplets, couplets, tags } = await pullSheetData('kabir-ke-dohe');
 
-		// check passkey
-		const hashedPasskey = generateHash(passkey);
-		if (hashedPasskey !== env.SUPABASE_PASSKEY_HASH) {
-			throw new ApiError("Unauthorized", 401);
-		}
+    // create supabase client
+    const supabase = await createSupabaseClient(hashedPasskey);
 
-		// pull sheet
-		const sheetJson = await sheetToJson("kabir-ke-dohe");
+    // summary
+    let message = '';
 
-		return success({ message: "Sheet fetched successfully", data: sheetJson });
+    // sync couplets
+    const { data: coupletsData, count: coupletsCount } = await syncCouplets(supabase, couplets);
+    message += `Upserted ${coupletsCount ?? 0} couplets.`;
 
-		// ensure array
-		if (!Array.isArray(sheetJson)) {
-			throw new ApiError("Unexpected data format", 400);
-		}
+    // sync tags and mappings
+    if (coupletsCount && coupletsCount > 0 && tags.length > 0) {
+      const { data: tagsData, count: tagsCount } = await syncTags(supabase, tags);
+      message += ` Upserted ${tagsCount} tags.`;
 
-		// convert to raw db format
-		const rawCouplets = transformSheetToDb(sheetJson);
+      // build and sync couplet-tag mappings
+      const mappingRes = await syncCoupletTags(supabase, rawCouplets, coupletsData ?? [], tagsData ?? []);
+      const mappingCount = mappingRes.count || 0;
+      message += ` Upserted ${mappingCount} couplet-tag mappings.`;
+    }
 
-		// require data
-		if (!rawCouplets || rawCouplets.length <= 0) {
-			throw new ApiError("No couplets found", 400);
-		}
-
-		// build db payloads
-		const dbCouplets = prepareCoupletsForDb(rawCouplets);
-		const dbTags = prepareTagsForDb(rawCouplets);
-
-		// supabase client
-		const supabase = await createClient({
-			global: { headers: { "x-hash-key": hashedPasskey } },
-		});
-
-		// ensure client
-		if (!supabase) {
-			throw new ApiError("Supabase error", 500);
-		}
-
-		// summary
-		let message = "";
-
-		// upsert couplets
-		const { data: coupletsData, count: coupletsCount } = await upsertCouplets(
-			supabase,
-			dbCouplets
-		);
-
-		// append to summary
-		message += `Upserted ${coupletsCount ?? 0} couplets.`;
-
-		// upsert tags
-		if (coupletsCount && coupletsCount > 0 && dbTags.length > 0) {
-			const { data: tagsData, count: tagsCount } = await upsertTags(supabase, dbTags);
-			message += ` Upserted ${tagsCount} tags.`;
-
-			// Map couplets to tags by creating entries in the join table that links couplets and tags based on their IDs. This involves finding the corresponding IDs for each couplet and tag, and then upserting those relationships into the database to maintain the many-to-many relationship between couplets and tags.
-			const coupletTagMappings: { couplet_id: string; tag_id: string }[] = [];
-			for (const couplet of rawCouplets) {
-				const coupletId = coupletsData?.find(
-					(c: Record<string, string>) => c.couplet_code === couplet.couplet_code
-				)?.id;
-				if (coupletId) {
-					for (const tag of couplet.tags) {
-						const tagId = tagsData?.find(
-							(t: Record<string, string>) => t.slug === sanitizeTitle(tag)
-						)?.id;
-						if (tagId) {
-							coupletTagMappings.push({ couplet_id: coupletId, tag_id: tagId });
-						}
-					}
-				}
-			}
-
-			// filter duplicates
-			const uniqueCoupletTagMappings = uniqueMappings(coupletTagMappings);
-
-			if (uniqueCoupletTagMappings.length > 0) {
-				const mappingRes = await upsertCoupletTags(supabase, uniqueCoupletTagMappings);
-				const mappingCount = mappingRes.count ?? uniqueCoupletTagMappings.length;
-				message += ` Upserted ${mappingCount} couplet-tag mappings.`;
-			}
-		}
-
-		// success response
-		return success({ message: message });
-	} catch (err) {
-		// standardize errors
-		return handleError(err instanceof Error ? err : new Error("Sync failed")) as NextResponse;
-	}
+    // success response
+    return success({ message: message });
+  } catch (err) {
+    // standardize errors
+    return handleError(err instanceof Error ? err : new Error('Sync failed')) as NextResponse;
+  }
 }
