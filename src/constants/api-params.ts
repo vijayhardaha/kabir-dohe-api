@@ -13,16 +13,9 @@ export interface ApiQueryParam {
  * Query parameters for the Kabir Ke Dohe API
  */
 export const API_QUERY_PARAMS: ApiQueryParam[] = [
-  { name: 's', type: 'string', description: 'Search term', defaultValue: '', possibleValues: 'Any text' },
+  { name: 'search', type: 'string', description: 'Search term', defaultValue: '', possibleValues: 'Any text' },
   {
-    name: 'exactMatch',
-    type: 'boolean',
-    description: 'Whether to use exact match for search',
-    defaultValue: 'false',
-    possibleValues: 'true, false',
-  },
-  {
-    name: 'searchWithin',
+    name: 'search_fields',
     type: 'string',
     description: 'Fields to search within (comma-separated list)',
     defaultValue: 'all',
@@ -36,20 +29,20 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     possibleValues: 'Any valid tag names',
   },
   {
-    name: 'popular',
+    name: 'is_popular',
     type: 'boolean',
     description: 'Whether to filter by popularity',
     defaultValue: 'false',
     possibleValues: 'true, false',
   },
   {
-    name: 'orderBy',
+    name: 'sort_by',
     type: 'string',
     description: 'Field to sort by',
     defaultValue: 'id',
-    possibleValues: 'id, random, popular, couplet_english, couplet_hindi',
+    possibleValues: 'id, popular, couplet_english, couplet_hindi',
   },
-  { name: 'order', type: 'string', description: 'Sort order', defaultValue: 'ASC', possibleValues: 'ASC, DESC' },
+  { name: 'sort_order', type: 'string', description: 'Sort order', defaultValue: 'asc', possibleValues: 'asc, desc' },
   {
     name: 'page',
     type: 'number',
@@ -58,7 +51,7 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     possibleValues: 'Any positive integer',
   },
   {
-    name: 'perPage',
+    name: 'per_page',
     type: 'number',
     description: 'Number of items per page',
     defaultValue: '10',

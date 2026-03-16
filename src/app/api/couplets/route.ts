@@ -6,96 +6,247 @@ import { handleError } from '@/server/lib/errors/error-handler';
 import { success } from '@/server/lib/response/response';
 
 /**
- * Zod schema for validating couplet query parameters.
+ * Default parameter values for the API.
  */
-const CoupletQuerySchema = z.object({
-  s: z.string().optional().default(''),
-  exactMatch: z.boolean().optional().default(false),
-  searchWithin: z
+const DEFAULT_PARAMS = {
+  search: '',
+  search_fields: 'all',
+  tags: '',
+  is_popular: false,
+  sort_by: 'id',
+  sort_order: 'asc',
+  page: 1,
+  per_page: 10,
+  pagination: true,
+} as const;
+
+/**
+ * Zod schema for validating query parameters.
+ */
+const QuerySchema = z.object({
+  search: z.string().optional().default(DEFAULT_PARAMS.search),
+  search_fields: z
     .string()
     .optional()
-    .default('all')
+    .default(DEFAULT_PARAMS.search_fields)
     .refine(
       (val) =>
         val === 'all'
         || val.split(',').every((v) => ['couplet', 'translation', 'explanation'].includes(v.trim().toLowerCase())),
-      { message: "Invalid searchWithin value. Allowed values: 'all', 'couplet', 'translation', 'explanation'" }
+      { message: "Invalid search_fields value. Allowed values: 'all', 'couplet', 'translation', 'explanation'" }
     ),
-  tags: z.string().optional().default(''),
-  popular: z.boolean().optional().default(false),
-  orderBy: z
+  tags: z.string().optional().default(DEFAULT_PARAMS.tags),
+  is_popular: z.boolean().optional().default(DEFAULT_PARAMS.is_popular),
+  sort_by: z
     .string()
     .optional()
-    .default('id')
+    .default(DEFAULT_PARAMS.sort_by)
     .refine((val) => ['id', 'popular', 'couplet_english', 'couplet_hindi'].includes(val), {
-      message: "Invalid orderBy value. Allowed values: 'id', 'popular', 'couplet_english', 'couplet_hindi'",
+      message: "Invalid sort_by value. Allowed values: 'id', 'popular', 'couplet_english', 'couplet_hindi'",
     }),
-  order: z
+  sort_order: z
     .string()
     .optional()
-    .default('ASC')
-    .refine((val) => ['ASC', 'DESC'].includes(val), { message: "Invalid order value. Allowed values: 'ASC', 'DESC'" }),
-  page: z.number().int().positive().optional().default(1),
-  perPage: z.number().int().positive().optional().default(10),
-  pagination: z.boolean().optional().default(true),
+    .default(DEFAULT_PARAMS.sort_order)
+    .refine((val) => ['asc', 'desc'].includes(val), {
+      message: "Invalid sort_order value. Allowed values: 'asc', 'desc'",
+    }),
+  page: z.number().int().positive().optional().default(DEFAULT_PARAMS.page),
+  per_page: z.number().int().positive().optional().default(DEFAULT_PARAMS.per_page),
+  pagination: z.boolean().optional().default(DEFAULT_PARAMS.pagination),
 });
+
+/**
+ * Type for a Supabase query builder instance.
+ * Accepts both PostgresQueryBuilder and PostgresFilterBuilder.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type QueryBuilder = any;
 
 /**
  * Type for validated query parameters.
  */
-type CoupletQueryParams = z.infer<typeof CoupletQuerySchema>;
+type QueryParams = z.infer<typeof QuerySchema>;
 
 /**
- * Default parameter values for the API.
+ * Type for transformed couplet data.
  */
-const DEFAULT_PARAMS: CoupletQueryParams = {
-  s: '',
-  exactMatch: false,
-  searchWithin: 'all',
-  tags: '',
-  popular: false,
-  orderBy: 'id',
-  order: 'ASC',
-  page: 1,
-  perPage: 10,
-  pagination: true,
-};
-
-/**
- * Helper to convert order string to boolean.
- *
- * @param {string} order - 'ASC' or 'DESC'
- * @returns {boolean} true for ascending, false for descending
- */
-function getAscending(order: string): boolean {
-  return order === 'ASC';
+interface Couplet {
+  id: number;
+  unique_slug: string;
+  couplet_hindi: string;
+  couplet_english: string;
+  translation_hindi: string;
+  translation_english: string;
+  explanation_hindi: string;
+  explanation_english: string;
+  is_popular: boolean;
+  tags: Array<{ slug: string; name: string }>;
 }
 
 /**
- * Get search fields based on searchWithin parameter.
+ * Base select fields for couplets query.
+ */
+const COUPLET_SELECT_FIELDS = `
+  id,
+  couplet_number,
+  slug,
+  hindi_text,
+  english_text,
+  hindi_translation,
+  english_translation,
+  hindi_explanation,
+  english_explanation,
+  popular,
+  tags:couplet_tags!inner(
+    tag:tags(
+      id,
+      slug,
+      name
+    )
+  )
+`;
+
+/**
+ * Get search fields based on search_fields parameter.
  *
- * @param {string} searchWithin - The searchWithin parameter value
+ * @param {string} search_fields - The search_fields parameter value
  * @returns {string[]} Array of field names to search within
  */
-function getSearchFields(searchWithin: string): string[] {
-  if (searchWithin === 'all') {
-    return [
-      'hindi_text',
-      'english_text',
-      'hindi_translation',
-      'english_translation',
-      'hindi_explanation',
-      'english_explanation',
-    ];
+function getSearchFields(search_fields: string): string[] {
+  // Define field groups
+  const coupletFields = ['hindi_text', 'english_text'];
+  const translationFields = ['hindi_translation', 'english_translation'];
+  const explanationFields = ['hindi_explanation', 'english_explanation'];
+
+  if (search_fields === 'all') {
+    return [...coupletFields, ...translationFields, ...explanationFields];
   }
 
-  return searchWithin.split(',').flatMap((field) => {
+  return search_fields.split(',').flatMap((field) => {
     const trimmed = field.trim().toLowerCase();
-    if (trimmed === 'couplet') return ['hindi_text', 'english_text'];
-    if (trimmed === 'translation') return ['hindi_translation', 'english_translation'];
-    if (trimmed === 'explanation') return ['hindi_explanation', 'english_explanation'];
+    if (trimmed === 'couplet') return coupletFields;
+    if (trimmed === 'translation') return translationFields;
+    if (trimmed === 'explanation') return explanationFields;
     return [];
   });
+}
+
+/**
+ * Transform a database row to couplet format.
+ *
+ * @param {Record<string, unknown>} row - Database row
+ * @returns {Couplet} Transformed couplet data
+ */
+function transformCoupletData(row: Record<string, unknown>): Couplet {
+  const tagsArray =
+    (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
+      slug: (t.tag as Record<string, unknown>)?.slug as string,
+      name: (t.tag as Record<string, unknown>)?.name as string,
+    })) ?? [];
+
+  return {
+    id: row.couplet_number as number,
+    unique_slug: row.slug as string,
+    couplet_hindi: row.hindi_text as string,
+    couplet_english: row.english_text as string,
+    translation_hindi: row.hindi_translation as string,
+    translation_english: row.english_translation as string,
+    explanation_hindi: row.hindi_explanation as string,
+    explanation_english: row.english_explanation as string,
+    is_popular: row.popular as boolean,
+    tags: tagsArray,
+  };
+}
+
+/**
+ * Apply search filter to a query.
+ * Includes both exact phrase and individual words for prioritization.
+ *
+ * @param {QueryBuilder} query - Supabase query builder
+ * @param {string} searchQuery - The search query string
+ * @param {string[]} searchFields - Fields to search within
+ * @returns {QueryBuilder} Query with search filter applied
+ */
+function applySearchFilter(query: QueryBuilder, searchQuery: string, searchFields: string[]): QueryBuilder {
+  if (!searchQuery) return query;
+
+  let searchTerms = searchQuery.trim().split(/\s+/).filter(Boolean);
+  // Include the full search string as an additional term for non-exact matching
+  searchTerms = [searchTerms.join(' '), ...new Set(searchTerms)];
+
+  const orConditions = searchTerms.flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`)).join(',');
+
+  return query.or(orConditions);
+}
+
+/**
+ * Apply tag filter to a query.
+ *
+ * @param {QueryBuilder} query - Supabase query builder
+ * @param {string[]} tagList - List of tags to filter by
+ * @returns {QueryBuilder} Query with tag filter applied
+ */
+function applyTagFilter(query: QueryBuilder, tagList: string[]): QueryBuilder {
+  if (tagList.length === 0) return query;
+
+  const tagConditions = tagList
+    .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
+    .join(',');
+
+  return query.or(tagConditions);
+}
+
+/**
+ * Apply popular filter to a query.
+ *
+ * @param {QueryBuilder} query - Supabase query builder
+ * @param {boolean} is_popular - Whether to filter by popular couplets
+ * @returns {QueryBuilder} Query with popular filter applied
+ */
+function applyPopularFilter(query: QueryBuilder, is_popular: boolean): QueryBuilder {
+  if (!is_popular) return query;
+
+  return query.eq('popular', true);
+}
+
+/**
+ * Apply sorting to a query.
+ *
+ * @param {QueryBuilder} query - Supabase query builder
+ * @param {string} sort_by - Field to sort by
+ * @param {string} sort_order - Sort order ('asc' or 'desc')
+ * @returns {QueryBuilder} Query with sorting applied
+ */
+function applySorting(query: QueryBuilder, sort_by: string, sort_order: string): QueryBuilder {
+  const ascending = sort_order === 'asc';
+
+  if (sort_by === 'popular') {
+    return query.order('popular', { ascending: false }).order('couplet_order', { ascending });
+  }
+  if (sort_by === 'couplet_english') {
+    return query.order('english_text', { ascending });
+  }
+  if (sort_by === 'couplet_hindi') {
+    return query.order('hindi_text', { ascending });
+  }
+
+  return query.order('couplet_order', { ascending });
+}
+
+/**
+ * Apply pagination (offset/range) to a query.
+ *
+ * @param {QueryBuilder} query - Supabase query builder
+ * @param {number} page - Page number (1-indexed)
+ * @param {number} per_page - Items per page
+ * @returns {QueryBuilder} Query with pagination applied
+ */
+function applyPagination(query: QueryBuilder, page: number, per_page: number): QueryBuilder {
+  const from = (page - 1) * per_page;
+  const to = from + per_page - 1;
+
+  return query.range(from, to);
 }
 
 /**
@@ -104,42 +255,15 @@ function getSearchFields(searchWithin: string): string[] {
 async function getFilteredCount(
   supabase: Awaited<ReturnType<typeof createClient>>,
   searchFields: string[],
-  s: string,
-  exactMatch: boolean,
+  search: string,
   tagList: string[],
-  popular: boolean
+  is_popular: boolean
 ): Promise<number> {
   let countQuery = supabase.from('couplets').select('*', { count: 'exact', head: true });
 
-  // Apply search filters
-  if (s) {
-    const searchTerms = s.trim().split(/\s+/).filter(Boolean);
-
-    if (exactMatch) {
-      // Exact match: search full string in any field (OR condition)
-      const orConditions = searchFields.map((field) => `${field}.ilike.%${s}%`).join(',');
-      countQuery = countQuery.or(orConditions);
-    } else {
-      // Non-exact match: any of the split words match any field (OR condition)
-      const orConditions = searchTerms
-        .flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`))
-        .join(',');
-      countQuery = countQuery.or(orConditions);
-    }
-  }
-
-  // Apply tags filter
-  if (tagList.length > 0) {
-    const tagConditions = tagList
-      .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
-      .join(',');
-    countQuery = countQuery.or(tagConditions);
-  }
-
-  // Apply popularity filter
-  if (popular) {
-    countQuery = countQuery.eq('popular', true);
-  }
+  countQuery = applySearchFilter(countQuery, search, searchFields);
+  countQuery = applyTagFilter(countQuery, tagList);
+  countQuery = applyPopularFilter(countQuery, is_popular);
 
   const { count } = await countQuery;
   return count ?? 0;
@@ -148,113 +272,53 @@ async function getFilteredCount(
 /**
  * Fetches couplets from Supabase with filtering, sorting, and pagination.
  *
- * @param {CoupletQueryParams} params - The validated query parameters.
- * @returns {Promise<{ couplets: unknown[]; total: number; totalPages: number; page: number; perPage: number; pagination: boolean }>} Paginated couplet results.
+ * @param {QueryParams} params - The validated query parameters.
+ * @returns {Promise<{ couplets: Couplet[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Paginated couplet results.
  */
 async function fetchCoupletsFromSupabase(
-  params: CoupletQueryParams
+  params: QueryParams
 ): Promise<{
-  couplets: unknown[];
+  couplets: Couplet[];
   total: number;
   totalPages: number;
   page: number;
-  perPage: number;
+  per_page: number;
   pagination: boolean;
 }> {
   const supabase = await createClient();
 
-  const { s, exactMatch, searchWithin, tags, popular, orderBy, order, page, perPage, pagination } = params;
+  const { search, search_fields, tags, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
 
-  const normalizedOrder = order?.toUpperCase() || 'ASC';
+  const normalizedOrder = sort_order?.toLowerCase() || 'asc';
 
   // Parse tags for filtering
   const tagList = tags
     ? tags
         .split(',')
-        .map((t) => t.trim().toLowerCase())
+        .map((t: string) => t.trim().toLowerCase())
         .filter(Boolean)
     : [];
 
-  const searchFields = getSearchFields(searchWithin);
+  const searchFields = getSearchFields(search_fields);
 
   // Build the base query with tags join
-  let query = supabase.from('couplets').select(
-    `
-    id,
-    couplet_number,
-    slug,
-    hindi_text,
-    english_text,
-    hindi_translation,
-    english_translation,
-    hindi_explanation,
-    english_explanation,
-    popular,
-    tags:couplet_tags!inner(
-      tag:tags(
-        id,
-        slug,
-        name
-      )
-    )
-  `
-  );
+  let query = supabase.from('couplets').select(COUPLET_SELECT_FIELDS);
 
-  // Apply search filter
-  if (s) {
-    const searchTerms = s.trim().split(/\s+/).filter(Boolean);
-
-    if (exactMatch) {
-      // Exact match: search full string in any field (OR condition)
-      const orConditions = searchFields.map((field) => `${field}.ilike.%${s}%`).join(',');
-      query = query.or(orConditions);
-    } else {
-      // Non-exact match: any of the split words match any field (OR condition)
-      const orConditions = searchTerms
-        .flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`))
-        .join(',');
-      query = query.or(orConditions);
-    }
-  }
-
-  // Apply tags filter in Supabase query
-  // Match couplets that have ANY of the provided tags (by slug OR name)
-  if (tagList.length > 0) {
-    const tagConditions = tagList
-      .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
-      .join(',');
-    query = query.or(tagConditions);
-  }
-
-  // Apply popularity filter
-  if (popular) {
-    query = query.eq('popular', true);
-  }
+  // Apply filters using reusable functions
+  query = applySearchFilter(query, search ?? '', searchFields);
+  query = applyTagFilter(query, tagList);
+  query = applyPopularFilter(query, is_popular);
 
   // Get total count with all filters applied
   const total = pagination
-    ? await getFilteredCount(supabase, searchFields, s ?? '', exactMatch ?? false, tagList, popular ?? false)
+    ? await getFilteredCount(supabase, searchFields, search ?? '', tagList, is_popular ?? false)
     : 0;
 
-  // Apply sorting
-  const ascending = getAscending(normalizedOrder);
-  if (orderBy === 'popular') {
-    query = query.order('popular', { ascending: false }).order('couplet_order', { ascending });
-  } else if (orderBy === 'couplet_english') {
-    query = query.order('english_text', { ascending });
-  } else if (orderBy === 'couplet_hindi') {
-    query = query.order('hindi_text', { ascending });
-  } else {
-    query = query.order('couplet_order', { ascending });
-  }
+  // Apply sorting using reusable function
+  query = applySorting(query, sort_by ?? 'id', normalizedOrder);
 
-  // Apply pagination
-  const pageNumber = page ?? 1;
-  const perPageNumber = perPage ?? 10;
-  const from = (pageNumber - 1) * perPageNumber;
-  const to = from + perPageNumber - 1;
-
-  query = query.range(from, to);
+  // Apply pagination using reusable function
+  query = applyPagination(query, page ?? 1, per_page ?? 10);
 
   // Execute query
   const { data, error } = await query;
@@ -263,29 +327,11 @@ async function fetchCoupletsFromSupabase(
     throw new Error(`Failed to fetch couplets: ${error.message}`);
   }
 
-  // Transform data to match expected format
-  const couplets = (data ?? []).map((row: Record<string, unknown>) => {
-    // Extract tags from the nested structure
-    const tagsArray =
-      (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
-        slug: (t.tag as Record<string, unknown>)?.slug as string,
-        name: (t.tag as Record<string, unknown>)?.name as string,
-      })) ?? [];
+  // Transform data using reusable function
+  const couplets = (data ?? []).map(transformCoupletData);
 
-    return {
-      id: row.couplet_number,
-      unique_slug: row.slug,
-      couplet_hindi: row.hindi_text,
-      couplet_english: row.english_text,
-      translation_hindi: row.hindi_translation,
-      translation_english: row.english_translation,
-      explanation_hindi: row.hindi_explanation,
-      explanation_english: row.english_explanation,
-      popular: row.popular,
-      tags: tagsArray,
-    };
-  });
-
+  const pageNumber = page ?? 1;
+  const perPageNumber = per_page ?? 10;
   const totalPages = perPageNumber > 0 ? Math.ceil(total / perPageNumber) : 1;
 
   return {
@@ -293,7 +339,7 @@ async function fetchCoupletsFromSupabase(
     total: pagination ? total : couplets.length,
     totalPages: pagination ? totalPages : 1,
     page: pageNumber,
-    perPage: perPageNumber,
+    per_page: perPageNumber,
     pagination,
   };
 }
@@ -302,15 +348,15 @@ async function fetchCoupletsFromSupabase(
  * Validates and parses query parameters from URL search params.
  *
  * @param {URLSearchParams} searchParams - URL search parameters.
- * @returns {CoupletQueryParams} Validated query parameters.
+ * @returns {QueryParams} Validated query parameters.
  */
-function parseQueryParams(searchParams: URLSearchParams): CoupletQueryParams {
+function parseQueryParams(searchParams: URLSearchParams): QueryParams {
   const params: Record<string, unknown> = {};
 
   for (const [key, value] of searchParams.entries()) {
-    if (key === 'exactMatch' || key === 'popular' || key === 'pagination') {
+    if (key === 'is_popular' || key === 'pagination') {
       params[key] = value === 'true';
-    } else if (key === 'page' || key === 'perPage') {
+    } else if (key === 'page' || key === 'per_page') {
       const num = Number(value);
       params[key] = isNaN(num) ? undefined : num;
     } else {
@@ -318,7 +364,7 @@ function parseQueryParams(searchParams: URLSearchParams): CoupletQueryParams {
     }
   }
 
-  return CoupletQuerySchema.parse({ ...DEFAULT_PARAMS, ...params });
+  return QuerySchema.parse({ ...DEFAULT_PARAMS, ...params });
 }
 
 /**
@@ -375,7 +421,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const body = await request.json();
 
     // Validate and parse request body
-    const params = CoupletQuerySchema.parse({ ...DEFAULT_PARAMS, ...body });
+    const params = QuerySchema.parse({ ...DEFAULT_PARAMS, ...body });
 
     // Fetch couplets from Supabase
     const result = await fetchCoupletsFromSupabase(params);
