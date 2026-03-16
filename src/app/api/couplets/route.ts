@@ -252,13 +252,13 @@ async function getFilteredCount(
   tagList: string[],
   is_popular: boolean
 ): Promise<number> {
-  let countQuery = supabase.from('posts').select('*', { count: 'exact', head: true });
+  let query = supabase.from('posts').select('*', { count: 'exact', head: true });
 
-  countQuery = applySearchFilter(countQuery, search, searchFields);
-  countQuery = applyTagFilter(countQuery, tagList);
-  countQuery = applyPopularFilter(countQuery, is_popular);
+  query = applySearchFilter(query, search, searchFields);
+  query = applyTagFilter(query, tagList);
+  query = applyPopularFilter(query, is_popular);
 
-  const { count } = await countQuery;
+  const { count } = await query;
   return count ?? 0;
 }
 
