@@ -48,15 +48,15 @@ const QuerySchema = z.object({
 });
 
 /**
+ * Type for validated query parameters.
+ */
+type QueryParams = z.infer<typeof QuerySchema>;
+
+/**
  * Type for a Supabase query builder instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type QueryBuilder = any;
-
-/**
- * Type for validated query parameters.
- */
-type QueryParams = z.infer<typeof QuerySchema>;
 
 /**
  * Type for transformed post data (simplified public API response).
@@ -77,24 +77,48 @@ interface Post {
 /**
  * Base select fields for posts query.
  */
-const POST_SELECT_FIELDS = `
-  id,
-  post_number,
-  slug,
-  text_hi,
-  text_en,
-  interpretation_hi,
-  interpretation_en,
-  category:categories (name, slug),
-  tags:post_tags!inner(
-    tag:tags(
-      name,
-      slug
-    )
-  ),
-  created_at,
-  updated_at
+const POST_SELECT = `
+  id, post_number, slug, text_hi, text_en,
+  interpretation_hi, interpretation_en,
+  category:categories(name, slug),
+  post_tags!inner(tag_id),
+  created_at, updated_at
 `;
+
+/**
+ * Parses a string value to boolean for query parameters.
+ *
+ * @param {string | null | undefined} value - The value to parse
+ * @returns {boolean} Parsed boolean value
+ */
+function parseBoolean(value: string | null | undefined): boolean {
+  return value === 'true' || value === '1' || value === 'yes';
+}
+
+/**
+ * Parses a string value to number for query parameters.
+ *
+ * @param {string | null | undefined} value - The value to parse
+ * @returns {number | undefined} Parsed number value or undefined if invalid
+ */
+function parseNumber(value: string | null | undefined): number | undefined {
+  const num = Number(value);
+  return isNaN(num) ? undefined : num;
+}
+
+/**
+ * Parses the tags query parameter into an array of tag names.
+ *
+ * @param {string} tagsParam - Comma-separated tags string
+ * @returns {string[]} Array of tag names
+ */
+function parseTagList(tagsParam: string): string[] {
+  if (!tagsParam) return [];
+  return tagsParam
+    .split(',')
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
+}
 
 /**
  * Get search fields based on search_content parameter.
@@ -114,18 +138,64 @@ function getSearchFields(search_content: boolean): string[] {
 }
 
 /**
+ * Look up tag IDs from tag names/slugs.
+ *
+ * @param {Awaited<ReturnType<typeof createClient>>} supabase - Supabase client
+ * @param {string[]} tagNames - List of tag names to search for
+ * @returns {Promise<string[]>} Array of tag IDs
+ */
+async function getTagIdsByNames(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  tagNames: string[]
+): Promise<string[]> {
+  if (tagNames.length === 0) return [];
+
+  const conditions = tagNames.map((tag) => `name.ilike.*${tag}*,slug.ilike.*${tag}*`).join(',');
+  const { data } = await supabase.from('tags').select('id').or(conditions);
+
+  return data?.map((t) => t.id) ?? [];
+}
+
+/**
+ * Get all tags for a list of posts.
+ *
+ * @param {Awaited<ReturnType<typeof createClient>>} supabase - Supabase client
+ * @param {string[]} postIds - List of post IDs
+ * @returns {Promise<Map<string, Array<{ id: string; name: string; slug: string }>>>} Map of post IDs to their tags
+ */
+async function getTagsForPosts(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  postIds: string[]
+): Promise<Map<string, Array<{ id: string; name: string; slug: string }>>> {
+  const tagMap = new Map<string, Array<{ id: string; name: string; slug: string }>>();
+
+  if (postIds.length === 0) return tagMap;
+
+  const { data } = await supabase.from('post_tags').select('post_id, tags(id, name, slug)').in('post_id', postIds);
+
+  if (!data) return tagMap;
+
+  for (const row of data) {
+    const postId = row.post_id;
+    const tag = (row.tags ?? {}) as unknown as Record<string, unknown>;
+
+    if (!tagMap.has(postId)) {
+      tagMap.set(postId, []);
+    }
+    tagMap.get(postId)!.push({ id: String(tag.id ?? ''), name: String(tag.name ?? ''), slug: String(tag.slug ?? '') });
+  }
+
+  return tagMap;
+}
+
+/**
  * Transform a database row to post format (simplified public API).
  *
  * @param {Record<string, unknown>} row - Database row
+ * @param {Array<{ id: string; name: string; slug: string }>} tags - Array of tags
  * @returns {Post} Transformed post data
  */
-function transformPostData(row: Record<string, unknown>): Post {
-  const tagsArray =
-    (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
-      name: (t.tag as Record<string, unknown>)?.name as string,
-      slug: (t.tag as Record<string, unknown>)?.slug as string,
-    })) ?? [];
-
+function transformPost(row: Record<string, unknown>, tags: Array<{ id: string; name: string; slug: string }>): Post {
   return {
     number: row.post_number as number,
     slug: row.slug as string,
@@ -134,7 +204,7 @@ function transformPostData(row: Record<string, unknown>): Post {
     interpretation_hi: row.interpretation_hi as string,
     interpretation_en: row.interpretation_en as string,
     category: (row.category as Record<string, unknown>) || null,
-    tags: tagsArray,
+    tags: tags.map((t) => ({ name: t.name, slug: t.slug })),
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };
@@ -145,41 +215,36 @@ function transformPostData(row: Record<string, unknown>): Post {
  * Includes both exact phrase and individual words for prioritization.
  *
  * @param {QueryBuilder} query - Supabase query builder
- * @param {string} searchQuery - The search query string
+ * @param {string} search - The search query string
  * @param {string[]} searchFields - Fields to search within
  * @returns {QueryBuilder} Query with search filter applied
  */
-function applySearchFilter(query: QueryBuilder, searchQuery: string, searchFields: string[]): QueryBuilder {
-  if (!searchQuery) return query;
+function applySearchFilter(query: QueryBuilder, search: string, searchFields: string[]): QueryBuilder {
+  if (!search) return query;
 
-  let searchTerms = searchQuery
+  const terms = search
     .trim()
     .split(/\s+/)
-    .filter(Boolean)
-    .filter((term) => term.length >= 3);
+    .filter((t) => t.length >= 3);
   // Include the full search string as an additional term for non-exact matching
-  searchTerms = [searchTerms.join(' '), ...new Set(searchTerms)];
+  const allTerms = [terms.join(' '), ...new Set(terms)];
 
-  const orConditions = searchTerms.flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`)).join(',');
+  const conditions = allTerms.flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`)).join(',');
 
-  return query.or(orConditions);
+  return query.or(conditions);
 }
 
 /**
  * Apply tag filter to a query.
  *
  * @param {QueryBuilder} query - Supabase query builder
- * @param {string[]} tagList - List of tags to filter by
+ * @param {string[]} tagIds - List of tag IDs to filter by
  * @returns {QueryBuilder} Query with tag filter applied
  */
-function applyTagFilter(query: QueryBuilder, tagList: string[]): QueryBuilder {
-  if (tagList.length === 0) return query;
+function applyTagFilter(query: QueryBuilder, tagIds: string[]): QueryBuilder {
+  if (tagIds.length === 0) return query;
 
-  const tagConditions = tagList
-    .flatMap((tag) => [`tags.tag.slug.ilike.%${tag}%`, `tags.tag.name.ilike.%${tag}%`])
-    .join(',');
-
-  return query.or(tagConditions);
+  return query.in('post_tags.tag_id', tagIds);
 }
 
 /**
@@ -235,111 +300,58 @@ function applyPagination(query: QueryBuilder, page: number, per_page: number): Q
 }
 
 /**
- * Build a count query with the same filters as the main query.
+ * Build a query with all filters applied.
+ *
+ * @param {QueryBuilder} query - Base query builder
+ * @param {QueryParams} params - Query parameters
+ * @param {string[]} searchFields - Fields to search within
+ * @param {string[]} tagIds - Tag IDs to filter by
+ * @param {boolean} forCount - Whether this is a count query
+ * @returns {QueryBuilder} Query with all filters applied
  */
-async function getFilteredCount(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+function buildQuery(
+  query: QueryBuilder,
+  params: QueryParams,
   searchFields: string[],
-  search: string,
-  tagList: string[],
-  is_popular: boolean
-): Promise<number> {
-  let query = supabase.from('posts').select('*', { count: 'exact', head: true });
+  tagIds: string[],
+  forCount: boolean
+): QueryBuilder {
+  const { search, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
+  const sortOrder = sort_order?.toLowerCase() || 'asc';
 
-  query = applySearchFilter(query, search, searchFields);
-  query = applyTagFilter(query, tagList);
+  // Apply search filter
+  query = applySearchFilter(query, search ?? '', searchFields);
+
+  // Apply tag filter
+  query = applyTagFilter(query, tagIds);
+
+  // Apply popular filter
   query = applyPopularFilter(query, is_popular);
 
-  const { count } = await query;
-  return count ?? 0;
+  // Apply sorting (skip for count queries)
+  if (!forCount) {
+    query = applySorting(query, sort_by ?? 'id', sortOrder);
+  }
+
+  // Apply pagination (skip for count queries)
+  if (!forCount && pagination) {
+    query = applyPagination(query, page ?? 1, per_page ?? 10);
+  }
+
+  return query;
 }
 
 /**
- * Fetches posts from Supabase with filtering, sorting, and pagination.
+ * Calculate search relevance score for a post.
  *
- * @param {QueryParams} params - The validated query parameters.
- * @returns {Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Paginated post results.
+ * @param {Record<string, unknown>} row - Database row
+ * @param {string} search - Search query
+ * @returns {number} Relevance score
  */
-async function fetchPostsFromSupabase(
-  params: QueryParams
-): Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }> {
-  const supabase = await createClient();
-
-  const { search, search_content, tags, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
-
-  const normalizedOrder = sort_order?.toLowerCase() || 'asc';
-
-  // Parse tags for filtering
-  const tagList = tags
-    ? tags
-        .split(',')
-        .map((t: string) => t.trim().toLowerCase())
-        .filter(Boolean)
-    : [];
-
-  const searchFields = getSearchFields(search_content ?? false);
-
-  // Build the base query with tags join
-  let query = supabase.from('posts').select(POST_SELECT_FIELDS);
-
-  // Apply filters using reusable functions
-  query = applySearchFilter(query, search ?? '', searchFields);
-  query = applyTagFilter(query, tagList);
-  query = applyPopularFilter(query, is_popular);
-
-  // Get total count with all filters applied
-  const total = pagination
-    ? await getFilteredCount(supabase, searchFields, search ?? '', tagList, is_popular ?? false)
-    : 0;
-
-  // Apply sorting using reusable function
-  query = applySorting(query, sort_by ?? 'id', normalizedOrder);
-
-  // Apply pagination using reusable function
-  query = applyPagination(query, page ?? 1, per_page ?? 10);
-
-  // Execute query
-  const { data, error } = await query;
-
-  if (error) {
-    throw new Error(`Failed to fetch posts: ${error.message}`);
-  }
-
-  // Transform data using reusable function
-  const posts = (data ?? [])
-    .sort((a, b) => {
-      const searchLower = search.toLowerCase().trim();
-
-      // Helper to get a "score" for an item
-      const getScore = (item: Record<string, unknown>) => {
-        // Combine fields to search across both
-        const content = `${item.text_hi} ${item.text_en}`.toLowerCase();
-
-        // Highest priority: Exact phrase match
-        if (content.includes(searchLower)) return 1;
-        return 0;
-      };
-
-      const scoreA = getScore(a);
-      const scoreB = getScore(b);
-
-      // Sort by score descending (highest score first)
-      return scoreB - scoreA;
-    })
-    .map(transformPostData);
-
-  const pageNumber = page ?? 1;
-  const perPageNumber = per_page ?? 10;
-  const totalPages = perPageNumber > 0 ? Math.ceil(total / perPageNumber) : 1;
-
-  return {
-    posts,
-    total: pagination ? total : posts.length,
-    totalPages: pagination ? totalPages : 1,
-    page: pageNumber,
-    per_page: perPageNumber,
-    pagination,
-  };
+function scoreBySearch(row: Record<string, unknown>, search: string): number {
+  if (!search) return 0;
+  const content = `${row.text_hi} ${row.text_en}`.toLowerCase();
+  return content.includes(search.toLowerCase()) ? 1 : 0;
 }
 
 /**
@@ -353,10 +365,9 @@ function parseQueryParams(searchParams: URLSearchParams): QueryParams {
 
   for (const [key, value] of searchParams.entries()) {
     if (key === 'is_popular' || key === 'pagination' || key === 'search_content') {
-      params[key] = value === 'true' || value === '1' || value === 'yes';
+      params[key] = parseBoolean(value);
     } else if (key === 'page' || key === 'per_page') {
-      const num = Number(value);
-      params[key] = isNaN(num) ? undefined : num;
+      params[key] = parseNumber(value);
     } else {
       params[key] = value;
     }
@@ -366,22 +377,105 @@ function parseQueryParams(searchParams: URLSearchParams): QueryParams {
 }
 
 /**
- * Handles errors in API route handlers, including Zod validation errors.
+ * Fetches posts from Supabase with filtering, sorting, and pagination.
  *
- * @param {unknown} error - Error thrown from route handlers.
- * @param {string} [fallbackMessage='An error occurred'] - Fallback message for unknown errors.
- * @returns {NextResponse} Structured error response with safe message and HTTP status.
- * @example
- * return handleRouteError(error);
- * // Returns validation error for ZodError, or generic error response.
+ * @param {Awaited<ReturnType<typeof createClient>>} supabase - Supabase client
+ * @param {QueryParams} params - Query parameters
+ * @returns {Promise<Post[]>} Array of posts
  */
-export function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
-  if (error instanceof z.ZodError) {
-    const message = error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ');
-    return handleError(new Error(`Validation error: ${message}`));
+async function fetchPosts(supabase: Awaited<ReturnType<typeof createClient>>, params: QueryParams): Promise<Post[]> {
+  const { tags, search_content } = params;
+
+  // Parse tags for filtering
+  const tagNames = parseTagList(tags);
+  const tagIds = await getTagIdsByNames(supabase, tagNames);
+  const searchFields = getSearchFields(search_content);
+
+  // Build the base query
+  let query = supabase.from('posts').select(POST_SELECT);
+
+  // Apply all filters
+  query = buildQuery(query, params, searchFields, tagIds, false);
+
+  // Execute query
+  const { data: postsData, error } = await query;
+
+  if (error) {
+    throw new Error(`Failed to fetch posts: ${error.message}`);
   }
 
-  return handleError(error instanceof Error ? error : new Error(fallbackMessage));
+  if (!postsData || postsData.length === 0) {
+    return [];
+  }
+
+  // Get all tags for the filtered posts
+  const postIds = postsData.map((p) => p.id as string);
+  const tagsMap = await getTagsForPosts(supabase, postIds);
+
+  // Transform and sort by search relevance
+  const posts = postsData.map((row) => {
+    const postId = row.id as string;
+    const postTags = tagsMap.get(postId) ?? [];
+    return transformPost(row, postTags);
+  });
+
+  return posts.sort((a, b) => {
+    const scoreA = scoreBySearch(a as unknown as Record<string, unknown>, params.search ?? '');
+    const scoreB = scoreBySearch(b as unknown as Record<string, unknown>, params.search ?? '');
+    return scoreB - scoreA;
+  });
+}
+
+/**
+ * Get total count of posts matching the filters.
+ *
+ * @param {Awaited<ReturnType<typeof createClient>>} supabase - Supabase client
+ * @param {QueryParams} params - Query parameters
+ * @returns {Promise<number>} Total count of matching posts
+ */
+async function getTotalCount(supabase: Awaited<ReturnType<typeof createClient>>, params: QueryParams): Promise<number> {
+  const { tags, search_content } = params;
+
+  const tagNames = parseTagList(tags);
+  const tagIds = await getTagIdsByNames(supabase, tagNames);
+  const searchFields = getSearchFields(search_content);
+
+  // Use inner join in select for count queries with tags
+  const selectFields = tagIds.length > 0 ? '*, post_tags!inner(tag_id)' : '*';
+  let query = supabase.from('posts').select(selectFields, { count: 'exact', head: true });
+
+  // Apply all filters (forCount = true)
+  query = buildQuery(query, params, searchFields, tagIds, true);
+
+  const { count, error } = await query;
+
+  if (error) {
+    throw new Error(`Failed to count posts: ${error.message}`);
+  }
+
+  return count ?? 0;
+}
+
+/**
+ * Handle API request and return formatted response.
+ *
+ * @param {QueryParams} params - Query parameters
+ * @returns {Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Formatted response
+ */
+async function handleRequest(params: QueryParams) {
+  const supabase = await createClient();
+
+  const posts = await fetchPosts(supabase, params);
+  const total = params.pagination ? await getTotalCount(supabase, params) : posts.length;
+
+  return {
+    posts,
+    total,
+    totalPages: params.pagination ? Math.ceil(total / params.per_page) : 1,
+    page: params.page,
+    per_page: params.per_page,
+    pagination: params.pagination,
+  };
 }
 
 /**
@@ -399,7 +493,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const params = parseQueryParams(searchParams);
 
     // Fetch posts from Supabase
-    const result = await fetchPostsFromSupabase(params);
+    const result = await handleRequest(params);
 
     return success(result);
   } catch (error) {
@@ -422,10 +516,29 @@ export async function POST(request: Request): Promise<NextResponse> {
     const params = QuerySchema.parse({ ...DEFAULT_PARAMS, ...body });
 
     // Fetch posts from Supabase
-    const result = await fetchPostsFromSupabase(params);
+    const result = await handleRequest(params);
 
     return success(result);
   } catch (error) {
     return handleRouteError(error, 'Failed to fetch posts');
   }
+}
+
+/**
+ * Handles errors in API route handlers, including Zod validation errors.
+ *
+ * @param {unknown} error - Error thrown from route handlers.
+ * @param {string} [fallbackMessage='An error occurred'] - Fallback message for unknown errors.
+ * @returns {NextResponse} Structured error response with safe message and HTTP status.
+ * @example
+ * return handleRouteError(error);
+ * // Returns validation error for ZodError, or generic error response.
+ */
+function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
+  if (error instanceof z.ZodError) {
+    const message = error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ');
+    return handleError(new Error(`Validation error: ${message}`));
+  }
+
+  return handleError(error instanceof Error ? error : new Error(fallbackMessage));
 }
