@@ -338,7 +338,7 @@ function parseQueryParams(searchParams: URLSearchParams): QueryParams {
 
   for (const [key, value] of searchParams.entries()) {
     if (key === 'is_popular' || key === 'pagination') {
-      params[key] = value === 'true';
+      params[key] = value === 'true' || value === '1' || value === 'yes';
     } else if (key === 'page' || key === 'per_page') {
       const num = Number(value);
       params[key] = isNaN(num) ? undefined : num;
