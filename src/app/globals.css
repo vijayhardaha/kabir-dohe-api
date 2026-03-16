@@ -75,7 +75,7 @@
   }
 
   section {
-    @apply rounded-lg bg-white p-4 shadow-sm not-last:mb-12 md:p-8;
+    @apply rounded-lg bg-white p-6 shadow-sm not-last:mb-12 md:p-8;
 
     h2 {
       @apply text-primary-500;
