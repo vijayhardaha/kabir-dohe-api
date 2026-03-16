@@ -10,7 +10,7 @@ import { success } from '@/server/lib/response/response';
  */
 const DEFAULT_PARAMS = {
   search: '',
-  search_fields: 'all',
+  search_content: false,
   tags: '',
   is_popular: false,
   sort_by: 'id',
@@ -25,15 +25,7 @@ const DEFAULT_PARAMS = {
  */
 const QuerySchema = z.object({
   search: z.string().optional().default(DEFAULT_PARAMS.search),
-  search_fields: z
-    .string()
-    .optional()
-    .default(DEFAULT_PARAMS.search_fields)
-    .refine(
-      (val) =>
-        val === 'all' || val.split(',').every((v) => ['text', 'interpretation'].includes(v.trim().toLowerCase())),
-      { message: "Invalid search_fields value. Allowed values: 'all', 'text', 'interpretation'" }
-    ),
+  search_content: z.boolean().optional().default(DEFAULT_PARAMS.search_content),
   tags: z.string().optional().default(DEFAULT_PARAMS.tags),
   is_popular: z.boolean().optional().default(DEFAULT_PARAMS.is_popular),
   sort_by: z
@@ -101,26 +93,20 @@ const POST_SELECT_FIELDS = `
 `;
 
 /**
- * Get search fields based on search_fields parameter.
+ * Get search fields based on search_content parameter.
+ * When true, searches in search_content_hi/search_content_en (full text search).
+ * When false, searches in text_hi/text_en (main content only).
  *
- * @param {string} search_fields - The search_fields parameter value
+ * @param {boolean} search_content - Whether to search in full content
  * @returns {string[]} Array of field names to search within
  */
-function getSearchFields(search_fields: string): string[] {
-  // Define field groups
-  const textFields = ['text_hi', 'text_en'];
-  const interpretationFields = ['interpretation_hi', 'interpretation_en'];
-
-  if (search_fields === 'all') {
-    return [...textFields, ...interpretationFields];
+function getSearchFields(search_content: boolean): string[] {
+  if (search_content) {
+    // Search in full content including all interpretations and analysis
+    return ['search_content_hi', 'search_content_en'];
   }
-
-  return search_fields.split(',').flatMap((field) => {
-    const trimmed = field.trim().toLowerCase();
-    if (trimmed === 'text') return textFields;
-    if (trimmed === 'interpretation') return interpretationFields;
-    return [];
-  });
+  // Search only in main text fields
+  return ['text_hi', 'text_en'];
 }
 
 /**
@@ -160,7 +146,11 @@ function transformPostData(row: Record<string, unknown>): Post {
 function applySearchFilter(query: QueryBuilder, searchQuery: string, searchFields: string[]): QueryBuilder {
   if (!searchQuery) return query;
 
-  let searchTerms = searchQuery.trim().split(/\s+/).filter(Boolean);
+  let searchTerms = searchQuery
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((term) => term.length >= 3);
   // Include the full search string as an additional term for non-exact matching
   searchTerms = [searchTerms.join(' '), ...new Set(searchTerms)];
 
@@ -269,7 +259,7 @@ async function fetchPostsFromSupabase(
 ): Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }> {
   const supabase = await createClient();
 
-  const { search, search_fields, tags, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
+  const { search, search_content, tags, is_popular, sort_by, sort_order, page, per_page, pagination } = params;
 
   const normalizedOrder = sort_order?.toLowerCase() || 'asc';
 
@@ -281,7 +271,7 @@ async function fetchPostsFromSupabase(
         .filter(Boolean)
     : [];
 
-  const searchFields = getSearchFields(search_fields);
+  const searchFields = getSearchFields(search_content ?? false);
 
   // Build the base query with tags join
   let query = supabase.from('posts').select(POST_SELECT_FIELDS);
@@ -336,7 +326,7 @@ function parseQueryParams(searchParams: URLSearchParams): QueryParams {
   const params: Record<string, unknown> = {};
 
   for (const [key, value] of searchParams.entries()) {
-    if (key === 'is_popular' || key === 'pagination') {
+    if (key === 'is_popular' || key === 'pagination' || key === 'search_content') {
       params[key] = value === 'true' || value === '1' || value === 'yes';
     } else if (key === 'page' || key === 'per_page') {
       const num = Number(value);
