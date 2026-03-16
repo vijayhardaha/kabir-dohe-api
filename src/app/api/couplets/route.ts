@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/server/db/supabase';
 import { handleError } from '@/lib/server/utils/errors/error-handler';
 import { success } from '@/lib/server/utils/response/response';
+import { sanitizeTitle } from '@/lib/server/utils/string';
 
 /**
  * Default parameter values for the API.
@@ -150,8 +151,10 @@ async function getTagIdsByNames(
 ): Promise<string[]> {
   if (tagNames.length === 0) return [];
 
-  const conditions = tagNames.map((tag) => `name.ilike.*${tag}*,slug.ilike.*${tag}*`).join(',');
-  const { data } = await supabase.from('tags').select('id').or(conditions);
+  // Slugify the tag names before searching
+  const slugifiedTags = tagNames.map((name) => sanitizeTitle(name));
+
+  const { data } = await supabase.from('tags').select('id').in('slug', slugifiedTags);
 
   return data?.map((t) => t.id) ?? [];
 }
@@ -389,6 +392,12 @@ async function fetchPosts(supabase: Awaited<ReturnType<typeof createClient>>, pa
   // Parse tags for filtering
   const tagNames = parseTagList(tags);
   const tagIds = await getTagIdsByNames(supabase, tagNames);
+
+  // If tags were requested but none found, return empty array
+  if (tagNames.length > 0 && tagIds.length === 0) {
+    return [];
+  }
+
   const searchFields = getSearchFields(search_content);
 
   // Build the base query
@@ -438,6 +447,12 @@ async function getTotalCount(supabase: Awaited<ReturnType<typeof createClient>>,
 
   const tagNames = parseTagList(tags);
   const tagIds = await getTagIdsByNames(supabase, tagNames);
+
+  // If tags were requested but none found, return 0
+  if (tagNames.length > 0 && tagIds.length === 0) {
+    return 0;
+  }
+
   const searchFields = getSearchFields(search_content);
 
   // Use inner join in select for count queries with tags
@@ -462,7 +477,9 @@ async function getTotalCount(supabase: Awaited<ReturnType<typeof createClient>>,
  * @param {QueryParams} params - Query parameters
  * @returns {Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }>} Formatted response
  */
-async function handleRequest(params: QueryParams) {
+async function handleRequest(
+  params: QueryParams
+): Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }> {
   const supabase = await createClient();
 
   const posts = await fetchPosts(supabase, params);
@@ -532,7 +549,6 @@ export async function POST(request: Request): Promise<NextResponse> {
  * @returns {NextResponse} Structured error response with safe message and HTTP status.
  * @example
  * return handleRouteError(error);
- * // Returns validation error for ZodError, or generic error response.
  */
 function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
   if (error instanceof z.ZodError) {
