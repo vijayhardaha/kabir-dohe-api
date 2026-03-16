@@ -63,7 +63,6 @@ export default defineConfig([
     '**/Thumbs.db',
 
     // Temporary/Backup Files
-    'codebackup.ts',
     '**/*.tmp',
   ]),
 
