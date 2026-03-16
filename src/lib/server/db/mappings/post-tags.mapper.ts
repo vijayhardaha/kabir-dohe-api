@@ -1,4 +1,4 @@
-import { sanitizeTitle } from '@/server/lib/string';
+import { sanitizeTitle } from '@/lib/server/utils/string';
 
 /**
  * Represents a normalized relationship row between a post record and tag record.

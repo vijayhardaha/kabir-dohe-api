@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
-import { env } from '@/server/env/server';
+import { env } from '@/lib/server/env/server';
 
 const supabaseUrl = env.SUPABASE_URL;
 const supabaseKey = env.SUPABASE_PUBLISHABLE_DEFAULT_KEY;

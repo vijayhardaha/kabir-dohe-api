@@ -1,4 +1,4 @@
-import type { SheetRow } from '@/server/integrations/gsheet';
+import type { SheetRow } from '@/lib/server/integrations/gsheet';
 
 /**
  * Defines the post payload stored in the database without spreadsheet tag arrays.

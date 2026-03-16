@@ -1,7 +1,7 @@
 import { JWT } from 'google-auth-library';
 
-import { env } from '@/server/env/server';
-import { ApiError } from '@/server/lib';
+import { env } from '@/lib/server/env/server';
+import { ApiError } from '@/lib/server/utils';
 
 /**
  * Creates a Google service-account JWT client for secure server-side Sheets API authentication.

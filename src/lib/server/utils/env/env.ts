@@ -1,4 +1,4 @@
-import { env } from '@/server/env/server';
+import { env } from '@/lib/server/env/server';
 
 /**
  * Determines whether the current runtime environment is configured for production deployments.

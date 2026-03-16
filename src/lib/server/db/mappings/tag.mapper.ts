@@ -1,7 +1,7 @@
-import { SheetData } from '@/server/integrations/gsheet';
-import { ApiError } from '@/server/lib';
-import { findDuplicates } from '@/server/lib/array/duplicates';
-import { sanitizeTitle } from '@/server/lib/string';
+import { SheetData } from '@/lib/server/integrations/gsheet';
+import { ApiError } from '@/lib/server/utils';
+import { findDuplicates } from '@/lib/server/utils/array/duplicates';
+import { sanitizeTitle } from '@/lib/server/utils/string';
 
 /**
  * Represents a normalized tag row with a canonical slug and display name.

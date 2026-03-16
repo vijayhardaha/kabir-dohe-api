@@ -1,4 +1,4 @@
-import { getBaseUrl } from '@/server/lib/utils/base-url';
+import { getBaseUrl } from '@/lib/utils/base-url';
 
 /**
  * Interface for site configuration variables.

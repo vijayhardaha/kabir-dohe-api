@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/server/db/supabase';
-import { handleError } from '@/server/lib/errors/error-handler';
-import { success } from '@/server/lib/response/response';
+import { createClient } from '@/lib/server/db/supabase';
+import { handleError } from '@/lib/server/utils/errors/error-handler';
+import { success } from '@/lib/server/utils/response/response';
 
 /**
  * Default parameter values for the API.

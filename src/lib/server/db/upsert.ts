@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { ApiError } from '@/server/lib';
+import { ApiError } from '@/lib/server/utils';
 
 import { DbPostTags } from './mappings/post-tags.mapper';
 import { DbPost } from './mappings/post.mapper';
