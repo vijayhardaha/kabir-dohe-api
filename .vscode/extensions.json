@@ -19,6 +19,6 @@
     "bradlc.vscode-tailwindcss",
 
     // 🛠️ EditorConfig: Overrides editor settings for consistency
-    "editorconfig.editorconfig",
+    "editorconfig.editorconfig"
   ]
 }
