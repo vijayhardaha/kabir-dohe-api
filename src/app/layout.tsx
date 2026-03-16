@@ -4,7 +4,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import { Kumbh_Sans, Fira_Code } from 'next/font/google';
 
 import Footer from '@/components/Footer';
-import { IBaseMetadata, baseMetadata } from '@/constants/seo';
+import { BaseMetadata, baseMetadata } from '@/constants/seo';
 
 const sansFont = Kumbh_Sans({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-sans' });
 const monoFont = Fira_Code({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-mono' });
@@ -14,7 +14,7 @@ import './globals.css';
 /**
  * Metadata for the application.
  */
-export const metadata: IBaseMetadata = baseMetadata;
+export const metadata: BaseMetadata = baseMetadata;
 
 /**
  * Root layout component for the application.
