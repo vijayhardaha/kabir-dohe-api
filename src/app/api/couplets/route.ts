@@ -76,7 +76,6 @@ interface Post {
   text_en: string;
   interpretation_hi: string;
   interpretation_en: string;
-  is_popular: boolean;
   category: string | null;
   tags: Array<{ slug: string; name: string }>;
 }
@@ -92,7 +91,6 @@ const POST_SELECT_FIELDS = `
   text_en,
   interpretation_hi,
   interpretation_en,
-  is_popular,
   category_id,
   tags:post_tags!inner(
     tag:tags(
@@ -146,7 +144,6 @@ function transformPostData(row: Record<string, unknown>): Post {
     text_en: row.text_en as string,
     interpretation_hi: row.interpretation_hi as string,
     interpretation_en: row.interpretation_en as string,
-    is_popular: row.is_popular as boolean,
     category: row.category_id as string | null,
     tags: tagsArray,
   };
