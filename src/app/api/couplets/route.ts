@@ -306,7 +306,27 @@ async function fetchPostsFromSupabase(
   }
 
   // Transform data using reusable function
-  const posts = (data ?? []).map(transformPostData);
+  const posts = (data ?? [])
+    .sort((a, b) => {
+      const searchLower = search.toLowerCase().trim();
+
+      // Helper to get a "score" for an item
+      const getScore = (item: Record<string, unknown>) => {
+        // Combine fields to search across both
+        const content = `${item.text_hi} ${item.text_en}`.toLowerCase();
+
+        // Highest priority: Exact phrase match
+        if (content.includes(searchLower)) return 1;
+        return 0;
+      };
+
+      const scoreA = getScore(a);
+      const scoreB = getScore(b);
+
+      // Sort by score descending (highest score first)
+      return scoreB - scoreA;
+    })
+    .map(transformPostData);
 
   const pageNumber = page ?? 1;
   const perPageNumber = per_page ?? 10;
