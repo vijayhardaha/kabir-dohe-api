@@ -28,21 +28,48 @@ export default defineConfig([
   // ---- Global ignores ----
   // Files and folders that should never be linted
   globalIgnores([
-    '**/.next/',
+    // Version Control & IDEs
+    '**/.git/',
+    '**/.idea/',
+    '**/.vscode/',
+    '**/.husky/',
+
+    // Dependencies
     '**/node_modules/',
-    '**/build/',
+
+    // Build Outputs & Cache
+    '**/.next/',
     '**/dist/',
-    '**/.env*',
-    '**/*.log',
+    '**/build/',
+    '**/out/',
+    '**/.vercel/',
+    '**/.cache/',
+    '**/.turbo/',
     '**/*.tsbuildinfo',
+
+    // Testing & Coverage
+    '**/coverage/',
+    '**/test-results/',
+    '**/.playwright-report/',
+
+    // Static Assets & Configs
     '**/public/',
+    '**/.env*',
+    '**/next-env.d.ts',
+
+    // Logs & System Files
+    '**/*.log',
+    '**/.DS_Store',
+    '**/Thumbs.db',
+
+    // Temporary/Backup Files
     'codebackup.ts',
+    '**/*.tmp',
   ]),
 
   // ---- Base extends & plugins ----
   // Extend Next.js, React, TypeScript, a11y and Prettier recommended configs.
   ...compat.extends(
-    'next',
     'next/core-web-vitals',
     'next/typescript',
     'plugin:react/recommended',
