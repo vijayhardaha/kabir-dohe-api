@@ -222,7 +222,7 @@ export function SEOContent(): React.JSX.Element {
             or{' '}
             <a href="https://developers.google.com/assistant" target="_blank" rel="noopener noreferrer">
               Google Assistant
-            </a>
+            </a>{' '}
             for voice-activated inspiration.
           </li>
         </ul>
