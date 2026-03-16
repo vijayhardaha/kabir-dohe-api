@@ -15,11 +15,12 @@ export interface ApiQueryParam {
 export const API_QUERY_PARAMS: ApiQueryParam[] = [
   { name: 'search', type: 'string', description: 'Search term', defaultValue: '', possibleValues: 'Any text' },
   {
-    name: 'search_fields',
-    type: 'string',
-    description: 'Fields to search within (comma-separated list)',
-    defaultValue: 'all',
-    possibleValues: 'all, text, interpretation',
+    name: 'search_content',
+    type: 'boolean',
+    description:
+      'When true, searches in full content (search_content_hi/en). When false, searches in main text (text_hi/en)',
+    defaultValue: 'false',
+    possibleValues: 'true, false',
   },
   {
     name: 'tags',
