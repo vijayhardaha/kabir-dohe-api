@@ -70,6 +70,8 @@ interface Post {
   interpretation_en: string;
   category: Record<string, unknown> | null;
   tags: Array<{ slug: string; name: string }>;
+  created_at: string;
+  updated_at: string;
 }
 
 /**
@@ -89,7 +91,9 @@ const POST_SELECT_FIELDS = `
       name,
       slug
     )
-  )
+  ),
+  created_at,
+  updated_at
 `;
 
 /**
@@ -131,6 +135,8 @@ function transformPostData(row: Record<string, unknown>): Post {
     interpretation_en: row.interpretation_en as string,
     category: (row.category as Record<string, unknown>) || null,
     tags: tagsArray,
+    created_at: row.created_at as string,
+    updated_at: row.updated_at as string,
   };
 }
 
