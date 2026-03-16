@@ -76,7 +76,7 @@ interface Post {
   text_en: string;
   interpretation_hi: string;
   interpretation_en: string;
-  category: string | null;
+  category: Record<string, unknown> | null;
   tags: Array<{ slug: string; name: string }>;
 }
 
@@ -91,12 +91,11 @@ const POST_SELECT_FIELDS = `
   text_en,
   interpretation_hi,
   interpretation_en,
-  category_id,
+  category:categories (name, slug),
   tags:post_tags!inner(
     tag:tags(
-      id,
-      slug,
-      name
+      name,
+      slug
     )
   )
 `;
@@ -133,8 +132,8 @@ function getSearchFields(search_fields: string): string[] {
 function transformPostData(row: Record<string, unknown>): Post {
   const tagsArray =
     (row.tags as Array<Record<string, unknown>>)?.map((t: Record<string, unknown>) => ({
-      slug: (t.tag as Record<string, unknown>)?.slug as string,
       name: (t.tag as Record<string, unknown>)?.name as string,
+      slug: (t.tag as Record<string, unknown>)?.slug as string,
     })) ?? [];
 
   return {
@@ -144,7 +143,7 @@ function transformPostData(row: Record<string, unknown>): Post {
     text_en: row.text_en as string,
     interpretation_hi: row.interpretation_hi as string,
     interpretation_en: row.interpretation_en as string,
-    category: row.category_id as string | null,
+    category: (row.category as Record<string, unknown>) || null,
     tags: tagsArray,
   };
 }
