@@ -1,15 +1,16 @@
 /**
  * ======================================================================
- * NEXT.SITEMAP CONFIGURATION
+ * Next Sitemap Configuration
  * ======================================================================
- * Purpose: Generate sitemaps and robots.txt to help search engines discover
- * and index site content. Use `npx next-sitemap` for local testing.
+ * Purpose: Generate sitemaps and robots.txt to help search engines
+ *          discover and index site content.
+ *          Use `npx next-sitemap` for local testing.
  * Docs: https://github.com/iamvishnusankar/next-sitemap
  * ======================================================================
  */
 
 // ----------------------------------------------------------------------
-// 🌐 GLOBAL SETTINGS
+// Global Settings
 // ----------------------------------------------------------------------
 const siteDomain = 'https://kabir-ke-dohe-api.vercel.app';
 
@@ -21,17 +22,12 @@ const config = {
   sitemapBaseFileName: 'sitemap',
   trailingSlash: false,
 
-  // ----------------------------------------------------------------------
-  // 🔍 CRAWLING STRATEGY
-  // ----------------------------------------------------------------------
+  // ---- Crawling Strategy ----
   changefreq: 'weekly',
   priority: 0.7,
   exclude: ['/404', '/500'],
 
-  // ----------------------------------------------------------------------
-  // 🛠️ ENTRY TRANSFORMATION
-  // ----------------------------------------------------------------------
-  //
+  // ---- Entry Transformation ----
   // Customizes each sitemap entry.
   // Here we clean up the 'lastmod' format for cleaner XML.
   transform: async (config, path) => {
@@ -44,9 +40,7 @@ const config = {
     };
   },
 
-  // ----------------------------------------------------------------------
-  // ROBOTS.TXT CONFIGURATION
-  // ----------------------------------------------------------------------
+  // ---- Robots.txt Configuration ----
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [{ userAgent: '*', allow: '/' }],
