@@ -38,29 +38,35 @@ src/
 │
 ├── lib/
 │   ├── server/           # Server-side code (never expose to client)
-│   │   ├── db/           # Database clients & mappers
-│   │   │   ├── mappings/ # Data mappers (post, tag, post-tags)
-│   │   │   ├── supabase.ts
-│   │   │   └── upsert.ts
-│   │   ├── integrations/ # Third-party integrations
-│   │   │   ├── gsheet.ts
-│   │   │   └── jwt.client.ts
+│   │   ├── db/           # Database clients
+│   │   │   └── supabase.ts
 │   │   ├── env/          # Environment variables
 │   │   │   └── server.ts
 │   │   └── utils/        # Server utilities
-│   │       ├── array/    # Array utilities (duplicates)
-│   │       ├── debug/    # Debug utilities (log)
 │   │       ├── errors/   # Error handling (api-error, error-handler)
-│   │       ├── response/# Response helpers (success, failure)
-│   │       └── string/   # String utilities (hash, sanitize, formatting)
+│   │       ├── response/ # Response helpers (success, failure)
+│   │       └── string/  # String utilities (sanitize, formatting)
 │   │
 │   └── utils/            # Shared utilities (client-safe)
-│       ├── boolean.ts
-│       ├── base-url.ts
-│       └── index.ts
+│       └── base-url.ts
 │
 └── types/                 # Global TypeScript definitions
     └── api/              # API-related types
+```
+
+---
+
+## Scripts
+
+```
+scripts/
+├── sync.ts               # Database sync script (Google Sheets → Supabase)
+├── indexnow.ts          # IndexNow API submission script
+└── lib/
+    ├── db.ts            # Database operations (upsert posts, tags, mappings)
+    ├── env.ts           # Environment loader for scripts
+    ├── gsheet.ts        # Google Sheets integration
+    └── supabase.ts      # Supabase client for scripts
 ```
 
 ---
@@ -74,15 +80,22 @@ pnpm run build            # Build for production
 pnpm run start            # Start production server
 
 # Linting & Formatting
-npx eslint .              # Lint all files
-npx eslint --fix .        # Fix auto-fixable issues
-npx prettier --write .   # Format files
+pnpm run lint             # Lint all files
+pnpm run lint:fix         # Fix auto-fixable issues
+pnpm run format           # Format files
+pnpm run format:check     # Check formatting
 
 # TypeScript
-npx tsc --noEmit          # Type check only
+pnpm run typecheck       # Type check only
+
+# Scripts
+pnpm sync                # Sync database (uses default .env)
+pnpm sync:local          # Sync in development mode
+pnpm sync:prod           # Sync in production mode
+pnpm indexnow            # Submit sitemap URLs to IndexNow
 
 # Testing
-pnpm test                 # Run Jest tests
+pnpm test                # Run Jest tests
 ```
 
 ---
@@ -133,6 +146,7 @@ pnpm test                 # Run Jest tests
 - Always select specific columns (avoid `SELECT *`)
 - Use RLS policies for security
 - Never expose Service Role key on client
+- For scripts, use service role key from environment variables
 
 ---
 
@@ -153,6 +167,7 @@ Add JSDoc to:
 - Exported functions and hooks
 - Complex utility functions
 - Types and interfaces
+- Scripts (sync.ts, indexnow.ts, etc.)
 
 Skip for:
 

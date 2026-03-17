@@ -39,26 +39,17 @@ src/
 │
 ├── lib/
 │   ├── server/           # Server-side code (never expose to client)
-│   │   ├── db/           # Database clients & mappers
-│   │   │   ├── mappings/ # Data mappers (post, tag, post-tags)
-│   │   │   ├── supabase.ts
-│   │   │   └── upsert.ts
-│   │   ├── integrations/ # Third-party integrations
-│   │   │   ├── gsheet.ts
-│   │   │   └── jwt.client.ts
-│   │   ├── env/          # Environment variables
+│   │   ├── db/          # Database clients
+│   │   │   └── supabase.ts
+│   │   ├── env/         # Environment variables
 │   │   │   └── server.ts
-│   │   └── utils/        # Server utilities
-│   │       ├── array/    # Array utilities (duplicates)
-│   │       ├── debug/    # Debug utilities (log)
-│   │       ├── errors/   # Error handling (api-error, error-handler)
-│   │       ├── response/# Response helpers (success, failure)
-│   │       └── string/   # String utilities (hash, sanitize, formatting)
+│   │   └── utils/       # Server utilities
+│   │       ├── errors/  # Error handling (api-error, error-handler)
+│   │       ├── response/ # Response helpers (success, failure)
+│   │       └── string/ # String utilities (sanitize, formatting)
 │   │
-│   └── utils/            # Shared utilities (client-safe)
-│       ├── boolean.ts
-│       ├── base-url.ts
-│       └── index.ts
+│   └── utils/           # Shared utilities (client-safe)
+│       └── base-url.ts
 │
 └── types/                 # Global TypeScript definitions
     └── api/              # API-related types
@@ -66,7 +57,22 @@ src/
 
 ---
 
-## 3. Server/Client Separation
+## 3. Scripts
+
+```
+scripts/
+├── sync.ts               # Database sync script (Google Sheets → Supabase)
+├── indexnow.ts          # IndexNow API submission script
+└── lib/
+    ├── db.ts            # Database operations (upsert posts, tags, mappings)
+    ├── env.ts           # Environment loader for scripts
+    ├── gsheet.ts        # Google Sheets integration
+    └── supabase.ts      # Supabase client for scripts
+```
+
+---
+
+## 4. Server/Client Separation
 
 **IMPORTANT**: Never import server-side code in client components.
 
@@ -83,7 +89,7 @@ import { cn } from "@/lib/utils";
 
 ---
 
-## 4. Coding Style
+## 5. Coding Style
 
 ### Naming Conventions
 
@@ -104,7 +110,7 @@ import { cn } from "@/lib/utils";
 
 ---
 
-## 5. Formatting (Prettier)
+## 6. Formatting (Prettier)
 
 Follow the project's Prettier configuration. Check `prettier.config.mjs` before generating code.
 
@@ -127,7 +133,7 @@ If unavailable, use these rules:
 
 ---
 
-## 6. TypeScript Standards
+## 7. TypeScript Standards
 
 ### Types vs Interfaces
 
@@ -150,7 +156,7 @@ type Status = "draft" | "published";
 
 ---
 
-## 7. Supabase & Database
+## 8. Supabase & Database
 
 ### Client Usage
 
@@ -167,7 +173,7 @@ import { createClient } from "@/lib/server/db/supabase";
 
 ---
 
-## 8. Validation (Zod)
+## 9. Validation (Zod)
 
 Validate all inputs from API requests, Server Actions, and Forms.
 
@@ -179,7 +185,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 9. API Routes
+## 10. API Routes
 
 - Handle errors with try/catch
 - Return standardized responses using `success` and `failure` helpers:
@@ -191,7 +197,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 10. React Best Practices
+## 11. React Best Practices
 
 - **Components**: Functional components only
 - **Hooks**: Extract logic to custom hooks (`useDebounce`, `useToggle`)
@@ -200,13 +206,14 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 11. JSDoc Documentation
+## 12. JSDoc Documentation
 
 Add JSDoc comments for:
 
 - Exported functions and hooks
 - Complex utility functions
 - Types and interfaces
+- Scripts (sync.ts, indexnow.ts, lib/\*.ts)
 
 Skip for:
 
@@ -228,7 +235,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
 
 ---
 
-## 12. Component Example
+## 13. Component Example
 
 ```tsx
 import { type ReactNode } from "react";
