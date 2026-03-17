@@ -2,30 +2,18 @@
 -- Replaces multiple SQL queries with a single function call for better performance.
 
 -- Drop existing function if exists
-DROP FUNCTION IF EXISTS public.get_couplets(jsonb);
+DROP FUNCTION IF EXISTS public.get_couplets_for_api(jsonb);
 
 -- Create the optimized function
-CREATE OR REPLACE FUNCTION public.get_couplets(filters jsonb)
+CREATE OR REPLACE FUNCTION public.get_couplets_for_api(filters jsonb)
 RETURNS TABLE (
   id uuid,
   post_number integer,
-  post_order integer,
   slug text,
   text_hi text,
   text_en text,
   interpretation_hi text,
   interpretation_en text,
-  philosophical_analysis_hi text,
-  philosophical_analysis_en text,
-  practical_example_hi text,
-  practical_example_en text,
-  practice_guidance_hi text,
-  practice_guidance_en text,
-  core_message_hi text,
-  core_message_en text,
-  reflection_questions_hi text,
-  reflection_questions_en text,
-  category_id uuid,
   category_name text,
   category_slug text,
   is_popular boolean,
@@ -51,7 +39,6 @@ DECLARE
   page_num int := COALESCE((filters->>'page')::int, 1);
   per_page_count int := COALESCE((filters->>'per_page')::int, 10);
   pagination_enabled boolean := COALESCE((filters->>'pagination')::boolean, true);
-
   offset_count int := (page_num - 1) * per_page_count;
   search_fields text[];
 BEGIN
@@ -74,23 +61,11 @@ BEGIN
     SELECT
       p.id,
       p.post_number,
-      p.post_order,
       p.slug,
       p.text_hi,
       p.text_en,
       p.interpretation_hi,
       p.interpretation_en,
-      p.philosophical_analysis_hi,
-      p.philosophical_analysis_en,
-      p.practical_example_hi,
-      p.practical_example_en,
-      p.practice_guidance_hi,
-      p.practice_guidance_en,
-      p.core_message_hi,
-      p.core_message_en,
-      p.reflection_questions_hi,
-      p.reflection_questions_en,
-      p.category_id,
       c.name AS category_name,
       c.slug AS category_slug,
       p.is_popular,
@@ -105,60 +80,36 @@ BEGIN
     WHERE
       -- Search filter
       (
-        search_text IS NULL
-        OR search_text = ''
-        OR (
-          SELECT COUNT(*) FROM unnest(search_fields) AS sf
-          WHERE sf = 'search_content_hi' AND p.search_content_hi ILIKE '%' || search_text || '%'
-        ) > 0
-        OR (
-          SELECT COUNT(*) FROM unnest(search_fields) AS sf
-          WHERE sf = 'search_content_en' AND p.search_content_en ILIKE '%' || search_text || '%'
-        ) > 0
-        OR (
-          SELECT COUNT(*) FROM unnest(search_fields) AS sf
-          WHERE sf = 'text_hi' AND p.text_hi ILIKE '%' || search_text || '%'
-        ) > 0
-        OR (
-          SELECT COUNT(*) FROM unnest(search_fields) AS sf
-          WHERE sf = 'text_en' AND p.text_en ILIKE '%' || search_text || '%'
-        ) > 0
+        NULLIF(search_text, '') IS NULL  -- Returns TRUE if text is NULL or ''
+        OR (search_fields @> ARRAY['search_content_hi'] AND p.search_content_hi ILIKE '%' || search_text || '%')
+        OR (search_fields @> ARRAY['search_content_en'] AND p.search_content_en ILIKE '%' || search_text || '%')
+        OR (search_fields @> ARRAY['text_hi']           AND p.text_hi           ILIKE '%' || search_text || '%')
+        OR (search_fields @> ARRAY['text_en']           AND p.text_en           ILIKE '%' || search_text || '%')
       )
 
       -- Tag filter
       AND (
-        tag_array IS NULL
-        OR array_length(tag_array, 1) IS NULL
-        OR array_length(tag_array, 1) = 0
+        COALESCE(cardinality(tag_array), 0) = 0 -- If null or empty, bypass filter
         OR EXISTS (
-          SELECT 1 FROM public.post_tags pt2
-          JOIN public.tags t2 ON t2.id = pt2.tag_id
+          SELECT 1
+          FROM public.post_tags pt2
+          INNER JOIN public.tags t2 ON t2.id = pt2.tag_id
           WHERE pt2.post_id = p.id
-          AND LOWER(t2.slug) = ANY(tag_array)
+          AND t2.slug = ANY(tag_array) -- Assuming tag_array and slug are already lowercase
         )
       )
 
       -- Popular filter
-      AND (
-        is_popular_filter IS NULL
-        OR is_popular_filter IS FALSE
-        OR p.is_popular = is_popular_filter
-      )
+      AND (is_popular_filter IS NOT TRUE OR p.is_popular)
 
       -- Featured filter
-      AND (
-        is_featured_filter IS NULL
-        OR is_featured_filter IS FALSE
-        OR p.is_featured = is_featured_filter
-      )
+      AND (is_featured_filter IS NOT TRUE OR p.is_featured)
 
       -- Category filter
-      AND (
-        category_slug_filter IS NULL
-        OR category_slug_filter = ''
-        OR c.slug = category_slug_filter
-      )
+      AND (NULLIF(category_slug_filter, '') IS NULL OR c.slug = category_slug_filter)
 
+      -- Post status
+      AND p.post_status = 'publish'
     GROUP BY
       p.id, c.name, c.slug
   ),
@@ -179,23 +130,11 @@ BEGIN
   SELECT
     fp.id,
     fp.post_number,
-    fp.post_order,
     fp.slug,
     fp.text_hi,
     fp.text_en,
     fp.interpretation_hi,
     fp.interpretation_en,
-    fp.philosophical_analysis_hi,
-    fp.philosophical_analysis_en,
-    fp.practical_example_hi,
-    fp.practical_example_en,
-    fp.practice_guidance_hi,
-    fp.practice_guidance_en,
-    fp.core_message_hi,
-    fp.core_message_en,
-    fp.reflection_questions_hi,
-    fp.reflection_questions_en,
-    fp.category_id,
     fp.category_name,
     fp.category_slug,
     fp.is_popular,
@@ -215,8 +154,7 @@ BEGIN
     CASE WHEN sort_by_field = 'text_en' AND sort_order_dir = 'desc' THEN fp.text_en END DESC,
     CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'asc' THEN fp.text_hi END ASC,
     CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'desc' THEN fp.text_hi END DESC,
-    CASE WHEN sort_by_field = 'id' OR sort_by_field = 'post_order' OR sort_by_field IS NULL THEN fp.post_order END ASC,
-    fp.post_order ASC
+    fp.post_number ASC
   LIMIT CASE WHEN pagination_enabled THEN per_page_count ELSE NULL END
   OFFSET CASE WHEN pagination_enabled THEN offset_count ELSE 0 END;
 END;
