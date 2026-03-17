@@ -1,22 +1,24 @@
 /**
- * Represents operational API failures with explicit status codes and safe client-facing messages.
+ * Custom error class for operational errors that should be communicated to the client.
+ * These are expected errors that we intentionally throw in our application code.
  */
 export class ApiError extends Error {
-  public statusCode: number;
-  public isOperational: boolean;
+  public readonly statusCode: number;
+  public readonly isOperational: boolean;
 
   /**
-   * Creates a typed API error with operational metadata for centralized response handling.
+   * Creates a new ApiError instance.
    *
-   * @param {string} message - Human-readable error message safe for API responses.
-   * @param {number} [statusCode=500] - HTTP status code associated with the failure.
-   * @param {boolean} [isOperational=true] - Indicates whether this error is expected and handled.
-   * @returns {void} Constructor does not return a value.
+   * @param message - Human-readable error message for the client.
+   * @param statusCode - HTTP status code to return (e.g., 400, 404, 500).
    */
-  constructor(message: string, statusCode = 500, isOperational = true) {
+  constructor(message: string, statusCode: number = 500) {
     super(message);
+    this.name = 'ApiError';
     this.statusCode = statusCode;
-    this.isOperational = isOperational;
+    this.isOperational = true;
+
+    Object.setPrototypeOf(this, ApiError.prototype);
 
     Error.captureStackTrace(this, this.constructor);
   }
