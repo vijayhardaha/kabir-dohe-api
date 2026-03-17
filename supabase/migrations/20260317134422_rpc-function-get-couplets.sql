@@ -2,10 +2,10 @@
 -- Replaces multiple SQL queries with a single function call for better performance.
 
 -- Drop existing function if exists
-DROP FUNCTION IF EXISTS get_couplets(jsonb);
+DROP FUNCTION IF EXISTS public.get_couplets(jsonb);
 
 -- Create the optimized function
-CREATE OR REPLACE FUNCTION get_couplets(filters jsonb)
+CREATE OR REPLACE FUNCTION public.get_couplets(filters jsonb)
 RETURNS TABLE (
   id uuid,
   post_number integer,
@@ -34,7 +34,10 @@ RETURNS TABLE (
   updated_at timestamptz,
   tags jsonb,
   total_count bigint
-) AS $$
+)
+LANGUAGE plpgsql
+SET search_path = public, pg_catalog
+AS $$
 DECLARE
   search_text text := filters->>'search';
   search_content boolean := COALESCE((filters->>'search_content')::boolean, false);
@@ -95,10 +98,10 @@ BEGIN
       p.created_at,
       p.updated_at,
       COUNT(*) OVER() AS total_count
-    FROM posts p
-    LEFT JOIN categories c ON c.id = p.category_id
-    LEFT JOIN post_tags pt ON pt.post_id = p.id
-    LEFT JOIN tags t ON t.id = pt.tag_id
+    FROM public.posts p
+    LEFT JOIN public.categories c ON c.id = p.category_id
+    LEFT JOIN public.post_tags pt ON pt.post_id = p.id
+    LEFT JOIN public.tags t ON t.id = pt.tag_id
     WHERE
       -- Search filter
       (
@@ -128,8 +131,8 @@ BEGIN
         OR array_length(tag_array, 1) IS NULL
         OR array_length(tag_array, 1) = 0
         OR EXISTS (
-          SELECT 1 FROM post_tags pt2
-          JOIN tags t2 ON t2.id = pt2.tag_id
+          SELECT 1 FROM public.post_tags pt2
+          JOIN public.tags t2 ON t2.id = pt2.tag_id
           WHERE pt2.post_id = p.id
           AND LOWER(t2.slug) = ANY(tag_array)
         )
@@ -169,8 +172,8 @@ BEGIN
           'slug', t.slug
         ) ORDER BY t.name
       ) FILTER (WHERE t.id IS NOT NULL) AS tags
-    FROM post_tags pt
-    LEFT JOIN tags t ON t.id = pt.tag_id
+    FROM public.post_tags pt
+    LEFT JOIN public.tags t ON t.id = pt.tag_id
     GROUP BY pt.post_id
   )
   SELECT
@@ -217,4 +220,4 @@ BEGIN
   LIMIT CASE WHEN pagination_enabled THEN per_page_count ELSE NULL END
   OFFSET CASE WHEN pagination_enabled THEN offset_count ELSE 0 END;
 END;
-$$ LANGUAGE plpgsql;
+$$;
