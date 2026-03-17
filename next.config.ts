@@ -11,7 +11,8 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   // ---- Core runtime settings ----
-  // Enable React strict mode to surface unsafe lifecycles and other issues during development
+  // Enable React strict mode to surface unsafe lifecycles and other issues
+  // during development
   reactStrictMode: true,
 
   // ----------------------------------------------------------------------
