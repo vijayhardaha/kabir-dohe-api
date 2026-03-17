@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
+import { cn } from '@/lib/utils/classnames';
 import { getCanonicalUrl } from '@/lib/utils/seo';
 
 /**
@@ -98,7 +99,7 @@ export default function UsageExamples(): React.JSX.Element {
             ref={(el) => {
               tabRefs.current[idx] = el;
             }}
-            className={`tab-button ${activeTab === key ? 'active' : ''}`}
+            className={cn('tab-button', activeTab === key && 'active')}
             onClick={() => setActiveTab(key)}
           >
             {examples[key].label}
@@ -113,7 +114,7 @@ export default function UsageExamples(): React.JSX.Element {
             id={`usage-panel-${key}`}
             role="tabpanel"
             aria-labelledby={`usage-tab-${key}`}
-            className={`tab-panel ${activeTab === key ? 'block' : 'hidden'}`}
+            className={cn('tab-panel', activeTab === key ? 'block' : 'hidden')}
           >
             <CodeBlock code={examples[key].code} language={examples[key].language} usePrism={true} />
           </div>
