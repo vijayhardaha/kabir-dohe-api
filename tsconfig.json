@@ -14,7 +14,7 @@
     "target": "ES2024",
 
     // Include DOM types and iterable helpers for browser-based code
-    "lib": ["dom", "dom.iterable"],
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
 
     // Use the modern React JSX transform
     "jsx": "react-jsx",
@@ -22,7 +22,7 @@
     // ---- Module resolution ----
     // Use native ESM module syntax and Node-style resolution
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
 
     // Base directory for non-relative imports used by tooling
     "baseUrl": ".",
