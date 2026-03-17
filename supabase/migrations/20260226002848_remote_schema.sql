@@ -5,6 +5,9 @@ CREATE EXTENSION IF NOT EXISTS "index_advisor" WITH SCHEMA "extensions";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm" WITH SCHEMA "extensions";
 
+ALTER ROLE authenticator SET search_path TO public, extensions;
+ALTER ROLE postgres SET search_path TO public, extensions;
+
 -- 2. TABLES
 CREATE TABLE public.categories (
   id uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -179,7 +182,7 @@ CREATE INDEX idx_posts_category_order ON public.posts(category_id, post_order);
 CREATE INDEX idx_post_tags_tag_id ON public.post_tags(tag_id);
 
 -- Trigram Search (requires pg_trgm)
-CREATE INDEX idx_posts_text_hi_search ON public.posts USING GIN (text_hi gin_trgm_ops);
-CREATE INDEX idx_posts_text_en_search ON public.posts USING GIN (text_en gin_trgm_ops);
-CREATE INDEX idx_posts_search_hi ON public.posts USING GIN (search_content_hi gin_trgm_ops);
-CREATE INDEX idx_posts_search_en ON public.posts USING GIN (search_content_en gin_trgm_ops);
+CREATE INDEX idx_posts_text_hi_search ON public.posts USING GIN (text_hi extensions.gin_trgm_ops);
+CREATE INDEX idx_posts_text_en_search ON public.posts USING GIN (text_en extensions.gin_trgm_ops);
+CREATE INDEX idx_posts_search_hi ON public.posts USING GIN (search_content_hi extensions.gin_trgm_ops);
+CREATE INDEX idx_posts_search_en ON public.posts USING GIN (search_content_en extensions.gin_trgm_ops);
