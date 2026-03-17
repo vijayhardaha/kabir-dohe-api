@@ -1,5 +1,3 @@
-import type { JSX } from 'react';
-
 /**
  * Safely stringify JSON-LD data by escaping the less-than character to prevent XSS vulnerabilities.
  *
@@ -14,9 +12,9 @@ export function safeJsonLd(data: unknown): string {
  * A React component that renders JSON-LD structured data within a script tag.
  * It takes an array of objects as input and generates a JSON-LD graph with the appropriate context.
  * @param {object[]} data - An array of objects representing the JSON-LD graph to be rendered.
- * @returns {JSX.Element} - A script tag containing the JSON-LD structured data.
+ * @returns {React.JSX.Element} - A script tag containing the JSON-LD structured data.
  */
-export default function JsonLd({ data }: { data: object[] }): JSX.Element {
+export default function JsonLd({ data }: { data: object[] }): React.JSX.Element {
   return (
     <script
       type="application/ld+json"
