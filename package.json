@@ -18,6 +18,9 @@
     "sync:local": "NODE_ENV=development tsx scripts/sync.ts",
     "sync:prod": "NODE_ENV=production tsx scripts/sync.ts",
     "check-types": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "prepare": "husky"
   },
   "keywords": [
@@ -56,12 +59,17 @@
     "@eslint/js": "^9.39.3",
     "@next/eslint-plugin-next": "^15.5.12",
     "@tailwindcss/postcss": "^4.2.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/latinize": "^0.2.18",
     "@types/node": "25.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.0",
     "eslint": "^9.39.3",
     "eslint-config-next": "^15.5.12",
     "eslint-config-prettier": "^10.1.8",
@@ -70,6 +78,7 @@
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.3.0",
+    "jsdom": "^29.0.0",
     "next-sitemap": "^4.2.3",
     "ora": "^9.3.0",
     "postcss": "^8.5.6",
@@ -78,6 +87,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
+    "vitest": "^4.1.0",
     "xml2js": "^0.6.2"
   }
 }
