@@ -112,19 +112,6 @@ ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.post_tags ENABLE ROW LEVEL SECURITY;
 
 -- 4. FUNCTIONS
-CREATE OR REPLACE FUNCTION public.is_hash_authorized()
-RETURNS boolean
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO ''
-AS $function$
-BEGIN
-  RETURN (current_setting('request.headers', true)::json->>'x-hash-key' = '6c361452ebd23a942b1a424309f32f972614b5833bdd32da5a441700e82cc7cd');
-EXCEPTION WHEN OTHERS THEN
-  RETURN false;
-END;
-$function$;
-
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -139,25 +126,15 @@ $function$;
 -- 5. RLS POLICIES
 -- Posts
 CREATE POLICY "Public Read Posts" ON public.posts FOR SELECT TO anon USING (TRUE);
-CREATE POLICY "Admin Insert Posts" ON public.posts FOR INSERT TO anon WITH CHECK (public.is_hash_authorized());
-CREATE POLICY "Admin Update Posts" ON public.posts FOR UPDATE TO anon USING (public.is_hash_authorized());
-CREATE POLICY "Admin Delete Posts" ON public.posts FOR DELETE TO anon USING (public.is_hash_authorized());
 
 -- Tags
 CREATE POLICY "Public Read Tags" ON public.tags FOR SELECT TO anon USING (TRUE);
-CREATE POLICY "Admin Insert Tags" ON public.tags FOR INSERT TO anon WITH CHECK (public.is_hash_authorized());
-CREATE POLICY "Admin Update Tags" ON public.tags FOR UPDATE TO anon USING (public.is_hash_authorized());
-CREATE POLICY "Admin Delete Tags" ON public.tags FOR DELETE TO anon USING (public.is_hash_authorized());
 
 -- Categories
 CREATE POLICY "Public Read Categories" ON public.categories FOR SELECT TO anon USING (TRUE);
-CREATE POLICY "Admin Insert Categories" ON public.categories FOR INSERT TO anon WITH CHECK (public.is_hash_authorized());
-CREATE POLICY "Admin Update Categories" ON public.categories FOR UPDATE TO anon USING (public.is_hash_authorized());
-CREATE POLICY "Admin Delete Categories" ON public.categories FOR DELETE TO anon USING (public.is_hash_authorized());
 
 -- Post Tags
 CREATE POLICY "Public Read Post_Tags" ON public.post_tags FOR SELECT TO anon USING (TRUE);
-CREATE POLICY "Admin All Post_Tags" ON public.post_tags FOR ALL TO anon USING (public.is_hash_authorized());
 
 -- 6. TRIGGERS
 CREATE TRIGGER update_posts_updated_at BEFORE UPDATE ON public.posts FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
