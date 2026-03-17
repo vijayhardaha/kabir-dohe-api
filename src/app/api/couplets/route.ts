@@ -172,7 +172,7 @@ async function fetchPosts(supabase: Awaited<ReturnType<typeof createClient>>, pa
     pagination: params.pagination !== false,
   };
 
-  const { data, error } = await supabase.rpc('get_couplets', { filters });
+  const { data, error } = await supabase.rpc('get_couplets_for_api', { filters });
 
   if (error) {
     throw new Error(`Failed to fetch posts: ${error.message}`);
