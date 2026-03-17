@@ -114,7 +114,7 @@ function prepareDbPosts(rows: SheetRow[]): DbPost[] {
     reflection_questions_en: row.reflection_questions_en || '',
     post_number: row.post_number,
     post_order: row.post_order,
-    post_status: 'published',
+    post_status: 'publish',
     is_popular: row.is_popular,
     is_featured: row.is_featured,
   }));
