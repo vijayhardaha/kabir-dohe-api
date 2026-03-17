@@ -1,10 +1,12 @@
+import type { ReactNode } from 'react';
+
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Metadata } from 'next';
 import { EB_Garamond, Geist_Mono, Nunito } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { SITE_METADATA } from '@/constants/seo';
+import { GOOGLE_ANALYTICS_ID, SITE_METADATA } from '@/constants/seo';
 
 const sansFont = Nunito({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
 const serifFont = EB_Garamond({ subsets: ['latin'], weight: ['400', '700', '800'], variable: '--font-serif' });
@@ -24,11 +26,11 @@ export const metadata: Metadata = SITE_METADATA;
  * @param {{ children: ReactNode }} props - The props for the RootLayout component.
  * @returns {React.JSX.Element} The root layout structure.
  */
-const RootLayout = ({ children }: { children: React.JSX.Element }): React.JSX.Element => {
+const RootLayout = ({ children }: { children: ReactNode }): React.JSX.Element => {
   return (
     <html lang="en">
       <head>
-        <GoogleAnalytics gaId="G-GM50Y47GMH" />
+        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
       </head>
       <body className={`${sansFont.variable} ${monoFont.variable} ${serifFont.variable}`}>
         <script type="application/ld+json">
