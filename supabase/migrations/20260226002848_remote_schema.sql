@@ -85,6 +85,9 @@ CREATE TABLE public.posts (
   -- analytics
   view_count integer DEFAULT 0,
 
+  -- post status
+  post_status text DEFAULT "draft",
+
   -- search content
   search_content_hi text GENERATED ALWAYS AS (
     text_hi || ' ' || interpretation_hi || ' ' || philosophical_analysis_hi || ' ' || core_message_hi
