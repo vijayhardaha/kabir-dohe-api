@@ -32,28 +32,23 @@ export function UsageExamples(): React.JSX.Element {
   const examples: Record<ExampleKey, Example> = {
     curl: {
       label: 'cURL',
-      code: `curl -X GET "${getCanonicalUrl()}/api/couplets?tags=devotion&perPage=5"`,
+      code: 'curl -X GET "' + getCanonicalUrl() + '/api/couplets?tags=devotion&per_page=5"',
       language: 'bash',
     },
     javascript: {
       label: 'JavaScript',
-      code: `fetch("${getCanonicalUrl()}/api/couplets?tags=devotion&perPage=5")
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));`,
+      code:
+        'fetch("'
+        + getCanonicalUrl()
+        + '/api/couplets?tags=devotion&per_page=5")\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error("Error:", error));',
       language: 'javascript',
     },
     python: {
       label: 'Python',
-      code: `import requests
-
-response = requests.get("${getCanonicalUrl()}/api/couplets", params={
-  "category": "devotion",
-  "limit": 5
-})
-
-data = response.json()
-print(data)`,
+      code:
+        'import requests\n\nresponse = requests.get("'
+        + getCanonicalUrl()
+        + '/api/couplets", params={\n  "tags": "devotion",\n  "per_page": 5\n})\n\ndata = response.json()\nprint(data)',
       language: 'python',
     },
   };
