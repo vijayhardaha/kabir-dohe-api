@@ -81,7 +81,7 @@ describe('schema utilities', () => {
       // Assert the expected outcome for this scenario.
       expect(schema.provider).toBeDefined();
       // Assert the expected outcome for this scenario.
-      expect(schema.provider['@id']).toContain('#person');
+      expect((schema.provider as { '@id': string })['@id']).toContain('#person');
     });
   });
 
