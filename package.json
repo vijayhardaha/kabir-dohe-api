@@ -5,12 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-		"start": "next start",
-		"build": "next build",
-		"lint": "eslint --ext .ts,.tsx,.js,.jsx,.mjs,.cjs .",
-		"lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx,.mjs,.cjs .",
-		"format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-		"format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "start": "next start",
+    "build": "next build",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx,.mjs,.cjs .",
+    "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx,.mjs,.cjs .",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "postbuild": "next-sitemap",
     "preindexnow": "next build && next-sitemap",
     "indexnow": "tsx scripts/indexnow.ts",
@@ -18,7 +18,7 @@
     "sync:local": "NODE_ENV=development tsx scripts/sync.ts",
     "sync:prod": "NODE_ENV=production tsx scripts/sync.ts",
     "check-types": "tsc --noEmit",
-		"prepare": "husky"
+    "prepare": "husky"
   },
   "keywords": [
     "Kabir",
