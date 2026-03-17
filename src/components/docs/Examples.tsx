@@ -13,25 +13,25 @@ interface IExample {
   code: string;
 }
 
+// Get the canonical URL for constructing API request examples
+const canonicalUrl: string = getCanonicalUrl();
+
+const examples: IExample[] = [
+  { title: '1. Fetch All Couplets', code: `GET ${canonicalUrl}/api/couplets` },
+  { title: '2. Search for a Couplet', code: `GET ${canonicalUrl}/api/couplets?s=love&exactMatch=false` },
+  { title: '3. Filter by Tags', code: `GET ${canonicalUrl}/api/couplets?tags=spiritual,life` },
+  { title: '4. Filter by Popularity', code: `GET ${canonicalUrl}/api/couplets?popular=true` },
+  { title: '5. Sort by Couplet in Hindi', code: `GET ${canonicalUrl}/api/couplets?orderBy=couplet_hindi&order=ASC` },
+  { title: '6. Paginate Results', code: `GET ${canonicalUrl}/api/couplets?page=2&perPage=5` },
+  {
+    title: '7. Combining Multiple Filters',
+    code: `GET ${canonicalUrl}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
+  },
+];
+
 export function Examples(): React.JSX.Element {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
-
-  const examples: IExample[] = [
-    { title: '1. Fetch All Couplets', code: `GET ${getCanonicalUrl()}/api/couplets` },
-    { title: '2. Search for a Couplet', code: `GET ${getCanonicalUrl()}/api/couplets?s=love&exactMatch=false` },
-    { title: '3. Filter by Tags', code: `GET ${getCanonicalUrl()}/api/couplets?tags=spiritual,life` },
-    { title: '4. Filter by Popularity', code: `GET ${getCanonicalUrl()}/api/couplets?popular=true` },
-    {
-      title: '5. Sort by Couplet in Hindi',
-      code: `GET ${getCanonicalUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC`,
-    },
-    { title: '6. Paginate Results', code: `GET ${getCanonicalUrl()}/api/couplets?page=2&perPage=5` },
-    {
-      title: '7. Combining Multiple Filters',
-      code: `GET ${getCanonicalUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
-    },
-  ];
 
   // Function to extract the API path from the code example
   const getApiUrl = (code: string): string => code.replace('GET ', '');
