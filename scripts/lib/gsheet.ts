@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { toSentenceCase } from '@/lib/server/utils';
 
-import { DbPost, DbTag } from './db';
+import { DbCategory, DbPost, DbTag } from './db';
 import type { ScriptEnv } from './env';
 
 /**
@@ -55,6 +55,7 @@ const SheetRowSchema = z
       }
       return Boolean(v);
     }, z.boolean()),
+    category: z.string().optional().default(''),
   })
   .transform((obj) => ({
     ...obj,
@@ -74,6 +75,7 @@ const SheetRowSchema = z
       const cleaned = t.trim().replace(/'/g, "'").replace(/[-_]/g, ' ');
       return toSentenceCase(cleaned);
     }),
+    category: obj.category ? toSentenceCase(obj.category.trim()) : '',
   }));
 
 /**
@@ -153,6 +155,33 @@ function prepareDbTags(rows: SheetRow[]): DbTag[] {
 }
 
 /**
+ * Extracts unique categories from sheet rows and transforms them into database-ready category records.
+ *
+ * @param {SheetRow[]} rows - The validated sheet rows containing category information.
+ * @returns {DbCategory[]} Array of unique category records ready for database insertion.
+ */
+function prepareDbCategories(rows: SheetRow[]): DbCategory[] {
+  const categorySet = new Set<string>();
+
+  for (const row of rows) {
+    const category = row.category?.trim();
+    if (category) {
+      categorySet.add(category);
+    }
+  }
+
+  const uniqueCategories = Array.from(categorySet).sort();
+
+  return uniqueCategories.map((name) => ({
+    name,
+    slug: name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-'),
+  }));
+}
+
+/**
  * Creates a Google JWT client for authenticating with Google Sheets API.
  *
  * @param {ScriptEnv} env - The environment variables containing service account credentials.
@@ -192,7 +221,7 @@ function createJwtClient(env: ScriptEnv): JWT {
 export async function sheetToJson(
   env: ScriptEnv,
   sheetName: string
-): Promise<{ rawPosts: SheetRow[]; posts: DbPost[]; tags: DbTag[] }> {
+): Promise<{ rawPosts: SheetRow[]; posts: DbPost[]; tags: DbTag[]; categories: DbCategory[] }> {
   const GOOGLE_SHEET_ID = env.GOOGLE_SHEET_ID;
 
   if (!GOOGLE_SHEET_ID) {
@@ -227,6 +256,7 @@ export async function sheetToJson(
   }
 
   const tags = prepareDbTags(rawPosts);
+  const categories = prepareDbCategories(rawPosts);
 
-  return { rawPosts, posts, tags };
+  return { rawPosts, posts, tags, categories };
 }
