@@ -1,4 +1,4 @@
-import { SITE_CONFIG, SEO_KEYWORDS } from '@/constants/seo';
+import { SITE_CONFIG } from '@/constants/seo';
 import { getCanonicalUrl } from '@/lib/utils/seo';
 
 // Updated type to handle the JSON-LD structure
@@ -57,8 +57,6 @@ export function webApiSchema(): AnyObject {
     url: rootUrl,
     documentation: rootUrl,
     provider: { '@id': personId },
-    isAccessibleForFree: true,
-    keywords: SEO_KEYWORDS,
   };
 }
 
