@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/server/db/supabase';
+import { sanitizeTitle } from '@/lib/server/utils';
 import { handleError } from '@/lib/server/utils/errors/error-handler';
 import { success } from '@/lib/server/utils/response/response';
-import { sanitizeTitle } from '@/lib/server/utils/string';
 
 /**
  * Default parameter values for the API.
