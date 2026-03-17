@@ -22,6 +22,7 @@ export interface DbPost {
   reflection_questions_en: string;
   post_number: number;
   post_order: number;
+  post_status: string;
   is_popular: boolean;
   is_featured: boolean;
 }
