@@ -56,7 +56,7 @@ export function Examples(): React.JSX.Element {
       href={getApiUrl(example.code)}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-outline-white rounded px-2 py-1 text-xs"
+      className="btn btn-outline-white px-3 py-1 text-xs"
       aria-label={`Try request: ${getApiUrl(example.code)}`}
     >
       Try this request

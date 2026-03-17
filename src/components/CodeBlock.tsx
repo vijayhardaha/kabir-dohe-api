@@ -39,8 +39,8 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
   const codeRef = useRef<HTMLElement | null>(null);
 
   return (
-    <div className="border-primary-200 relative overflow-hidden rounded-md border not-last:mb-8">
-      <div className="border-primary-200 bg-primary-500 flex items-center justify-between border-b px-4 py-2">
+    <div className="border-primary-100 relative overflow-hidden rounded-md border not-last:mb-8">
+      <div className="border-primary-100 bg-primary-500 flex items-center justify-between border-b px-4 py-2">
         <span className="font-semibold text-white">{language}</span>
         <div className="flex items-center gap-2">
           {actionElement}
@@ -50,8 +50,8 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
       {usePrism ? (
         <Highlight theme={themes.github} code={code} language={language}>
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre className="bg-primary-50 m-0 overflow-auto p-4" style={style}>
-              <code ref={codeRef} className={`${className} text-primary-900 font-mono`}>
+            <pre className="m-0 overflow-auto bg-white! p-4" style={style}>
+              <code ref={codeRef} className={`${className} text-primary-900 font-mono text-xs`}>
                 {tokens.map((line, i) => {
                   const lineProps = getLineProps({ line });
                   return (

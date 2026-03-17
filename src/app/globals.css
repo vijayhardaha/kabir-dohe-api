@@ -120,7 +120,7 @@
   }
 
   .table-container {
-    @apply border-primary-200 overflow-scroll rounded-lg border bg-white not-last:mb-8 lg:overflow-hidden;
+    @apply border-primary-100 overflow-scroll rounded-lg border bg-white not-last:mb-8 lg:overflow-hidden;
   }
 
   .table {
@@ -136,7 +136,7 @@
     }
 
     td {
-      @apply border-primary-200 border-b px-4 py-5 text-left;
+      @apply border-primary-100 border-b px-4 py-5 text-left;
     }
 
     tr:last-child td {
@@ -164,7 +164,7 @@
   .tab-button {
     @apply border-primary-700 text-primary-700 cursor-pointer border bg-transparent px-3 py-1;
     @apply inline-flex items-center justify-center gap-0.5 text-sm font-bold transition-all duration-200;
-    @apply rounded-md active:scale-[0.9];
+    @apply rounded-lg active:scale-[0.9];
   }
 
   .tab-button:hover,
@@ -182,5 +182,22 @@
 
   .tab-panel {
     @apply w-full;
+  }
+
+  /* Reusable info/card block for fields and error responses */
+  .info-card {
+    @apply flex items-start gap-4 rounded-lg border border-primary-100 bg-white p-4;
+  }
+
+  .info-card-key {
+    @apply min-h-12 min-w-12 flex items-center shrink-0 justify-center rounded-md bg-primary-50 text-primary-700 font-mono px-3 py-2 text-sm;
+  }
+
+  .info-card-body h4 {
+    @apply font-semibold;
+  }
+
+  .info-card-body p {
+    @apply text-sm text-primary-700;
   }
 }

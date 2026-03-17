@@ -9,9 +9,14 @@ export function SEOContent(): React.JSX.Element {
       <section id="who-was-sant-kabir">
         <h2>Who Was Sant Kabir?</h2>
         <p>
-          <strong>Sant Kabir Das (1440–1518)</strong> was a titan of the{' '}
+          <strong>
+            <a href="https://en.wikipedia.org/wiki/Kabir" target="_blank" rel="noopener noreferrer">
+              Sant Kabir Das (1440–1518)
+            </a>
+          </strong>{' '}
+          was a titan of the{' '}
           <a
-            href="https://ignca.gov.in/online-digital-resources/archives/sant-kabir/"
+            href="https://www.drishtiias.com/to-the-points/paper1/bhakti-and-sufi-movements"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -32,7 +37,7 @@ export function SEOContent(): React.JSX.Element {
           Kabir’s philosophy was one of <em>Nirguna Bhakti</em> — devotion to a formless divine. He was a vocal critic
           of{' '}
           <a
-            href="https://www.worldhistory.org/Caste_System_in_Ancient_India/"
+            href="https://www.worldhistory.org/article/1152/caste-system-in-ancient-india/"
             target="_blank"
             rel="noopener noreferrer"
           >

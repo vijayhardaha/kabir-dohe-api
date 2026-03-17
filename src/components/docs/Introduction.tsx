@@ -14,14 +14,21 @@ export function Introduction(): React.JSX.Element {
         <strong>
           <a href="/api/couplets">2500 dohas (couplets)</a>
         </strong>{' '}
-        written by <strong>Sant Kabir</strong>, a revered Indian mystic poet and spiritual reformer. His verses, rich in
-        meaning and simplicity, offer timeless insights into life, morality, love, and human nature.
+        written by{' '}
+        <strong>
+          {' '}
+          <a href="https://en.wikipedia.org/wiki/Kabir" target="_blank" rel="noopener noreferrer">
+            Sant Kabir Das
+          </a>
+        </strong>
+        , a revered Indian mystic poet and spiritual reformer. His verses, rich in meaning and simplicity, offer
+        timeless insights into life, morality, love, and human nature.
       </p>
       <p>
         This API is ideal for developers, educators, researchers, and spiritual seekers looking to build applications
         that incorporate <strong>Indian spiritual poetry</strong>, <strong>mystic literature</strong>, or culturally
-        rich content. Whether you’re building a mobile app, a daily quote service, or a machine learning model
-        trained on vernacular philosophy, the Kabir Ke Dohe API is a perfect fit.
+        rich content. Whether you’re building a mobile app, a daily quote service, or a machine learning model trained
+        on vernacular philosophy, the Kabir Ke Dohe API is a perfect fit.
       </p>
       <p>
         With no authentication required, the API is <strong>completely free to use</strong> and includes powerful

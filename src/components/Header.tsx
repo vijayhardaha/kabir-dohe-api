@@ -12,12 +12,16 @@ export default function Header(): React.JSX.Element {
       <div className="box">
         <h1 className="mb-4 text-5xl font-black">Kabir Ke Dohe API</h1>
         <p className="text-primary-100 mb-6 text-lg">
-          Access over <a href="/api/couplets">2500 authentic couplets (dohe)</a> by Sant Kabir, one of India’s greatest
-          spiritual poets and philosophers. This RESTful API offers seamless integration to fetch, search, and filter
-          Kabir’s timeless wisdom in your web or mobile apps, educational platforms, and AI projects.
+          Access over{' '}
+          <a href="/api/couplets" target="_blank">
+            2500 authentic couplets (dohe)
+          </a>{' '}
+          by Sant Kabir, one of India’s greatest spiritual poets and philosophers. This RESTful API offers seamless
+          integration to fetch, search, and filter Kabir’s timeless wisdom in your web or mobile apps, educational
+          platforms, and AI projects.
         </p>
         <div className="space-x-4">
-          <a href="/api/couplets" className="btn btn-outline-white" aria-label="Try the API" target="_blank">
+          <a href="/api/couplets" className="btn btn-outline-white" target="_blank">
             Try the API
           </a>
           <a
