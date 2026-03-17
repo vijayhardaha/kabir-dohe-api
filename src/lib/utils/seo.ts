@@ -2,17 +2,18 @@
  * Return a normalized base URL for the running application.
  *
  * Preference order:
- * 1. `process.env.VERCEL_PROJECT_PRODUCTION_URL`
- * 2. `process.env.VERCEL_BRANCH_URL`
- * 3. `process.env.VERCEL_URL`
- * 4. Fallback to `http://localhost:{PORT}` where PORT defaults to 3000
+ * 1. `NEXT_PUBLIC_SITE_URL` (custom env var)
+ * 2. `process.env.VERCEL_PROJECT_PRODUCTION_URL`
+ * 3. `process.env.VERCEL_BRANCH_URL`
+ * 4. `process.env.VERCEL_URL`
+ * 5. Fallback to `http://localhost:{PORT}` where PORT defaults to 3000
  *
  * Normalization ensures a scheme is present and removes a trailing slash.
  *
  * @returns {string} The normalized base URL.
  *
  * @example
- * // When no Vercel env vars are set and PORT is 3000
+ * // When no env vars are set and PORT is 3000
  * getBaseUrl() // -> 'http://localhost:3000'
  */
 export const getBaseUrl = (): string => {
@@ -20,6 +21,7 @@ export const getBaseUrl = (): string => {
     process.env.VERCEL_PROJECT_PRODUCTION_URL
     || process.env.VERCEL_BRANCH_URL
     || process.env.VERCEL_URL
+    || process.env.NEXT_PUBLIC_SITE_URL
     || `http://localhost:${process.env.PORT || 3000}`;
 
   const cleaned = url.trim().replace(/\/+$/, '');
