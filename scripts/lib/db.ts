@@ -23,6 +23,7 @@ export interface DbPost {
   post_number: number;
   post_order: number;
   post_status: string;
+  category_id?: string;
   is_popular: boolean;
   is_featured: boolean;
 }
@@ -31,6 +32,14 @@ export interface DbPost {
  * Represents a tag record from the database.
  */
 export interface DbTag {
+  name: string;
+  slug: string;
+}
+
+/**
+ * Represents a category record from the database.
+ */
+export interface DbCategory {
   name: string;
   slug: string;
 }
@@ -156,6 +165,55 @@ export async function upsertTags(
 
   if (error) {
     throw new Error('Failed to upsert tags: ' + error.message);
+  }
+
+  return { data, count };
+}
+
+/**
+ * Upserts a single category into the database using slug as the conflict key.
+ *
+ * @param {SupabaseClient} supabase - The Supabase client instance.
+ * @param {DbCategory} category - The category data to upsert.
+ * @returns {Promise<{ id: string; slug: string }>} The inserted/updated category's id and slug.
+ * @throws {Error} Throws when the upsert operation fails.
+ */
+export async function upsertCategory(
+  supabase: SupabaseClient,
+  category: DbCategory
+): Promise<{ id: string; slug: string }> {
+  const { data, error } = await supabase
+    .from('categories')
+    .upsert(category, { onConflict: 'slug' })
+    .select('id, slug')
+    .single();
+
+  if (error) {
+    throw new Error('Failed to upsert category ' + category.name + ': ' + error.message);
+  }
+
+  return { id: data.id, slug: data.slug };
+}
+
+/**
+ * Upserts multiple categories into the database using slug as the conflict key.
+ *
+ * @param {SupabaseClient} supabase - The Supabase client instance.
+ * @param {DbCategory[]} categories - The array of categories to upsert.
+ * @returns {Promise<{ data: { id: string; slug: string }[]; count: number | null }>} The upserted categories and count.
+ * @throws {Error} Throws when the upsert operation fails.
+ */
+export async function upsertCategories(
+  supabase: SupabaseClient,
+  categories: DbCategory[]
+): Promise<{ data: { id: string; slug: string }[]; count: number | null }> {
+  const { data, error, count } = await supabase
+    .from('categories')
+    .upsert(categories, { onConflict: 'slug', count: 'exact' })
+    .select('id, slug');
+
+  if (error) {
+    throw new Error('Failed to upsert categories: ' + error.message);
   }
 
   return { data, count };
