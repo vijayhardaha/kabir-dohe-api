@@ -14,7 +14,15 @@ import ora from 'ora';
 
 import { sanitizeTitle } from '@/lib/server/utils';
 
-import { upsertPosts, upsertTags, upsertPostTags, type DbPost, type DbTag } from './lib/db';
+import {
+  upsertCategories,
+  upsertPosts,
+  upsertTags,
+  upsertPostTags,
+  type DbCategory,
+  type DbPost,
+  type DbTag,
+} from './lib/db';
 import { loadScriptEnv, type ScriptEnv } from './lib/env';
 import { sheetToJson } from './lib/gsheet';
 import { createSupabaseClient } from './lib/supabase';
@@ -46,19 +54,72 @@ async function main() {
   const supabase = createSupabaseClient(env);
   spinner.succeed('Supabase client created');
 
-  // Fetch data from Google Sheets - gets raw posts, mapped posts, and tags
+  // Fetch data from Google Sheets - gets raw posts, mapped posts, tags and categories
   spinner.start('Pulling data from Google Sheets...');
-  let rawPosts: Array<{ identifier: string; tags: string[] }>, posts: DbPost[], tags: DbTag[];
+  let rawPosts: Array<{ identifier: string; tags: string[]; category: string }>,
+    posts: DbPost[],
+    tags: DbTag[],
+    categories: DbCategory[];
   try {
     const sheetData = await sheetToJson(env, 'kabir-ke-dohe');
-    // Extract just the identifier and tags for mapping later
-    rawPosts = sheetData.rawPosts.map((p) => ({ identifier: p.identifier, tags: p.tags }));
+    // Extract identifier, tags, and category for mapping later
+    rawPosts = sheetData.rawPosts.map((p) => ({ identifier: p.identifier, tags: p.tags, category: p.category }));
     posts = sheetData.posts;
     tags = sheetData.tags;
-    spinner.succeed('Pulled ' + posts.length + ' posts and ' + tags.length + ' tags from Google Sheets');
+    categories = sheetData.categories;
+    spinner.succeed(
+      'Pulled '
+        + posts.length
+        + ' posts, '
+        + tags.length
+        + ' tags, and '
+        + categories.length
+        + ' categories from Google Sheets'
+    );
   } catch (error) {
     spinner.fail('Failed to pull sheet data: ' + (error as Error).message);
     process.exit(1);
+  }
+
+  // Cache category results for quick lookups
+  // Maps slug -> { id, slug } for quick lookups
+  const categoryCache = new Map<string, { id: string; slug: string }>();
+
+  // Sync categories in batches of 500 to avoid rate limiting
+  spinner.start('Syncing categories to database...');
+
+  try {
+    for (let i = 0; i < categories.length; i += BATCH_SIZE) {
+      const batch = categories.slice(i, i + BATCH_SIZE);
+      const uniqueCategories = batch.filter((cat, index, self) => index === self.findIndex((c) => c.slug === cat.slug));
+
+      const result = await upsertCategories(supabase, uniqueCategories);
+
+      // Cache all categories from this batch
+      if (result.data) {
+        for (const category of result.data) {
+          categoryCache.set(category.slug, category);
+        }
+      }
+
+      spinner.text = 'Syncing categories: ' + Math.min(i + BATCH_SIZE, categories.length) + '/' + categories.length;
+    }
+    spinner.succeed('Synced ' + categories.length + ' categories');
+  } catch (error) {
+    spinner.fail('Failed to sync categories: ' + (error as Error).message);
+    process.exit(1);
+  }
+
+  // Update posts with category_id from cache
+  for (const post of posts) {
+    const rawPost = rawPosts.find((r) => r.identifier === post.identifier);
+    if (rawPost?.category) {
+      const categorySlug = sanitizeTitle(rawPost.category);
+      const categoryData = categoryCache.get(categorySlug);
+      if (categoryData) {
+        post.category_id = categoryData.id;
+      }
+    }
   }
 
   // Cache tag results to avoid re-fetching during post processing
