@@ -86,7 +86,7 @@ CREATE TABLE public.posts (
   view_count integer DEFAULT 0,
 
   -- post status
-  post_status text DEFAULT "draft",
+  post_status text NOT NULL DEFAULT 'draft',
 
   -- search content
   search_content_hi text GENERATED ALWAYS AS (
