@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getBaseUrl } from '@/lib/utils/seo';
+import { getCanonicalUrl } from '@/lib/utils/seo';
 
 /**
  * Site-wide configuration values for SEO and metadata.
@@ -86,8 +86,8 @@ export const SITE_METADATA: Metadata = {
   ...titleAndDescription,
   keywords: SEO_KEYWORDS,
   applicationName: SITE_CONFIG.name,
-  metadataBase: new URL(getBaseUrl()),
-  alternates: { canonical: new URL(getBaseUrl()) },
+  metadataBase: new URL(getCanonicalUrl()),
+  alternates: { canonical: new URL(getCanonicalUrl()) },
   authors: [{ name: SITE_CONFIG.creator.name, url: 'https://instagram.com/vegan.vijay' }],
   publisher: SITE_CONFIG.creator.name,
   robots: { index: true, follow: true },
@@ -107,7 +107,7 @@ export const SITE_METADATA: Metadata = {
     type: 'website',
     siteName: SITE_CONFIG.name,
     locale: 'en_US',
-    url: new URL(getBaseUrl()),
+    url: new URL(getCanonicalUrl()),
   },
   twitter: {
     ...titleAndDescription,

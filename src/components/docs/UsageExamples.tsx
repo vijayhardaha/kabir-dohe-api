@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
-import { getBaseUrl } from '@/lib/utils/seo';
+import { getCanonicalUrl } from '@/lib/utils/seo';
 
 /**
  * Type definition for API usage examples.
@@ -32,12 +32,12 @@ export function UsageExamples(): React.JSX.Element {
   const examples: Record<ExampleKey, Example> = {
     curl: {
       label: 'cURL',
-      code: `curl -X GET "${getBaseUrl()}/api/couplets?tags=devotion&perPage=5"`,
+      code: `curl -X GET "${getCanonicalUrl()}/api/couplets?tags=devotion&perPage=5"`,
       language: 'bash',
     },
     javascript: {
       label: 'JavaScript',
-      code: `fetch("${getBaseUrl()}/api/couplets?tags=devotion&perPage=5")
+      code: `fetch("${getCanonicalUrl()}/api/couplets?tags=devotion&perPage=5")
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));`,
@@ -47,7 +47,7 @@ export function UsageExamples(): React.JSX.Element {
       label: 'Python',
       code: `import requests
 
-response = requests.get("${getBaseUrl()}/api/couplets", params={
+response = requests.get("${getCanonicalUrl()}/api/couplets", params={
   "category": "devotion",
   "limit": 5
 })

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
-import { getBaseUrl } from '@/lib/utils/seo';
+import { getCanonicalUrl } from '@/lib/utils/seo';
 
 /**
  * Interface representing an example API request.
@@ -18,15 +18,18 @@ export function Examples(): React.JSX.Element {
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const examples: IExample[] = [
-    { title: '1. Fetch All Couplets', code: `GET ${getBaseUrl()}/api/couplets` },
-    { title: '2. Search for a Couplet', code: `GET ${getBaseUrl()}/api/couplets?s=love&exactMatch=false` },
-    { title: '3. Filter by Tags', code: `GET ${getBaseUrl()}/api/couplets?tags=spiritual,life` },
-    { title: '4. Filter by Popularity', code: `GET ${getBaseUrl()}/api/couplets?popular=true` },
-    { title: '5. Sort by Couplet in Hindi', code: `GET ${getBaseUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC` },
-    { title: '6. Paginate Results', code: `GET ${getBaseUrl()}/api/couplets?page=2&perPage=5` },
+    { title: '1. Fetch All Couplets', code: `GET ${getCanonicalUrl()}/api/couplets` },
+    { title: '2. Search for a Couplet', code: `GET ${getCanonicalUrl()}/api/couplets?s=love&exactMatch=false` },
+    { title: '3. Filter by Tags', code: `GET ${getCanonicalUrl()}/api/couplets?tags=spiritual,life` },
+    { title: '4. Filter by Popularity', code: `GET ${getCanonicalUrl()}/api/couplets?popular=true` },
+    {
+      title: '5. Sort by Couplet in Hindi',
+      code: `GET ${getCanonicalUrl()}/api/couplets?orderBy=couplet_hindi&order=ASC`,
+    },
+    { title: '6. Paginate Results', code: `GET ${getCanonicalUrl()}/api/couplets?page=2&perPage=5` },
     {
       title: '7. Combining Multiple Filters',
-      code: `GET ${getBaseUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
+      code: `GET ${getCanonicalUrl()}/api/couplets?s=wisdom&exactMatch=true&searchWithin=translation,explanation&tags=philosophy&popular=false&orderBy=id&order=DESC&page=1&perPage=10`,
     },
   ];
 
