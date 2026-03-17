@@ -53,72 +53,6 @@ export interface PostTagMapping {
 }
 
 /**
- * Upserts a single post into the database using identifier as the conflict key.
- *
- * @param {SupabaseClient} supabase - The Supabase client instance.
- * @param {DbPost} post - The post data to upsert.
- * @returns {Promise<{ id: string; identifier: string }>} The inserted/updated post's id and identifier.
- * @throws {Error} Throws when the upsert operation fails.
- * @example
- * const result = await upsertPost(supabase, { identifier: "K001", text_hi: "..." });
- */
-export async function upsertPost(supabase: SupabaseClient, post: DbPost): Promise<{ id: string; identifier: string }> {
-  const { data, error } = await supabase
-    .from('posts')
-    .upsert(post, { onConflict: 'identifier' })
-    .select('id, identifier')
-    .single();
-
-  if (error) {
-    throw new Error('Failed to upsert post ' + post.identifier + ': ' + error.message);
-  }
-
-  return { id: data.id, identifier: data.identifier };
-}
-
-/**
- * Upserts a single tag into the database using slug as the conflict key.
- *
- * @param {SupabaseClient} supabase - The Supabase client instance.
- * @param {DbTag} tag - The tag data to upsert.
- * @returns {Promise<{ id: string; slug: string }>} The inserted/updated tag's id and slug.
- * @throws {Error} Throws when the upsert operation fails.
- * @example
- * const result = await upsertTag(supabase, { name: "Bhakti", slug: "bhakti" });
- */
-export async function upsertTag(supabase: SupabaseClient, tag: DbTag): Promise<{ id: string; slug: string }> {
-  const { data, error } = await supabase.from('tags').upsert(tag, { onConflict: 'slug' }).select('id, slug').single();
-
-  if (error) {
-    throw new Error('Failed to upsert tag ' + tag.name + ': ' + error.message);
-  }
-
-  return { id: data.id, slug: data.slug };
-}
-
-/**
- * Upserts a single post-tag mapping into the junction table.
- *
- * @param {SupabaseClient} supabase - The Supabase client instance.
- * @param {PostTagMapping} mapping - The post-tag mapping to upsert.
- * @returns {Promise<void>} Resolves when the operation completes successfully.
- * @throws {Error} Throws when the upsert operation fails.
- * @example
- * await upsertPostTag(supabase, { post_id: "post-uuid", tag_id: "tag-uuid" });
- */
-export async function upsertPostTag(supabase: SupabaseClient, mapping: PostTagMapping): Promise<void> {
-  const { error } = await supabase
-    .from('post_tags')
-    .upsert(mapping, { onConflict: 'post_id,tag_id' })
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error('Failed to upsert post_tag mapping: ' + error.message);
-  }
-}
-
-/**
  * Upserts multiple posts into the database using identifier as the conflict key.
  *
  * @param {SupabaseClient} supabase - The Supabase client instance.
@@ -168,31 +102,6 @@ export async function upsertTags(
   }
 
   return { data, count };
-}
-
-/**
- * Upserts a single category into the database using slug as the conflict key.
- *
- * @param {SupabaseClient} supabase - The Supabase client instance.
- * @param {DbCategory} category - The category data to upsert.
- * @returns {Promise<{ id: string; slug: string }>} The inserted/updated category's id and slug.
- * @throws {Error} Throws when the upsert operation fails.
- */
-export async function upsertCategory(
-  supabase: SupabaseClient,
-  category: DbCategory
-): Promise<{ id: string; slug: string }> {
-  const { data, error } = await supabase
-    .from('categories')
-    .upsert(category, { onConflict: 'slug' })
-    .select('id, slug')
-    .single();
-
-  if (error) {
-    throw new Error('Failed to upsert category ' + category.name + ': ' + error.message);
-  }
-
-  return { id: data.id, slug: data.slug };
 }
 
 /**
