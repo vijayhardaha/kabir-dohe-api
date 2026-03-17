@@ -345,8 +345,8 @@ export function Button({ children, variant = "primary", onClick }: ButtonProps) 
 fix: standardize react types in components
 
 # Body: can have normal case, describe changes
-- add react import for consistent type usage
-- use react.jsx.element for return types
+- Add react import for consistent type usage
+- Use React.JSX.Element for return types
 ```
 
 ### Rules
