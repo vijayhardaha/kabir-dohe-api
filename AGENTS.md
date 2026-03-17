@@ -82,7 +82,20 @@ scripts/
     ├── env.ts            # Environment loader & validation (Zod schema)
     ├── supabase.ts      # Supabase client factory
     ├── gsheet.ts        # Google Sheets integration (fetch, validate, transform)
-    └── db.ts            # Database operations (batch upserts for posts, tags, mappings)
+    └── db.ts            # Database operations (batch upserts for posts, tags, categories, mappings)
+```
+
+---
+
+## Commit Message Format
+
+```
+# Subject line: lowercase, max 50 characters
+fix: standardize react types in components
+
+# Body: can have normal case, describe changes
+- add react import for consistent type usage
+- use react.jsx.element for return types
 ```
 
 ---

@@ -335,3 +335,22 @@ export function Button({ children, variant = "primary", onClick }: ButtonProps) 
   );
 }
 ```
+
+---
+
+## 16. Commit Message Format
+
+```
+# Subject line: lowercase, max 50 characters
+fix: standardize react types in components
+
+# Body: can have normal case, describe changes
+- add react import for consistent type usage
+- use react.jsx.element for return types
+```
+
+### Rules
+
+- Subject line: lowercase only, max 50 characters
+- Body: normal case allowed, max 72 characters per line
+- Use conventional commits format (type: subject)
