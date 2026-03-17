@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getBaseUrl } from '@/lib/utils/base-url';
+import { getBaseUrl } from '@/lib/utils/seo';
 
 /**
  * Site-wide configuration values for SEO and metadata.

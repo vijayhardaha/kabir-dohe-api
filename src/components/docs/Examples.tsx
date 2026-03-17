@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
-import { getBaseUrl } from '@/lib/utils/base-url';
+import { getBaseUrl } from '@/lib/utils/seo';
 
 /**
  * Interface representing an example API request.
