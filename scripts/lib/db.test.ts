@@ -27,7 +27,7 @@ const createMockClient = (response: { data: unknown; error: unknown | null }) =>
 });
 
 // Mock Supabase client for batch operations
-const createBatchMockClient = (response: { data: unknown[]; error: unknown | null; count: number | null }) => ({
+const createBatchMockClient = (response: { data: unknown[] | null; error: unknown | null; count: number | null }) => ({
   from: vi.fn(() => ({
     upsert: vi.fn(() => ({
       select: vi.fn(() => Promise.resolve({ data: response.data, error: response.error, count: response.count })),
@@ -67,6 +67,7 @@ describe('db', () => {
         reflection_questions_en: '',
         post_number: 1,
         post_order: 1,
+        post_status: 'publish',
         is_popular: false,
         is_featured: false,
       };
@@ -100,6 +101,7 @@ describe('db', () => {
         reflection_questions_en: '',
         post_number: 1,
         post_order: 1,
+        post_status: 'publish',
         is_popular: false,
         is_featured: false,
       };
@@ -192,6 +194,7 @@ describe('db', () => {
           reflection_questions_en: '',
           post_number: 1,
           post_order: 1,
+          post_status: 'publish',
           is_popular: false,
           is_featured: false,
         },
@@ -214,6 +217,7 @@ describe('db', () => {
           reflection_questions_en: '',
           post_number: 2,
           post_order: 2,
+          post_status: 'publish',
           is_popular: false,
           is_featured: false,
         },
@@ -227,7 +231,7 @@ describe('db', () => {
 
     // Verify error handling when batch upsert fails
     it('should throw error when batch upsert fails', async () => {
-      const mockClient = createBatchMockClient({ data: null, error: { message: 'Batch error' }, count: null });
+      const mockClient = createBatchMockClient({ data: [], error: { message: 'Batch error' }, count: null });
 
       const posts: DbPost[] = [
         {
@@ -249,6 +253,7 @@ describe('db', () => {
           reflection_questions_en: '',
           post_number: 1,
           post_order: 1,
+          post_status: 'publish',
           is_popular: false,
           is_featured: false,
         },
