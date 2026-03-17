@@ -230,7 +230,7 @@ function applySearchFilter(query: QueryBuilder, search: string, searchFields: st
     .split(/\s+/)
     .filter((t) => t.length >= 3);
   // Include the full search string as an additional term for non-exact matching
-  const allTerms = [terms.join(' '), ...new Set(terms)];
+  const allTerms = [terms.join(' '), ...Array.from(new Set(terms))];
 
   const conditions = allTerms.flatMap((term) => searchFields.map((field) => `${field}.ilike.%${term}%`)).join(',');
 
@@ -366,7 +366,7 @@ function scoreBySearch(row: Record<string, unknown>, search: string): number {
 function parseQueryParams(searchParams: URLSearchParams): QueryParams {
   const params: Record<string, unknown> = {};
 
-  for (const [key, value] of searchParams.entries()) {
+  searchParams.forEach((value, key) => {
     if (key === 'is_popular' || key === 'pagination' || key === 'search_content') {
       params[key] = parseBoolean(value);
     } else if (key === 'page' || key === 'per_page') {
@@ -374,7 +374,7 @@ function parseQueryParams(searchParams: URLSearchParams): QueryParams {
     } else {
       params[key] = value;
     }
-  }
+  });
 
   return QuerySchema.parse({ ...DEFAULT_PARAMS, ...params });
 }
