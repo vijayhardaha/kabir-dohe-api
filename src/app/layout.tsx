@@ -33,16 +33,6 @@ const RootLayout = ({ children }: { children: ReactNode }): React.JSX.Element =>
         <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
       </head>
       <body className={`${sansFont.variable} ${monoFont.variable} ${serifFont.variable}`}>
-        <script type="application/ld+json">
-          {`{
-      "@context": "https://schema.org",
-      "@type": "WebAPI",
-      "name": "Kabir ke Dohe API",
-      "description": "RESTful API providing access to 2500+ Kabir couplets with translations and interpretations.",
-      "url": "https://kabir-ke-dohe-api.vercel.app",
-      "provider": { "@type": "Organization", "name": "Kabir ke Dohe" }
-    }`}
-        </script>
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1 py-12">{children}</main>
