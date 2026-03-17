@@ -20,6 +20,7 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     default: 'false',
   },
   { name: 'tags', type: 'string', description: 'Filter results by a comma-separated list of tag slugs.', default: '' },
+  { name: 'category', type: 'string', description: 'Filter results by a single category slug.', default: '' },
   {
     name: 'is_popular',
     type: 'boolean',
@@ -27,9 +28,16 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
     default: 'false',
   },
   {
+    name: 'is_featured',
+    type: 'boolean',
+    description: 'Filter results to show only featured entries (true/false).',
+    default: 'false',
+  },
+  {
     name: 'sort_by',
     type: 'string',
-    description: 'Specify the field for ordering results. Supported: number, is_popular, text_en, text_hi.',
+    description:
+      'Specify the field for ordering results. Supported: number, is_popular, is_featured, text_en, text_hi.',
     default: 'number',
   },
   {
