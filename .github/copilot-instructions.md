@@ -14,7 +14,7 @@ You are an expert Senior Developer in a Next.js 16 environment. Your role is to 
 | Validation | Zod                      |
 | Styling    | Tailwind CSS             |
 | UI Library | Custom components        |
-| Testing    | Jest                     |
+| Testing    | Vitest                   |
 
 ---
 
@@ -24,12 +24,18 @@ You are an expert Senior Developer in a Next.js 16 environment. Your role is to 
 src/
 ├── app/                    # Next.js App Router - routing only
 │   ├── api/               # API routes
+│   │   └── couplets/     # Couplets API endpoint
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page
 │   └── globals.css        # Global styles
 │
 ├── components/             # Reusable UI components
 │   ├── docs/             # API documentation components
+│   │   ├── Introduction.tsx
+│   │   ├── QueryParameters.tsx
+│   │   ├── ResponseFormat.tsx
+│   │   ├── ErrorResponse.tsx
+│   │   └── UsageExamples.tsx
 │   ├── CopyButton.tsx
 │   ├── CodeBlock.tsx
 │   ├── Footer.tsx
@@ -44,12 +50,14 @@ src/
 │   │   ├── env/         # Environment variables
 │   │   │   └── server.ts
 │   │   └── utils/       # Server utilities
-│   │       ├── errors/  # Error handling (api-error, error-handler)
-│   │       ├── response/ # Response helpers (success, failure)
-│   │       └── string/ # String utilities (sanitize, formatting)
+│   │       ├── errors/  # Error handling
+│   │       ├── response/ # Response helpers
+│   │       └── string/  # String utilities
 │   │
-│   └── utils/           # Shared utilities (client-safe)
-│       └── base-url.ts
+│   └── utils/            # Shared utilities (client-safe)
+│       ├── seo.ts        # SEO utilities
+│       ├── schema.ts     # JSON-LD schema builders
+│       └── base-url.ts   # Base URL helper
 │
 └── types/                 # Global TypeScript definitions
     └── api/              # API-related types
@@ -62,17 +70,69 @@ src/
 ```
 scripts/
 ├── sync.ts               # Database sync script (Google Sheets → Supabase)
-├── indexnow.ts          # IndexNow API submission script
+│                         # Usage: pnpm sync:local (dev) or pnpm sync:prod (prod)
+├── indexnow.ts           # IndexNow API submission script
+│                         # Usage: pnpm indexnow
 └── lib/
-    ├── db.ts            # Database operations (upsert posts, tags, mappings)
-    ├── env.ts           # Environment loader for scripts
-    ├── gsheet.ts        # Google Sheets integration
-    └── supabase.ts      # Supabase client for scripts
+    ├── env.ts            # Environment loader & validation (Zod schema)
+    ├── supabase.ts      # Supabase client factory
+    ├── gsheet.ts        # Google Sheets integration (fetch, validate, transform)
+    └── db.ts            # Database operations (batch upserts for posts, tags, mappings)
+```
+
+### Available Commands
+
+```bash
+# Development
+pnpm run dev              # Start development server
+pnpm run build            # Build for production
+pnpm run start            # Start production server
+
+# Linting & Formatting
+pnpm run lint             # Lint all files
+pnpm run lint:fix         # Fix auto-fixable issues
+pnpm run format           # Format files
+pnpm run format:check     # Check formatting
+
+# Scripts (Database Sync)
+pnpm sync:local           # Sync database in development mode (.env.local)
+pnpm sync:prod            # Sync database in production mode (.env.production)
+pnpm indexnow             # Submit sitemap URLs to IndexNow
+
+# Testing
+pnpm test                 # Run tests in watch mode
+pnpm test:run             # Run tests once
 ```
 
 ---
 
-## 4. Server/Client Separation
+## 4. Utils Knowledge Base
+
+### Client-Safe Utils (`src/lib/utils/`)
+
+| File        | Function                | Description                                            |
+| ----------- | ----------------------- | ------------------------------------------------------ |
+| `seo.ts`    | `getBaseUrl()`          | Returns normalized base URL for the application        |
+| `seo.ts`    | `safeCanonical(slug)`   | Normalizes a slug by removing leading/trailing slashes |
+| `seo.ts`    | `getCanonicalUrl(slug)` | Generates fully qualified canonical URL                |
+| `schema.ts` | `personSchema()`        | Builds Schema.org Person entity                        |
+| `schema.ts` | `webApiSchema()`        | Builds Schema.org WebAPI entity                        |
+| `schema.ts` | `getFullSchemaGraph()`  | Returns complete JSON-LD graph                         |
+
+### Server Utils (`src/lib/server/utils/`)
+
+| File                   | Function                      | Description                           |
+| ---------------------- | ----------------------------- | ------------------------------------- |
+| `string/sanitize.ts`   | `sanitize(string, separator)` | Converts text to URL-safe slug        |
+| `string/sanitize.ts`   | `sanitizeKey(string)`         | Converts text to snake_case key       |
+| `string/sanitize.ts`   | `sanitizeTitle(string)`       | Converts text to kebab-case title     |
+| `string/formatting.ts` | `toSentenceCase(str)`         | Converts string to sentence case      |
+| `response/response.ts` | `success(data)`               | Creates standardized success response |
+| `response/response.ts` | `failure(message, status)`    | Creates standardized error response   |
+
+---
+
+## 5. Server/Client Separation
 
 **IMPORTANT**: Never import server-side code in client components.
 
@@ -84,12 +144,12 @@ scripts/
 import { createClient } from "@/lib/server/db/supabase";
 
 // Client-safe utilities
-import { cn } from "@/lib/utils";
+import { getCanonicalUrl } from "@/lib/utils/seo";
 ```
 
 ---
 
-## 5. Coding Style
+## 6. Coding Style
 
 ### Naming Conventions
 
@@ -110,7 +170,7 @@ import { cn } from "@/lib/utils";
 
 ---
 
-## 6. Formatting (Prettier)
+## 7. Formatting (Prettier)
 
 Follow the project's Prettier configuration. Check `prettier.config.mjs` before generating code.
 
@@ -133,7 +193,7 @@ If unavailable, use these rules:
 
 ---
 
-## 7. TypeScript Standards
+## 8. TypeScript Standards
 
 ### Types vs Interfaces
 
@@ -156,7 +216,7 @@ type Status = "draft" | "published";
 
 ---
 
-## 8. Supabase & Database
+## 9. Supabase & Database
 
 ### Client Usage
 
@@ -173,7 +233,7 @@ import { createClient } from "@/lib/server/db/supabase";
 
 ---
 
-## 9. Validation (Zod)
+## 10. Validation (Zod)
 
 Validate all inputs from API requests, Server Actions, and Forms.
 
@@ -185,7 +245,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 10. API Routes
+## 11. API Routes
 
 - Handle errors with try/catch
 - Return standardized responses using `success` and `failure` helpers:
@@ -197,7 +257,7 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 11. React Best Practices
+## 12. React Best Practices
 
 - **Components**: Functional components only
 - **Hooks**: Extract logic to custom hooks (`useDebounce`, `useToggle`)
@@ -206,7 +266,28 @@ const CreatePostSchema = z.object({ title: z.string().min(5).max(100), content: 
 
 ---
 
-## 12. JSDoc Documentation
+## 13. Testing (Vitest)
+
+Tests are located alongside the code they test with `.test.ts` or `.test.tsx` extension.
+
+```bash
+# Run tests in watch mode
+pnpm test
+
+# Run tests once
+pnpm test:run
+```
+
+### Test File Conventions
+
+- Test files use `.test.ts` or `.test.tsx` extension
+- Place tests next to the code they test (same directory)
+- Use `@testing-library/react` for React components
+- Use descriptive test names: `describe('FunctionName', () => { it('should...') })`
+
+---
+
+## 14. JSDoc Documentation
 
 Add JSDoc comments for:
 
@@ -235,11 +316,10 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
 
 ---
 
-## 13. Component Example
+## 15. Component Example
 
 ```tsx
 import { type ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 interface ButtonProps {
   children: ReactNode;
@@ -249,10 +329,7 @@ interface ButtonProps {
 
 export function Button({ children, variant = "primary", onClick }: ButtonProps) {
   return (
-    <button
-      className={cn("rounded-md px-4 py-2", variant === "primary" ? "bg-blue-500 text-white" : "bg-gray-200")}
-      onClick={onClick}
-    >
+    <button className={variant === "primary" ? "bg-blue-500 text-white" : "bg-gray-200"} onClick={onClick}>
       {children}
     </button>
   );
