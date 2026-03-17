@@ -14,10 +14,12 @@ import ora from 'ora';
 
 import { sanitizeTitle } from '@/lib/server/utils';
 
-import { upsertPost, upsertTag, upsertPostTag, type DbPost, type DbTag } from './lib/db';
+import { upsertPosts, upsertTags, upsertPostTags, type DbPost, type DbTag } from './lib/db';
 import { loadScriptEnv, type ScriptEnv } from './lib/env';
 import { sheetToJson } from './lib/gsheet';
 import { createSupabaseClient } from './lib/supabase';
+
+const BATCH_SIZE = 500;
 
 /**
  * Main sync function that orchestrates the data synchronization process.
@@ -63,22 +65,25 @@ async function main() {
   // Maps slug -> { id, slug } for quick lookups
   const tagCache = new Map<string, { id: string; slug: string }>();
 
-  // Sync tags in batches to avoid rate limiting
-  // Using batch size of 50 to balance speed and reliability
+  // Sync tags in batches of 500 to avoid rate limiting
   spinner.start('Syncing tags to database...');
-  const tagsBatchSize = 50;
 
   try {
-    for (let i = 0; i < tags.length; i += tagsBatchSize) {
-      const batch = tags.slice(i, i + tagsBatchSize);
-      // Process batch in parallel for better performance
-      await Promise.all(
-        batch.map(async (tag) => {
-          const result = await upsertTag(supabase, tag);
-          tagCache.set(tag.slug, result);
-        })
-      );
-      spinner.text = 'Syncing tags: ' + Math.min(i + tagsBatchSize, tags.length) + '/' + tags.length;
+    for (let i = 0; i < tags.length; i += BATCH_SIZE) {
+      const batch = tags.slice(i, i + BATCH_SIZE);
+      // Remove duplicate tags by slug
+      const uniqueTags = batch.filter((tag, index, self) => index === self.findIndex((t) => t.slug === tag.slug));
+
+      const result = await upsertTags(supabase, uniqueTags);
+
+      // Cache all tags from this batch
+      if (result.data) {
+        for (const tag of result.data) {
+          tagCache.set(tag.slug, tag);
+        }
+      }
+
+      spinner.text = 'Syncing tags: ' + Math.min(i + BATCH_SIZE, tags.length) + '/' + tags.length;
     }
     spinner.succeed('Synced ' + tags.length + ' tags');
   } catch (error) {
@@ -86,42 +91,56 @@ async function main() {
     process.exit(1);
   }
 
-  // Sync posts and their tag mappings in batches
-  // Each post is linked to its tags via the post_tags junction table
+  // Sync posts and their tag mappings in batches of 500
   spinner.start('Syncing posts and post-tags...');
-  const postsBatchSize = 50;
   let mappingsCount = 0;
 
   try {
-    for (let i = 0; i < posts.length; i += postsBatchSize) {
-      const batch = posts.slice(i, i + postsBatchSize);
-      await Promise.all(
-        batch.map(async (post, batchIndex) => {
-          // Get the corresponding raw post to access its tags
-          const rawPost = rawPosts[i + batchIndex];
+    for (let i = 0; i < posts.length; i += BATCH_SIZE) {
+      const batch = posts.slice(i, i + BATCH_SIZE);
+      const rawBatch = rawPosts.slice(i, i + BATCH_SIZE);
 
-          // Insert or update the post in the database
-          const postResult = await upsertPost(supabase, post);
+      // Upsert all posts in batch
+      const postsResult = await upsertPosts(supabase, batch);
 
-          // Link tags to the post if tags exist
+      // Build mappings for all posts in batch
+      const mappings: Array<{ post_id: string; tag_id: string }> = [];
+      const seenMappings = new Set<string>();
+
+      if (postsResult.data) {
+        for (let j = 0; j < postsResult.data.length; j++) {
+          const postData = postsResult.data[j];
+          const rawPost = rawBatch[j];
+
           if (rawPost.tags && rawPost.tags.length > 0) {
             for (const tagName of rawPost.tags) {
-              // Convert tag name to slug using existing utility
               const slug = sanitizeTitle(tagName);
-              const tagResult = tagCache.get(slug);
+              const tagData = tagCache.get(slug);
 
-              if (tagResult) {
-                // Create the post-tag relationship
-                await upsertPostTag(supabase, { post_id: postResult.id, tag_id: tagResult.id });
-                mappingsCount++;
+              if (tagData) {
+                const key = postData.id + ':' + tagData.id;
+                if (!seenMappings.has(key)) {
+                  seenMappings.add(key);
+                  mappings.push({ post_id: postData.id, tag_id: tagData.id });
+                }
               }
             }
           }
+        }
+      }
 
-          return postResult;
-        })
-      );
-      spinner.text = `Syncing posts: ${Math.min(i + postsBatchSize, posts.length)}/${posts.length} (${mappingsCount} mappings)`;
+      // Remove duplicate mappings and upsert
+      if (mappings.length > 0) {
+        const uniqueMappings = mappings.filter((mapping, index, self) => {
+          const key = mapping.post_id + ':' + mapping.tag_id;
+          return index === self.findIndex((m) => m.post_id + ':' + m.tag_id === key);
+        });
+
+        await upsertPostTags(supabase, uniqueMappings);
+        mappingsCount += uniqueMappings.length;
+      }
+
+      spinner.text = `Syncing posts: ${Math.min(i + BATCH_SIZE, posts.length)}/${posts.length} (${mappingsCount} mappings)`;
     }
     spinner.succeed('Synced ' + posts.length + ' posts with ' + mappingsCount + ' post-tag mappings');
   } catch (error) {
