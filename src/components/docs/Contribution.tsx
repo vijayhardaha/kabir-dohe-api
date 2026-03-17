@@ -6,7 +6,7 @@ import { LuArrowUpRight } from 'react-icons/lu';
  *
  * @returns {React.JSX.Element} - The rendered contribution section
  */
-export function Contribution(): React.JSX.Element {
+export default function Contribution(): React.JSX.Element {
   return (
     <section>
       <h2>Contribute to the Project</h2>

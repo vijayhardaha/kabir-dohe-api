@@ -4,7 +4,7 @@
  *
  * @returns {React.JSX.Element} - The rendered introduction section
  */
-export function Introduction(): React.JSX.Element {
+export default function Introduction(): React.JSX.Element {
   return (
     <section id="introduction">
       <h2>Introduction to Kabir Ke Dohe API</h2>

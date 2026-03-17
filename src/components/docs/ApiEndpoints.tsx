@@ -4,7 +4,7 @@
  *
  * @returns {React.JSX.Element} - The rendered API endpoint documentation.
  */
-export function ApiEndpoints(): React.JSX.Element {
+export default function ApiEndpoints(): React.JSX.Element {
   return (
     <section id="api-endpoint">
       <h2>API Endpoint</h2>

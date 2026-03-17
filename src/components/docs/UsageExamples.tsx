@@ -23,7 +23,7 @@ type ExampleKey = 'curl' | 'javascript' | 'python';
  * @returns {React.JSX.Element} - The rendered examples section
  */
 
-export function UsageExamples(): React.JSX.Element {
+export default function UsageExamples(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<ExampleKey>('curl');
 
   const keys = Object.keys({ curl: 1, javascript: 1, python: 1 }) as ExampleKey[];

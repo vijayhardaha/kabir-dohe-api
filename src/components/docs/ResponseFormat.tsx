@@ -6,7 +6,7 @@ import { CodeBlock } from '@/components/CodeBlock';
  *
  * @returns {React.JSX.Element} - The rendered response format documentation
  */
-export function ResponseFormat(): React.JSX.Element {
+export default function ResponseFormat(): React.JSX.Element {
   const responseExample = `{
   "success": true,
   "data": {

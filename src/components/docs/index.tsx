@@ -1,9 +1,9 @@
-export { Introduction } from './Introduction';
-export { ApiEndpoints } from './ApiEndpoints';
-export { QueryParameters } from './QueryParameters';
-export { ResponseFormat } from './ResponseFormat';
-export { ErrorResponse } from './ErrorResponse';
-export { Examples } from './Examples';
-export { UsageExamples } from './UsageExamples';
-export { Contribution } from './Contribution';
-export { SEOContent } from './SEOContent';
+export { default as Introduction } from './Introduction';
+export { default as ApiEndpoints } from './ApiEndpoints';
+export { default as QueryParameters } from './QueryParameters';
+export { default as ResponseFormat } from './ResponseFormat';
+export { default as ErrorResponse } from './ErrorResponse';
+export { default as Examples } from './Examples';
+export { default as UsageExamples } from './UsageExamples';
+export { default as Contribution } from './Contribution';
+export { default as SEOContent } from './SEOContent';

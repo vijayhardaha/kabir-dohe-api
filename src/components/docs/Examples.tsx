@@ -33,7 +33,7 @@ const examples: IExample[] = [
   },
 ];
 
-export function Examples(): React.JSX.Element {
+export default function Examples(): React.JSX.Element {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
 

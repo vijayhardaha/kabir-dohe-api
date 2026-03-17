@@ -104,8 +104,6 @@ export async function upsertPostTag(supabase: SupabaseClient, mapping: PostTagMa
     .single();
 
   if (error) {
-    console.log(mapping);
-    console.log(error);
     throw new Error('Failed to upsert post_tag mapping: ' + error.message);
   }
 }

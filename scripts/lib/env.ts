@@ -43,9 +43,8 @@ export function loadScriptEnv(): ScriptEnv {
   const parsed = scriptEnvSchema.safeParse(process.env);
 
   if (!parsed.success) {
-    console.error('Invalid environment variables');
-    console.error(z.treeifyError(parsed.error));
-    process.exit(1);
+    const validationError = z.treeifyError(parsed.error);
+    throw new Error('Invalid environment variables: ' + JSON.stringify(validationError));
   }
 
   return parsed.data;

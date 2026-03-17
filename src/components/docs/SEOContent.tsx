@@ -3,7 +3,7 @@
  *
  * @returns {React.JSX.Element} - The rendered SEO content section.
  */
-export function SEOContent(): React.JSX.Element {
+export default function SEOContent(): React.JSX.Element {
   return (
     <>
       <section id="who-was-sant-kabir">

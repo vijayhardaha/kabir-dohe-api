@@ -23,7 +23,7 @@ interface QueryParameters {
  * @param {Array<Object>} props.parameters - Array of parameter objects with details
  * @returns {React.JSX.Element} - The rendered query parameters documentation
  */
-export function QueryParameters({ parameters }: QueryParameters): React.JSX.Element {
+export default function QueryParameters({ parameters }: QueryParameters): React.JSX.Element {
   return (
     <section id="query-parameters">
       <h2>Query Parameters</h2>
