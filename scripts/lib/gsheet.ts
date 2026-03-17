@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { toSentenceCase } from '@/lib/server/utils';
 
+import { DbPost, DbTag } from './db';
 import type { ScriptEnv } from './env';
 
 /**
@@ -84,40 +85,6 @@ export type SheetRow = z.infer<typeof SheetRowSchema>;
  * Zod schema for validating an array of sheet rows.
  */
 const SheetSchema = z.array(SheetRowSchema);
-
-/**
- * Represents a post record ready for database insertion.
- */
-interface DbPost {
-  slug: string;
-  identifier: string;
-  text_hi: string;
-  text_en: string;
-  interpretation_hi: string;
-  interpretation_en: string;
-  philosophical_analysis_hi: string;
-  philosophical_analysis_en: string;
-  practical_example_hi: string;
-  practical_example_en: string;
-  practice_guidance_hi: string;
-  practice_guidance_en: string;
-  core_message_hi: string;
-  core_message_en: string;
-  reflection_questions_hi: string;
-  reflection_questions_en: string;
-  post_number: number;
-  post_order: number;
-  is_popular: boolean;
-  is_featured: boolean;
-}
-
-/**
- * Represents a tag record ready for database insertion.
- */
-interface DbTag {
-  name: string;
-  slug: string;
-}
 
 /**
  * Transforms validated sheet rows into database-ready post records.
