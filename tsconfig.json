@@ -53,6 +53,19 @@
     // Enable all strict type-checking options for safer code
     "strict": true,
 
+    // Catch unused local variables and function parameters at compile time
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // Ensure all code paths return a value or explicitly return nothing
+    "noImplicitReturns": true,
+
+    // Require explicit handling of switch case fallthrough
+    "noFallthroughCasesInSwitch": true,
+
+    // Use modern class field semantics for better compatibility
+    "useDefineForClassFields": true,
+
     // Skip deep type checks inside node_modules for performance
     "skipLibCheck": true,
 
@@ -70,8 +83,14 @@
     ".next/dev/types/**/*.ts",
     ".next/types/**/*.ts",
     "*.config.mjs",
+    "*.config.ts",
     "*.d.ts",
-    "**/*.{js,jsx,ts,tsx,mjs,cjs}",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mjs",
+    "**/*.cjs",
     "next-env.d.ts"
   ],
 
