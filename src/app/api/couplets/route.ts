@@ -16,7 +16,7 @@ const DEFAULT_PARAMS = {
   category: '',
   is_popular: false,
   is_featured: false,
-  sort_by: 'post_order',
+  sort_by: 'number',
   sort_order: 'asc',
   page: 1,
   per_page: 10,
