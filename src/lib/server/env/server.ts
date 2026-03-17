@@ -13,7 +13,6 @@ const envSchema = z.object({
 
   SUPABASE_URL: z.url(),
   SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1),
-  SUPABASE_PASSKEY_HASH: z.string().min(1),
 
   GOOGLE_SERVICE_ACCOUNT_BASE64: z.string().min(1),
   GOOGLE_SHEET_ID: z.string().min(1),
