@@ -6,8 +6,8 @@
  * and upserts them into the database using batch processing to avoid rate limiting.
  *
  * Usage:
- *   pnpm sync:local    - Run in development mode
- *   pnpm sync:prod     - Run in production mode
+ *   bun run sync       - Run in development mode
+ *   bun run sync:prod - Run in production mode
  */
 
 import ora from 'ora';

@@ -84,28 +84,32 @@ function sleep(ms: number): Promise<void> {
  * Generate system prompt with all field definitions
  */
 function getSystemPrompt(): string {
-  return `Analyze Kabir's dohas as a spiritual expert, returning ONLY a JSON array. Total word count per doha must be 1200-1500 words.
+  return `Analyze the provided each Kabir Doha(s) and return ONLY a JSON array. Each entry must be between 1200-1500 words in total to ensure maximum depth.
 
 GLOBAL RULES:
 - Every '_hi' field must be in Hindi.
 - Every '_en' field must be a high-quality, poetic English translation (except 'text_en', which is Hinglish transliteration).
+- Tone: Scholarly and mystical, yet emotionally resonant. Avoid being preachy.
 - Depth: Connect to Nirgun Bhakti, Advaita Vedanta, Sufism, and the rejection of ritualism.
-- Strict JSON: No text before or after the array.
+- Constraint: Strict JSON output only. No introductory or concluding text.
 
 FIELD SPECIFICATIONS:
-1. text_hi/text_en: Original Hindi and Hinglish transliteration.
-2. interpretation_hi/en: 6-8 sentences covering Literal meaning of each line, Metaphorical/symbolic interpretation, Connection to Kabir's core philosophy (nirgun bhakti, maya, atman-brahman), Spiritual terminology explained (if any) & The paradox or deeper truth Kabir is revealing.
-3. philosophical_analysis_hi/en: 5-7 paragraphs (>50 words each) discussing Historical/cultural context of couplet's teaching,  How this doha reflects Kabir's rejection of ritualism and caste, Connection to broader mystical traditions (Advaita, Sufism, Bhakti), The psychological/inner transformation Kabir advocates, Common misconceptions vs. true understanding, Why this teaching was radical in Kabir's time and remains relevant today.
-4. practical_example_hi/en: Create a compelling 15-20 paragraphs modern story with A relatable contemporary protagonist facing a genuine spiritual/life crisis, Clear connection to the doha's teaching, Realistic challenges and inner conflict, The turning point inspired by Kabir's wisdom, Tangible transformation in thought, behavior, and life outcomes, Emotional resonance that makes the teaching memorable, Natural integration of the doha's message without being preachy.
-5. practice_guidance_hi/en: Provide 4-5 practical spiritual practices including Daily meditation/contemplation techniques, Journaling prompts for self-inquiry, Behavioral changes to embody the teaching, Mindfulness exercises related to the doha's theme, How to recognize when you're living/not living this wisdom.
-6. core_message_hi/en: Write 5-7 items (10-15 words each) including profound and poetic message, addresses common spiritual obstacles message, actionable wisdom message, connects individual and universal truth message, inspires ongoing spiritual journey message.
-7. reflection_questions_hi/en: 5-8 deep, non-obvious reflective questions that Prompt deep self-examination, Have no easy answers, Connect the doha to reader's personal life, Encourage continued contemplation beyond the reading.
-8. tags/category: 2-5 relevant tags and 1 main category.
+- text_hi / text_en: Original Hindi script and Hinglish transliteration.
+- meaning_hi / en: (Minimum 40 words) Provide a clear, accessible, and direct explanation of the Doha, distilling the literal and fundamental message without losing its spiritual weight.
+- interpretation_hi / en: (6-8 sentences) Begin with the literal meaning, then transition into a deep metaphorical analysis. Explicitly link to Nirgun Bhakti (formless devotion), Maya (illusion), and Atman-Brahman non-duality. Define spiritual terminology while highlighting the central paradox of the human condition.
+- philosophical_analysis_hi / en: (5-7 paragraphs, >50 words each) Detail the historical/cultural context of Kabir’s era. Explain his rejection of ritualism and caste. Connect the teaching to Advaita Vedanta, Sufism, and the Bhakti movement. Focus on psychological transformation and the annihilation of ego, correcting common literalist misconceptions.
+- practical_example_hi / en: (8-10 paragraphs, ~30 words each) A compelling contemporary short story of a protagonist facing a realistic existential crisis (e.g., corporate burnout, digital ego). Use a "Kabir Twist" to trigger a concrete transformation in behavior and life outcomes.
+- practice_guidance_hi / en: (4-5 items) Provide a roadmap including daily meditation/contemplation, journaling prompts for self-inquiry, and specific behavioral changes. Include a "Diagnostic Checklist" to recognize when one is living (or failing to live) this wisdom.
+- core_message_hi / en: (5-7 items, 10-15 words each) Poetic, profound modern insights. Sequentially address spiritual obstacles, actionable wisdom, and the connection between individual and universal truth.
+- reflection_questions_hi / en: (5-8 items) Deep, non-obvious questions with no easy answers. Force the reader to examine their public identity versus their internal shadows and personal life (digital ego, hidden biases).
+- tags / category: Provide a list of 3-5 specific tags and one overarching category (e.g., "Ego & Identity," "Nature of Reality").
 
 JSON STRUCTURE:
 [{
   "text_hi": "",
   "text_en": "",
+  "meaning_hi": "",
+  "meaning_en": "",
   "interpretation_hi": "",
   "interpretation_en": "",
   "philosophical_analysis_hi": "",
@@ -119,7 +123,7 @@ JSON STRUCTURE:
   "reflection_questions_hi": [],
   "reflection_questions_en": [],
   "tags": [],
-  "category": ""
+  "category": "",
 }]`;
 }
 
@@ -201,7 +205,7 @@ async function appendToFile(data: GeneratedCouplet[], OUTPUT_FILE: string) {
 async function main() {
   const INPUT_FILE = 'scripts/dohe-input.json';
   const OUTPUT_FILE = 'scripts/dohe-output.json';
-  const BATCH_SIZE = 25;
+  const BATCH_SIZE = 1;
 
   if (!existsSync(INPUT_FILE)) {
     console.error(`Input file "${INPUT_FILE}" not found!`);
