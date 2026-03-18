@@ -6,15 +6,16 @@ You are an expert Senior Developer in a Next.js 16 environment. Your role is to 
 
 ## 1. Tech Stack
 
-| Category   | Technology               |
-| ---------- | ------------------------ |
-| Framework  | Next.js 16 (App Router)  |
-| Language   | TypeScript (Strict mode) |
-| Database   | Supabase (PostgreSQL)    |
-| Validation | Zod                      |
-| Styling    | Tailwind CSS             |
-| UI Library | Custom components        |
-| Testing    | Vitest                   |
+| Category        | Technology               |
+| --------------- | ------------------------ |
+| Framework       | Next.js 16 (App Router)  |
+| Language        | TypeScript (Strict mode) |
+| Database        | Supabase (PostgreSQL)    |
+| Validation      | Zod                      |
+| Styling         | Tailwind CSS             |
+| UI Library      | Custom components        |
+| Testing         | Vitest                   |
+| Package Manager | Bun                      |
 
 ---
 
@@ -70,9 +71,9 @@ src/
 ```
 scripts/
 ├── sync.ts               # Database sync script (Google Sheets → Supabase)
-│                         # Usage: pnpm sync:local (dev) or pnpm sync:prod (prod)
+│                         # Usage: bun run sync (dev) or bun run sync:prod (prod)
 ├── indexnow.ts           # IndexNow API submission script
-│                         # Usage: pnpm indexnow
+│                         # Usage: bun run indexnow
 └── lib/
     ├── env.ts            # Environment loader & validation (Zod schema)
     ├── supabase.ts      # Supabase client factory
@@ -84,24 +85,24 @@ scripts/
 
 ```bash
 # Development
-pnpm run dev              # Start development server
-pnpm run build            # Build for production
-pnpm run start            # Start production server
+bun run dev              # Start development server
+bun run build            # Build for production
+bun run start            # Start production server
 
 # Linting & Formatting
-pnpm run lint             # Lint all files
-pnpm run lint:fix         # Fix auto-fixable issues
-pnpm run format           # Format files
-pnpm run format:check     # Check formatting
+bun run lint             # Lint all files
+bun run lint:fix         # Fix auto-fixable issues
+bun run format           # Format files
+bun run format:check     # Check formatting
 
 # Scripts (Database Sync)
-pnpm sync:local           # Sync database in development mode (.env.local)
-pnpm sync:prod            # Sync database in production mode (.env.production)
-pnpm indexnow             # Submit sitemap URLs to IndexNow
+bun run sync             # Sync database in development mode (.env.local)
+bun run sync:prod        # Sync database in production mode (.env.production)
+bun run indexnow         # Submit sitemap URLs to IndexNow
 
 # Testing
-pnpm test                 # Run tests in watch mode
-pnpm test:run             # Run tests once
+bun run test             # Run tests in watch mode
+bun run test:run         # Run tests once
 ```
 
 ---
@@ -272,10 +273,10 @@ Tests are located alongside the code they test with `.test.ts` or `.test.tsx` ex
 
 ```bash
 # Run tests in watch mode
-pnpm test
+bun run test
 
 # Run tests once
-pnpm test:run
+bun run test:run
 ```
 
 ### Test File Conventions
@@ -354,3 +355,23 @@ fix: standardize react types in components
 - Subject line: lowercase only, max 50 characters
 - Body: normal case allowed, max 72 characters per line
 - Use conventional commits format (type: subject)
+
+---
+
+## 17. Committing Changes
+
+After completing a task:
+
+1. Run `git status` and `git diff` to review changes
+2. Group changes into logical commits:
+   - **One file changed**: Single commit
+   - **Multiple files with similar changes**: One commit per logical change
+   - **Unrelated changes**: Separate commits
+3. Prepare `git add` and `git commit` commands following commitlint rules:
+   - Max subject: 50 characters
+   - Max body line: 72 characters
+   - Subject must be lowercase
+4. Update git.md with the new prepared commands
+5. Remove stale commits from git.md when changes are committed
+
+Output the exact git commands. Do NOT commit automatically.
