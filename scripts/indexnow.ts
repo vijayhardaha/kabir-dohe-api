@@ -4,7 +4,7 @@
  * Submits URLs from sitemap to IndexNow API for search engine indexing.
  *
  * Usage:
- *   pnpm indexnow    - Submit URLs to IndexNow
+ *   bun run indexnow - Submit URLs to IndexNow
  */
 
 import fs from 'fs/promises';
