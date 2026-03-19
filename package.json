@@ -18,8 +18,8 @@
     "sync": "bun --env-file=.env.local scripts/sync.ts",
     "sync:prod": "bun --env-file=.env.production scripts/sync.ts",
     "tsc": "tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "prepare": "husky"
   },
