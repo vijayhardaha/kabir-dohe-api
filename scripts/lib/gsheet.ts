@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { toSentenceCase } from '@/lib/server/utils';
 
-import { DbCategory, DbPost, DbTag } from './db';
+import type { DbCategory, DbPost, DbTag } from './db';
 import type { ScriptEnv } from './env';
 
 /**

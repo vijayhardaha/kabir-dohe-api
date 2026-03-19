@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { EB_Garamond, Geist_Mono, Nunito } from 'next/font/google';
 
 import Footer from '@/components/Footer';
