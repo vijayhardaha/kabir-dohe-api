@@ -11,12 +11,12 @@ const CORS_HEADERS = {
 };
 
 /**
- * Middleware to add CORS headers to couplets API responses.
+ * Proxy function to add CORS headers to couplets API responses.
  *
  * @param {NextRequest} request - The incoming request object.
  * @returns {NextResponse} The response with CORS headers attached.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const response = NextResponse.next();
 
   if (request.nextUrl.pathname.startsWith('/api/couplets')) {
@@ -29,6 +29,6 @@ export function middleware(request: NextRequest) {
 }
 
 /**
- * Route matcher configuration for the middleware.
+ * Route matcher configuration for the proxy.
  */
 export const config = { matcher: '/api/couplets/:path*' };
