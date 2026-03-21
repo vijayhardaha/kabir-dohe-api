@@ -10,7 +10,7 @@ import { success, successCached } from '@/lib/server/utils/response/response';
  * Default parameter values for the API.
  */
 const DEFAULT_PARAMS = {
-  search: '',
+  search_query: '',
   search_content: false,
   tags: '',
   category: '',
@@ -27,7 +27,7 @@ const DEFAULT_PARAMS = {
  * Zod schema for validating query parameters.
  */
 const QuerySchema = z.object({
-  search: z.string().optional().default(DEFAULT_PARAMS.search),
+  search_query: z.string().optional().default(DEFAULT_PARAMS.search_query),
   search_content: z.boolean().optional().default(DEFAULT_PARAMS.search_content),
   tags: z.string().optional().default(DEFAULT_PARAMS.tags),
   category: z.string().optional().default(DEFAULT_PARAMS.category),
@@ -141,7 +141,7 @@ function transformPost(row: Record<string, unknown>): Post {
  * Fetches posts from Supabase using the RPC function.
  */
 async function fetchPosts(params: QueryParams) {
-  const searchTrimmed = params.search?.trim() || '';
+  const searchTrimmed = params.search_query?.trim() || '';
   const tagsTrimmed = params.tags?.trim() || '';
   const categoryTrimmed = params.category?.trim() || '';
 
@@ -164,7 +164,7 @@ async function fetchPosts(params: QueryParams) {
   };
 
   const filters = {
-    search: searchTrimmed || null,
+    search_query: searchTrimmed || null,
     search_content: params.search_content || false,
     tags: tagsSlugified || null,
     category: categorySlugified || null,

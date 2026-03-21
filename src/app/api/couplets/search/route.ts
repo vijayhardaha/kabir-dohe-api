@@ -8,13 +8,13 @@ import { successCached } from '@/lib/server/utils/response/response';
 /**
  * Default parameter values for the search API.
  */
-const DEFAULT_PARAMS = { search: '', page: 1, per_page: 10 } as const;
+const DEFAULT_PARAMS = { search_query: '', page: 1, per_page: 10 } as const;
 
 /**
  * Zod schema for validating search query parameters.
  */
 const SearchQuerySchema = z.object({
-  search: z.string().optional().default(DEFAULT_PARAMS.search),
+  search_query: z.string().optional().default(DEFAULT_PARAMS.search_query),
   page: z.coerce.number().int().positive().optional().default(DEFAULT_PARAMS.page),
   per_page: z.coerce.number().int().positive().max(100).optional().default(DEFAULT_PARAMS.per_page),
 });
@@ -42,7 +42,7 @@ function parseQueryParams(searchParams: URLSearchParams): SearchQueryParams {
  * Returns only the text_hi field for each matching result.
  */
 async function searchCouplets(params: SearchQueryParams): Promise<{ posts: string[] }> {
-  const searchTerm = params.search?.trim() || '';
+  const searchTerm = params.search_query?.trim() || '';
   const offset = (params.page - 1) * params.per_page;
 
   let query = supabase.from('posts').select('text_hi');
