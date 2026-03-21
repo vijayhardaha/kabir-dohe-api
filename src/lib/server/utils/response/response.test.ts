@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 
-import { success, failure } from '@/lib/server/utils/response/response';
+import { success, successCached, failure } from '@/lib/server/utils/response/response';
 
 // Keep success and failure branches isolated to verify shared response contract consistency.
 describe('response utilities', () => {
@@ -36,6 +36,36 @@ describe('response utilities', () => {
 
       // Assert the expected outcome for this scenario.
       expect(body.data).toEqual(testData);
+    });
+  });
+
+  // Group related test behavior in this suite.
+  describe('successCached', () => {
+    it('should return NextResponse with 200 status', () => {
+      const response = successCached({ message: 'test' });
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should include success: true in body', async () => {
+      const response = successCached({ id: 1 });
+      const body = await response.json();
+
+      expect(body.success).toBe(true);
+    });
+
+    it('should include data in body', async () => {
+      const testData = { id: 1, name: 'test' };
+      const response = successCached(testData);
+      const body = await response.json();
+
+      expect(body.data).toEqual(testData);
+    });
+
+    it('should include Cache-Control header', () => {
+      const response = successCached({ message: 'test' });
+
+      expect(response.headers.get('Cache-Control')).toBe('s-maxage=60, stale-while-revalidate=300');
     });
   });
 
