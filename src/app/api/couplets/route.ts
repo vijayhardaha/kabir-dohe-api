@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/lib/server/db/supabase';
+import { supabase } from '@/lib/server/db/supabase';
 import { sanitizeTitle } from '@/lib/server/utils';
 import { handleError } from '@/lib/server/utils/errors/error-handler';
 import { success } from '@/lib/server/utils/response/response';
@@ -135,7 +135,7 @@ function transformPost(row: Record<string, unknown>): Post {
 /**
  * Fetches posts from Supabase using the RPC function.
  */
-async function fetchPosts(supabase: Awaited<ReturnType<typeof createClient>>, params: QueryParams) {
+async function fetchPosts(params: QueryParams) {
   const searchTrimmed = params.search?.trim() || '';
   const tagsTrimmed = params.tags?.trim() || '';
   const categoryTrimmed = params.category?.trim() || '';
@@ -194,9 +194,7 @@ async function fetchPosts(supabase: Awaited<ReturnType<typeof createClient>>, pa
 async function handleRequest(
   params: QueryParams
 ): Promise<{ posts: Post[]; total: number; totalPages: number; page: number; per_page: number; pagination: boolean }> {
-  const supabase = await createClient();
-
-  const { posts, total } = await fetchPosts(supabase, params);
+  const { posts, total } = await fetchPosts(params);
 
   return {
     posts,
@@ -209,6 +207,20 @@ async function handleRequest(
 }
 
 /**
+ * Handles errors in API route handlers.
+ */
+function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
+  if (error instanceof z.ZodError) {
+    const message = error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ');
+    return handleError(new Error(`Validation error: ${message}`));
+  }
+
+  return handleError(error instanceof Error ? error : new Error(fallbackMessage));
+}
+
+export const runtime = 'edge';
+
+/**
  * GET route handler for the posts API.
  */
 export async function GET(request: Request): Promise<NextResponse> {
@@ -217,7 +229,10 @@ export async function GET(request: Request): Promise<NextResponse> {
     const params = parseQueryParams(searchParams);
     const result = await handleRequest(params);
 
-    return success(result);
+    return NextResponse.json(
+      { success: true, data: result },
+      { status: 200, headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' } }
+    );
   } catch (error) {
     return handleRouteError(error, 'Failed to fetch posts');
   }
@@ -236,16 +251,4 @@ export async function POST(request: Request): Promise<NextResponse> {
   } catch (error) {
     return handleRouteError(error, 'Failed to fetch posts');
   }
-}
-
-/**
- * Handles errors in API route handlers.
- */
-function handleRouteError(error: unknown, fallbackMessage: string = 'An error occurred'): NextResponse {
-  if (error instanceof z.ZodError) {
-    const message = error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ');
-    return handleError(new Error(`Validation error: ${message}`));
-  }
-
-  return handleError(error instanceof Error ? error : new Error(fallbackMessage));
 }

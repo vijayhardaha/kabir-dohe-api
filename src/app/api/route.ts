@@ -8,6 +8,8 @@ interface ApiResponse {
   message: string;
 }
 
+export const runtime = 'edge';
+
 /**
  * Handles GET requests to the root API endpoint.
  *

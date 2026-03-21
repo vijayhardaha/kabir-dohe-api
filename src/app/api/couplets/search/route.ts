@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/lib/server/db/supabase';
+import { supabase } from '@/lib/server/db/supabase';
 import { handleError } from '@/lib/server/utils/errors/error-handler';
-import { success } from '@/lib/server/utils/response/response';
 
 /**
  * Default parameter values for the search API.
@@ -41,10 +40,7 @@ function parseQueryParams(searchParams: URLSearchParams): SearchQueryParams {
  * Searches couplets by text in text_hi and text_en columns using OR ilike pattern.
  * Returns only the text_hi field for each matching result.
  */
-async function searchCouplets(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  params: SearchQueryParams
-): Promise<{ posts: string[] }> {
+async function searchCouplets(params: SearchQueryParams): Promise<{ posts: string[] }> {
   const searchTerm = params.search?.trim() || '';
   const offset = (params.page - 1) * params.per_page;
 
@@ -69,9 +65,10 @@ async function searchCouplets(
  * Handles the search API request and returns formatted response.
  */
 async function handleRequest(params: SearchQueryParams): Promise<{ posts: string[] }> {
-  const supabase = await createClient();
-  return searchCouplets(supabase, params);
+  return searchCouplets(params);
 }
+
+export const runtime = 'edge';
 
 /**
  * GET route handler for the search API.
@@ -86,7 +83,10 @@ export async function GET(request: Request): Promise<NextResponse> {
     const params = parseQueryParams(searchParams);
     const result = await handleRequest(params);
 
-    return success(result);
+    return NextResponse.json(
+      { success: true, data: result },
+      { status: 200, headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' } }
+    );
   } catch (error) {
     return handleRouteError(error);
   }
