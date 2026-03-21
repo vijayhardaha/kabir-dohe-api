@@ -162,14 +162,15 @@ bun run test:run         # Run tests once
 
 ### Server Utils (`src/lib/server/utils/`)
 
-| File                   | Function                      | Description                           |
-| ---------------------- | ----------------------------- | ------------------------------------- |
-| `string/sanitize.ts`   | `sanitize(string, separator)` | Converts text to URL-safe slug        |
-| `string/sanitize.ts`   | `sanitizeKey(string)`         | Converts text to snake_case key       |
-| `string/sanitize.ts`   | `sanitizeTitle(string)`       | Converts text to kebab-case title     |
-| `string/formatting.ts` | `toSentenceCase(str)`         | Converts string to sentence case      |
-| `response/response.ts` | `success(data)`               | Creates standardized success response |
-| `response/response.ts` | `failure(message, status)`    | Creates standardized error response   |
+| File                   | Function                      | Description                                                               |
+| ---------------------- | ----------------------------- | ------------------------------------------------------------------------- |
+| `string/sanitize.ts`   | `sanitize(string, separator)` | Converts text to URL-safe slug                                            |
+| `string/sanitize.ts`   | `sanitizeKey(string)`         | Converts text to snake_case key                                           |
+| `string/sanitize.ts`   | `sanitizeTitle(string)`       | Converts text to kebab-case title                                         |
+| `string/formatting.ts` | `toSentenceCase(str)`         | Converts string to sentence case                                          |
+| `response/response.ts` | `success(data)`               | Creates standardized success response                                     |
+| `response/response.ts` | `successCached(data)`         | Creates cached success response (s-maxage=60, stale-while-revalidate=300) |
+| `response/response.ts` | `failure(message, status)`    | Creates standardized error response                                       |
 
 ---
 
@@ -215,7 +216,7 @@ bun run test:run         # Run tests once
 
 ## Supabase Guidelines
 
-- Import from `@/lib/server/db/supabase`
+- Import the singleton client: `import { supabase } from '@/lib/server/db/supabase'`
 - Always select specific columns (avoid `SELECT *`)
 - Use RLS policies for security
 - Never expose Service Role key on client
