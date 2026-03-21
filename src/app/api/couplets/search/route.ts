@@ -38,7 +38,7 @@ function parseQueryParams(searchParams: URLSearchParams): SearchQueryParams {
 }
 
 /**
- * Searches couplets by text in text_hi and text_en columns using OR ilike pattern.
+ * Searches couplets by text in search_text column.
  * Returns only the text_hi field for each matching result.
  */
 async function searchCouplets(params: SearchQueryParams): Promise<{ posts: string[] }> {
@@ -48,7 +48,7 @@ async function searchCouplets(params: SearchQueryParams): Promise<{ posts: strin
   let query = supabase.from('posts').select('text_hi');
 
   if (searchTerm) {
-    query = query.or(`text_hi.ilike.%${searchTerm}%,text_en.ilike.%${searchTerm}%`);
+    query = query.ilike('search_text', `%${searchTerm}%`);
   }
 
   const { data, error } = await query.range(offset, offset + params.per_page - 1);
