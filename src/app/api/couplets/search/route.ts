@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { supabase } from '@/lib/server/db/supabase';
 import { handleError } from '@/lib/server/utils/errors/error-handler';
+import { successCached } from '@/lib/server/utils/response/response';
 
 /**
  * Default parameter values for the search API.
@@ -83,10 +84,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const params = parseQueryParams(searchParams);
     const result = await handleRequest(params);
 
-    return NextResponse.json(
-      { success: true, data: result },
-      { status: 200, headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' } }
-    );
+    return successCached(result);
   } catch (error) {
     return handleRouteError(error);
   }

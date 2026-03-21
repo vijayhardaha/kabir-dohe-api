@@ -28,6 +28,13 @@ export function success<T>(data: T): NextResponse {
   return NextResponse.json({ success: true, data } as ApiSuccess<T>, { status: 200 });
 }
 
+export function successCached<T>(data: T): NextResponse {
+  return NextResponse.json({ success: true, data } as ApiSuccess<T>, {
+    status: 200,
+    headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
+  });
+}
+
 /**
  * Creates a standardized error response payload for predictable API failure handling.
  *
