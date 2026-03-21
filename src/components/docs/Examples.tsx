@@ -18,8 +18,11 @@ const canonicalUrl: string = getCanonicalUrl();
 
 const examples: IExample[] = [
   { title: '1. Fetch All Couplets', code: 'GET ' + canonicalUrl + '/api/couplets' },
-  { title: '2. Search for a Couplet', code: 'GET ' + canonicalUrl + '/api/couplets?search=itna%20dijai' },
-  { title: '3. Search with Content', code: 'GET ' + canonicalUrl + '/api/couplets?search=wisdom&search_content=true' },
+  { title: '2. Search for a Couplet', code: 'GET ' + canonicalUrl + '/api/couplets?search_query=itna%20dijai' },
+  {
+    title: '3. Search with Content',
+    code: 'GET ' + canonicalUrl + '/api/couplets?search_query=wisdom&search_content=true',
+  },
   { title: '4. Filter by Tags', code: 'GET ' + canonicalUrl + '/api/couplets?tags=spiritual,life' },
   { title: '5. Filter by Category', code: 'GET ' + canonicalUrl + '/api/couplets?category=philosophy' },
   { title: '6. Filter by Popular', code: 'GET ' + canonicalUrl + '/api/couplets?is_popular=true' },
@@ -31,7 +34,7 @@ const examples: IExample[] = [
     code:
       'GET '
       + canonicalUrl
-      + '/api/couplets?search=wisdom&search_content=true&tags=philosophy&is_popular=false&is_featured=false&sort_by=number&sort_order=desc&page=1&per_page=10',
+      + '/api/couplets?search_query=wisdom&search_content=true&tags=philosophy&is_popular=false&is_featured=false&sort_by=number&sort_order=desc&page=1&per_page=10',
   },
 ];
 

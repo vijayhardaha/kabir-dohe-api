@@ -10,7 +10,7 @@ import QueryParameters from '@/components/docs/QueryParameters';
 
 // Use representative parameters so table assertions reflect real endpoint documentation behavior.
 const mockParameters = [
-  { name: 'search', type: 'string', default: '', description: 'Search for couplets' },
+  { name: 'search_query', type: 'string', default: '', description: 'Search for couplets' },
   { name: 'page', type: 'number', default: 1, description: 'Page number' },
   { name: 'is_popular', type: 'boolean', default: false, description: 'Filter by popular' },
 ];
@@ -44,7 +44,7 @@ describe('QueryParameters', () => {
     render(<QueryParameters parameters={mockParameters} />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByText('search')).toBeInTheDocument();
+    expect(screen.getByText('search_query')).toBeInTheDocument();
     // Assert the expected outcome for this scenario.
     expect(screen.getByText('page')).toBeInTheDocument();
     // Assert the expected outcome for this scenario.

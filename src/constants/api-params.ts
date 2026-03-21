@@ -12,7 +12,12 @@ export interface ApiQueryParam {
  * Query parameters for the Kabir Ke Dohe API
  */
 export const API_QUERY_PARAMS: ApiQueryParam[] = [
-  { name: 'search', type: 'string', description: 'Perform a keyword search across available content.', default: '' },
+  {
+    name: 'search_query',
+    type: 'string',
+    description: 'Perform a keyword search across available content.',
+    default: '',
+  },
   {
     name: 'search_content',
     type: 'boolean',
