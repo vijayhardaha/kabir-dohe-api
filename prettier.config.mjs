@@ -25,7 +25,7 @@ const config = {
 
   // ---- Behavior & Edge Cases ----
   arrowParens: 'always', // Include parens around single-arg arrow functions
-  trailingComma: 'es5', // Add trailing commas where valid in ES5 (objects, arrays)
+  trailingComma: 'none', // No trailing commas by default
   bracketSpacing: true, // Print spaces between object braces: { foo: bar }
   bracketSameLine: false, // Put > of multi-line HTML/JSX elements on a new line
   proseWrap: 'preserve', // Respect manual wrapping in markdown/ prose
@@ -45,7 +45,7 @@ const config = {
     {
       // Scripting: JS/TS
       files: ['*.js', '*.ts', '*.mjs', '*.cjs', '*.jsx', '*.tsx'],
-      options: { tabWidth: 2, singleQuote: true },
+      options: { tabWidth: 2, singleQuote: true, trailingComma: 'es5' },
     },
     {
       // Styles: CSS / SASS

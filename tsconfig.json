@@ -91,7 +91,7 @@
     // Plugins & extras
     // ----------------------------------------------------------------------
     "plugins": [{ "name": "next" }],
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
 
   // ---- Includes ----
