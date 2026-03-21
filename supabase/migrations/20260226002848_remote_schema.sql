@@ -46,6 +46,10 @@ CREATE TABLE public.posts (
   text_hi text NOT NULL,
   text_en text NOT NULL,
 
+  -- meaning (can be null)
+  meaning_hi text,
+  meaning_en text,
+
   -- interpretation
   interpretation_hi text,
   interpretation_en text,
@@ -88,13 +92,15 @@ CREATE TABLE public.posts (
   -- post status
   post_status text NOT NULL DEFAULT 'draft',
 
-  -- search content
-  search_content_hi text GENERATED ALWAYS AS (
-    text_hi || ' ' || interpretation_hi || ' ' || philosophical_analysis_hi || ' ' || core_message_hi
+  -- generated columns for search
+  -- Combined text for full-text search (text + meaning)
+  search_content text GENERATED ALWAYS AS (
+    text_hi || ' ' || COALESCE(meaning_hi, '') || ' ' || interpretation_hi || ' ' || philosophical_analysis_hi || ' ' || core_message_hi || ' ' || text_en || ' ' || COALESCE(meaning_en, '') || ' ' || interpretation_en || ' ' || philosophical_analysis_en || ' ' || core_message_en
   ) STORED,
 
-  search_content_en text GENERATED ALWAYS AS (
-    text_en || ' ' || interpretation_en || ' ' || philosophical_analysis_en || ' ' || core_message_en
+  -- Combined text for basic search (text only)
+  search_text text GENERATED ALWAYS AS (
+    text_hi || ' ' || text_en
   ) STORED,
 
   -- timestamps
@@ -162,7 +168,5 @@ CREATE INDEX idx_posts_category_order ON public.posts(category_id, post_order);
 CREATE INDEX idx_post_tags_tag_id ON public.post_tags(tag_id);
 
 -- Trigram Search (requires pg_trgm)
-CREATE INDEX idx_posts_text_hi_search ON public.posts USING GIN (text_hi extensions.gin_trgm_ops);
-CREATE INDEX idx_posts_text_en_search ON public.posts USING GIN (text_en extensions.gin_trgm_ops);
-CREATE INDEX idx_posts_search_hi ON public.posts USING GIN (search_content_hi extensions.gin_trgm_ops);
-CREATE INDEX idx_posts_search_en ON public.posts USING GIN (search_content_en extensions.gin_trgm_ops);
+CREATE INDEX idx_posts_search_text ON public.posts USING GIN (search_text extensions.gin_trgm_ops);
+CREATE INDEX idx_posts_search_content ON public.posts USING GIN (search_content extensions.gin_trgm_ops);

@@ -1,28 +1,12 @@
 -- Optimized RPC function for fetching couplets/posts.
--- Replaces multiple SQL queries with a single function call for better performance.
+-- Returns JSON for simpler structure and better performance.
 
 -- Drop existing function if exists
 DROP FUNCTION IF EXISTS public.get_couplets_for_api(jsonb);
 
 -- Create the optimized function
 CREATE OR REPLACE FUNCTION public.get_couplets_for_api(filters jsonb)
-RETURNS TABLE (
-  id uuid,
-  post_number integer,
-  slug text,
-  text_hi text,
-  text_en text,
-  interpretation_hi text,
-  interpretation_en text,
-  category_name text,
-  category_slug text,
-  is_popular boolean,
-  is_featured boolean,
-  created_at timestamptz,
-  updated_at timestamptz,
-  tags jsonb,
-  total_count bigint
-)
+RETURNS jsonb
 LANGUAGE plpgsql
 SET search_path = public, pg_catalog
 AS $$
@@ -40,7 +24,8 @@ DECLARE
   per_page_count int := COALESCE((filters->>'per_page')::int, 10);
   pagination_enabled boolean := COALESCE((filters->>'pagination')::boolean, true);
   offset_count int := (page_num - 1) * per_page_count;
-  search_fields text[];
+  search_column text;
+  result jsonb;
 BEGIN
   -- Convert comma-separated tags to array
   tag_array := ARRAY(
@@ -49,53 +34,64 @@ BEGIN
     WHERE LENGTH(TRIM(x)) > 0
   );
 
-  -- Determine which fields to search based on search_content parameter
+  -- Determine which column to search based on search_content parameter
   IF search_content THEN
-    search_fields := ARRAY['search_content_hi', 'search_content_en'];
+    search_column := 'search_content';
   ELSE
-    search_fields := ARRAY['text_hi', 'text_en'];
+    search_column := 'search_text';
   END IF;
 
-  RETURN QUERY
-  WITH filtered_posts AS (
+  -- Execute query and return JSON
+  SELECT COALESCE(JSONB_AGG(row_to_json(t)), '[]'::jsonb) INTO result
+  FROM (
     SELECT
       p.id,
       p.post_number,
       p.slug,
       p.text_hi,
       p.text_en,
-      p.interpretation_hi,
-      p.interpretation_en,
-      c.name AS category_name,
-      c.slug AS category_slug,
+      p.meaning_hi,
+      p.meaning_en,
+      CASE
+        WHEN c.id IS NULL THEN NULL
+        ELSE JSONB_BUILD_OBJECT('name', c.name, 'slug', c.slug)
+      END AS category,
       p.is_popular,
       p.is_featured,
       p.created_at,
       p.updated_at,
+      COALESCE(
+        (SELECT JSONB_AGG(JSONB_BUILD_OBJECT('id', t.id, 'name', t.name, 'slug', t.slug) ORDER BY t.name)
+         FROM public.post_tags pt
+         JOIN public.tags t ON t.id = pt.tag_id
+         WHERE pt.post_id = p.id),
+        '[]'::jsonb
+      ) AS tags,
       COUNT(*) OVER() AS total_count
     FROM public.posts p
     LEFT JOIN public.categories c ON c.id = p.category_id
-    LEFT JOIN public.post_tags pt ON pt.post_id = p.id
-    LEFT JOIN public.tags t ON t.id = pt.tag_id
     WHERE
       -- Search filter
       (
-        NULLIF(search_text, '') IS NULL  -- Returns TRUE if text is NULL or ''
-        OR (search_fields @> ARRAY['search_content_hi'] AND p.search_content_hi ILIKE '%' || search_text || '%')
-        OR (search_fields @> ARRAY['search_content_en'] AND p.search_content_en ILIKE '%' || search_text || '%')
-        OR (search_fields @> ARRAY['text_hi']           AND p.text_hi           ILIKE '%' || search_text || '%')
-        OR (search_fields @> ARRAY['text_en']           AND p.text_en           ILIKE '%' || search_text || '%')
+        NULLIF(search_text, '') IS NULL
+        OR (
+          CASE search_column
+            WHEN 'search_content' THEN p.search_content
+            WHEN 'search_text' THEN p.search_text
+          END
+        ILIKE '%' || search_text || '%'
+        )
       )
 
       -- Tag filter
       AND (
-        COALESCE(cardinality(tag_array), 0) = 0 -- If null or empty, bypass filter
+        COALESCE(cardinality(tag_array), 0) = 0
         OR EXISTS (
           SELECT 1
           FROM public.post_tags pt2
           INNER JOIN public.tags t2 ON t2.id = pt2.tag_id
           WHERE pt2.post_id = p.id
-          AND t2.slug = ANY(tag_array) -- Assuming tag_array and slug are already lowercase
+          AND t2.slug = ANY(tag_array)
         )
       )
 
@@ -111,51 +107,21 @@ BEGIN
       -- Post status
       AND p.post_status = 'publish'
     GROUP BY
-      p.id, c.name, c.slug
-  ),
-  post_tags_json AS (
-    SELECT
-      pt.post_id,
-      JSONB_AGG(
-        JSONB_BUILD_OBJECT(
-          'id', t.id,
-          'name', t.name,
-          'slug', t.slug
-        ) ORDER BY t.name
-      ) FILTER (WHERE t.id IS NOT NULL) AS tags
-    FROM public.post_tags pt
-    LEFT JOIN public.tags t ON t.id = pt.tag_id
-    GROUP BY pt.post_id
-  )
-  SELECT
-    fp.id,
-    fp.post_number,
-    fp.slug,
-    fp.text_hi,
-    fp.text_en,
-    fp.interpretation_hi,
-    fp.interpretation_en,
-    fp.category_name,
-    fp.category_slug,
-    fp.is_popular,
-    fp.is_featured,
-    fp.created_at,
-    fp.updated_at,
-    COALESCE(ptj.tags, '[]'::jsonb) AS tags,
-    fp.total_count
-  FROM filtered_posts fp
-  LEFT JOIN post_tags_json ptj ON ptj.post_id = fp.id
-  ORDER BY
-    CASE WHEN sort_by_field = 'is_featured' AND sort_order_dir = 'asc' THEN fp.is_featured::int END ASC,
-    CASE WHEN sort_by_field = 'is_featured' AND sort_order_dir = 'desc' THEN fp.is_featured::int END DESC,
-    CASE WHEN sort_by_field = 'is_popular' AND sort_order_dir = 'asc' THEN fp.is_popular::int END ASC,
-    CASE WHEN sort_by_field = 'is_popular' AND sort_order_dir = 'desc' THEN fp.is_popular::int END DESC,
-    CASE WHEN sort_by_field = 'text_en' AND sort_order_dir = 'asc' THEN fp.text_en END ASC,
-    CASE WHEN sort_by_field = 'text_en' AND sort_order_dir = 'desc' THEN fp.text_en END DESC,
-    CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'asc' THEN fp.text_hi END ASC,
-    CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'desc' THEN fp.text_hi END DESC,
-    fp.post_number ASC
-  LIMIT CASE WHEN pagination_enabled THEN per_page_count ELSE NULL END
-  OFFSET CASE WHEN pagination_enabled THEN offset_count ELSE 0 END;
+      p.id, c.id, c.name, c.slug
+    ORDER BY
+      CASE WHEN sort_by_field = 'is_featured' AND sort_order_dir = 'asc' THEN p.is_featured::int END ASC,
+      CASE WHEN sort_by_field = 'is_featured' AND sort_order_dir = 'desc' THEN p.is_featured::int END DESC,
+      CASE WHEN sort_by_field = 'is_popular' AND sort_order_dir = 'asc' THEN p.is_popular::int END ASC,
+      CASE WHEN sort_by_field = 'is_popular' AND sort_order_dir = 'desc' THEN p.is_popular::int END DESC,
+      CASE WHEN sort_by_field = 'text_en' AND sort_order_dir = 'asc' THEN p.text_en END ASC,
+      CASE WHEN sort_by_field = 'text_en' AND sort_order_dir = 'desc' THEN p.text_en END DESC,
+      CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'asc' THEN p.text_hi END ASC,
+      CASE WHEN sort_by_field = 'text_hi' AND sort_order_dir = 'desc' THEN p.text_hi END DESC,
+      p.post_number ASC
+    LIMIT CASE WHEN pagination_enabled THEN per_page_count ELSE NULL END
+    OFFSET CASE WHEN pagination_enabled THEN offset_count ELSE 0 END
+  ) t;
+
+  RETURN result;
 END;
 $$;

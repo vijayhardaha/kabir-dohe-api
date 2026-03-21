@@ -65,9 +65,9 @@ interface Post {
   slug: string;
   text_hi: string;
   text_en: string;
-  interpretation_hi: string;
-  interpretation_en: string;
-  category: Record<string, unknown> | null;
+  meaning_hi: string | null;
+  meaning_en: string | null;
+  category: { name: string; slug: string } | null;
   tags: Array<{ slug: string; name: string }>;
   created_at: string;
   updated_at: string;
@@ -118,14 +118,19 @@ function transformPost(row: Record<string, unknown>): Post {
       }))
     : [];
 
+  const category = row.category as { name: unknown; slug: unknown } | null;
+  const transformedCategory = category
+    ? { name: String(category.name ?? ''), slug: String(category.slug ?? '') }
+    : null;
+
   return {
     number: row.post_number as number,
     slug: row.slug as string,
     text_hi: row.text_hi as string,
     text_en: row.text_en as string,
-    interpretation_hi: row.interpretation_hi as string,
-    interpretation_en: row.interpretation_en as string,
-    category: row.category_slug ? { name: row.category_name, slug: row.category_slug } : null,
+    meaning_hi: row.meaning_hi as string | null,
+    meaning_en: row.meaning_en as string | null,
+    category: transformedCategory,
     tags,
     created_at: (row.created_at as string) || '',
     updated_at: (row.updated_at as string) || '',
