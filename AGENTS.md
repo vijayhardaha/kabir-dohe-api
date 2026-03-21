@@ -141,8 +141,12 @@ bun run sync:prod        # Sync database in production mode (.env.production)
 bun run indexnow         # Submit sitemap URLs to IndexNow
 
 # Testing
-bun run test             # Run tests in watch mode
-bun run test:run         # Run tests once
+bun run test            # Run tests once
+bun run test:watch     # Run tests in watch mode
+bun run test:coverage  # Run tests with coverage
+
+# Supabase Migrations
+supabase migration new <name>  # Create new migration file
 ```
 
 ---
