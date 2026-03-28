@@ -115,14 +115,14 @@ supabase migration new <name>  # Create new migration file
 
 ### Client-Safe Utils (`src/lib/utils/`)
 
-| File        | Function                | Description                                            |
-| ----------- | ----------------------- | ------------------------------------------------------ |
-| `seo.ts`    | `getBaseUrl()`          | Returns normalized base URL for the application        |
-| `seo.ts`    | `safeCanonical(slug)`   | Normalizes a slug by removing leading/trailing slashes |
-| `seo.ts`    | `getCanonicalUrl(slug)` | Generates fully qualified canonical URL                |
-| `schema.ts` | `personSchema()`        | Builds Schema.org Person entity                        |
-| `schema.ts` | `webApiSchema()`        | Builds Schema.org WebAPI entity                        |
-| `schema.ts` | `getFullSchemaGraph()`  | Returns complete JSON-LD graph                         |
+| File        | Function               | Description                                            |
+| ----------- | ---------------------- | ------------------------------------------------------ |
+| `seo.ts`    | `siteUrl()`            | Returns normalized base URL for the application        |
+| `seo.ts`    | `cleanPath(slug)`      | Normalizes a slug by removing leading/trailing slashes |
+| `seo.ts`    | `getPermaLink(slug)`   | Generates fully qualified canonical URL                |
+| `schema.ts` | `personSchema()`       | Builds Schema.org Person entity                        |
+| `schema.ts` | `webApiSchema()`       | Builds Schema.org WebAPI entity                        |
+| `schema.ts` | `getFullSchemaGraph()` | Returns complete JSON-LD graph                         |
 
 ### Server Utils (`src/lib/server/utils/`)
 
@@ -150,7 +150,7 @@ supabase migration new <name>  # Create new migration file
 import { supabase } from "@/lib/server/db/supabase";
 
 // Client-safe utilities
-import { getCanonicalUrl } from "@/lib/utils/seo";
+import { getPermaLink } from "@/lib/utils/seo";
 ```
 
 ---

@@ -1,5 +1,5 @@
 import { SITE_CONFIG } from '@/constants/seo';
-import { getCanonicalUrl } from '@/lib/utils/seo';
+import { getPermaLink } from '@/lib/utils/seo';
 
 // Updated type to handle the JSON-LD structure
 type AnyObject = Record<string, unknown>;
@@ -8,7 +8,7 @@ type AnyObject = Record<string, unknown>;
  * Build a Schema.org `Person` entity.
  */
 export function personSchema(): AnyObject {
-  const rootUrl = getCanonicalUrl();
+  const rootUrl = getPermaLink();
   return {
     '@type': 'Person',
     '@id': `${rootUrl}#person`,
@@ -46,7 +46,7 @@ export function personSchema(): AnyObject {
  * Converted from WebSite to describe the technical API service.
  */
 export function webApiSchema(): AnyObject {
-  const rootUrl = getCanonicalUrl();
+  const rootUrl = getPermaLink();
   const personId = `${rootUrl}#person`; // Pointing to you
 
   return {

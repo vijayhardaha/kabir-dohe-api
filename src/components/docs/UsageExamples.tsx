@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
 import { cn } from '@/lib/utils/classnames';
-import { getCanonicalUrl } from '@/lib/utils/seo';
+import { getPermaLink } from '@/lib/utils/seo';
 
 /**
  * Type definition for API usage examples.
@@ -33,14 +33,14 @@ export default function UsageExamples(): React.JSX.Element {
   const examples: Record<ExampleKey, Example> = {
     curl: {
       label: 'cURL',
-      code: 'curl -X GET "' + getCanonicalUrl() + '/api/couplets?tags=devotion&per_page=5"',
+      code: 'curl -X GET "' + getPermaLink() + '/api/couplets?tags=devotion&per_page=5"',
       language: 'bash',
     },
     javascript: {
       label: 'JavaScript',
       code:
         'fetch("'
-        + getCanonicalUrl()
+        + getPermaLink()
         + '/api/couplets?tags=devotion&per_page=5")\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error("Error:", error));',
       language: 'javascript',
     },
@@ -48,7 +48,7 @@ export default function UsageExamples(): React.JSX.Element {
       label: 'Python',
       code:
         'import requests\n\nresponse = requests.get("'
-        + getCanonicalUrl()
+        + getPermaLink()
         + '/api/couplets", params={\n  "tags": "devotion",\n  "per_page": 5\n})\n\ndata = response.json()\nprint(data)',
       language: 'python',
     },

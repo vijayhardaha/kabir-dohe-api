@@ -5,46 +5,46 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-import { safeCanonical, getBaseUrl } from './seo';
+import { cleanPath, siteUrl } from './seo';
 
 // Group SEO utility assertions to catch regressions in URL handling logic.
-describe('safeCanonical', () => {
+describe('cleanPath', () => {
   // Group related test behavior in this suite.
   // Define a focused test case for one behavior.
   it('should remove leading slashes', () => {
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('/about')).toBe('about');
+    expect(cleanPath('/about')).toBe('about');
   });
 
   // Define a focused test case for one behavior.
   it('should remove trailing slashes', () => {
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('about/')).toBe('about');
+    expect(cleanPath('about/')).toBe('about');
   });
 
   // Define a focused test case for one behavior.
   it('should handle slashes on both sides', () => {
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('/about/')).toBe('about');
+    expect(cleanPath('/about/')).toBe('about');
   });
 
   // Define a focused test case for one behavior.
   it('should return empty string for root', () => {
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('')).toBe('');
+    expect(cleanPath('')).toBe('');
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('/')).toBe('');
+    expect(cleanPath('/')).toBe('');
   });
 
   // Define a focused test case for one behavior.
   it('should handle whitespace', () => {
     // Assert the expected outcome for this scenario.
-    expect(safeCanonical('  about  ')).toBe('about');
+    expect(cleanPath('  about  ')).toBe('about');
   });
 });
 
 // Group base URL generation assertions in a dedicated suite.
-describe('getBaseUrl', () => {
+describe('siteUrl', () => {
   // Preserve and restore environment variables around tests.
   let originalEnv: NodeJS.ProcessEnv;
 
@@ -60,7 +60,7 @@ describe('getBaseUrl', () => {
 
   // Define a focused test case for one behavior.
   it('should return localhost when no env vars set', () => {
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toMatch(/^https?:\/\/localhost/);
   });
@@ -68,7 +68,7 @@ describe('getBaseUrl', () => {
   // Define a focused test case for one behavior.
   it('should add https:// prefix to URL without scheme', () => {
     process.env.NEXT_PUBLIC_SITE_URL = 'example.com';
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toBe('https://example.com');
   });
@@ -76,7 +76,7 @@ describe('getBaseUrl', () => {
   // Define a focused test case for one behavior.
   it('should keep http:// scheme when already present', () => {
     process.env.NEXT_PUBLIC_SITE_URL = 'http://example.com';
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toBe('http://example.com');
   });
@@ -84,7 +84,7 @@ describe('getBaseUrl', () => {
   // Define a focused test case for one behavior.
   it('should keep https:// scheme when already present', () => {
     process.env.NEXT_PUBLIC_SITE_URL = 'https://example.com';
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toBe('https://example.com');
   });
@@ -92,7 +92,7 @@ describe('getBaseUrl', () => {
   // Define a focused test case for one behavior.
   it('should remove trailing slash from URL', () => {
     process.env.NEXT_PUBLIC_SITE_URL = 'example.com/';
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toBe('https://example.com');
   });
@@ -100,7 +100,7 @@ describe('getBaseUrl', () => {
   // Define a focused test case for one behavior.
   it('should trim whitespace from URL', () => {
     process.env.NEXT_PUBLIC_SITE_URL = '  example.com  ';
-    const url = getBaseUrl();
+    const url = siteUrl();
     // Assert the expected outcome for this scenario.
     expect(url).toBe('https://example.com');
   });

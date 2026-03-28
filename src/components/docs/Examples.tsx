@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
-import { getCanonicalUrl } from '@/lib/utils/seo';
+import { getPermaLink } from '@/lib/utils/seo';
 
 /**
  * Interface representing an example API request.
@@ -14,7 +14,7 @@ interface IExample {
 }
 
 // Get the canonical URL for constructing API request examples
-const canonicalUrl: string = getCanonicalUrl();
+const canonicalUrl: string = getPermaLink();
 
 const examples: IExample[] = [
   { title: '1. Fetch All Couplets', code: 'GET ' + canonicalUrl + '/api/couplets' },

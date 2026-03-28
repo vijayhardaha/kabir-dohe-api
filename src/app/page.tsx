@@ -20,14 +20,14 @@ import {
 } from '@/components/docs';
 import { API_QUERY_PARAMS } from '@/constants/api-params';
 import { SITE_CONFIG } from '@/constants/seo';
-import { getBaseUrl } from '@/lib/utils/seo';
+import { siteUrl } from '@/lib/utils/seo';
 
 const title = SITE_CONFIG.title;
 const description = SITE_CONFIG.description;
 const siteName = SITE_CONFIG.name;
 
 // Schema.org structured data.
-const rootUrl = getBaseUrl();
+const rootUrl = siteUrl();
 const commonOptions = { rootUrl };
 const commonSchema = { name: title, description };
 const schema = [

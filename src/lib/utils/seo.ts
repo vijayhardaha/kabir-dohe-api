@@ -2,21 +2,20 @@
  * Return a normalized base URL for the running application.
  *
  * Preference order:
- * 1. `NEXT_PUBLIC_SITE_URL` (custom env var)
- * 2. `process.env.VERCEL_PROJECT_PRODUCTION_URL`
- * 3. `process.env.VERCEL_BRANCH_URL`
- * 4. `process.env.VERCEL_URL`
- * 5. Fallback to `http://localhost:{PORT}` where PORT defaults to 3000
+ * 1. `process.env.VERCEL_PROJECT_PRODUCTION_URL`
+ * 2. `process.env.VERCEL_BRANCH_URL`
+ * 3. `process.env.VERCEL_URL`
+ * 4. Fallback to `http://localhost:{PORT}` where PORT defaults to 3000
  *
  * Normalization ensures a scheme is present and removes a trailing slash.
  *
  * @returns {string} The normalized base URL.
  *
  * @example
- * // When no env vars are set and PORT is 3000
- * getBaseUrl() // -> 'http://localhost:3000'
+ * // When no Vercel env vars are set and PORT is 3000
+ * siteUrl() // -> 'http://localhost:3000'
  */
-export const getBaseUrl = (): string => {
+export const siteUrl = (): string => {
   const url =
     process.env.VERCEL_PROJECT_PRODUCTION_URL
     || process.env.VERCEL_BRANCH_URL
@@ -35,38 +34,38 @@ export const getBaseUrl = (): string => {
  * - Removes leading and trailing slashes
  * - Returns empty string for root
  *
- * @param {string} [slug=""] - The input path or slug.
+ * @param {string} [path=""] - The input path or slug.
  * @returns {string} A clean relative path without leading slash.
  *
  * @example
- * safeCanonical("about")      // "about"
- * safeCanonical("/about")     // "about"
- * safeCanonical("/about/")    // "about"
- * safeCanonical("")           // ""
- * safeCanonical("/")          // ""
+ * cleanPath("about")      // "about"
+ * cleanPath("/about")     // "about"
+ * cleanPath("/about/")    // "about"
+ * cleanPath("")           // ""
+ * cleanPath("/")          // ""
  */
-export const safeCanonical = (slug: string = ''): string => {
-  return slug.trim().replace(/^\/+/, '').replace(/\/+$/, '');
+export const cleanPath = (path: string = ''): string => {
+  return path.trim().replace(/^\/+/, '').replace(/\/+$/, '');
 };
 
 /**
- * Generates a fully qualified canonical URL.
+ * Generates a fully qualified permalink.
  *
- * Combines the application's base URL with a normalized slug.
- * Leading and trailing slashes in the slug are handled safely.
- * If no slug is provided, the base URL is returned.
+ * Combines the application's base URL with a normalized path.
+ * Leading and trailing slashes in the path are handled safely.
+ * If no path is provided, the base URL is returned.
  *
- * @param {string} [slug=""] - Optional path segment to append to the base URL.
- * @returns {string} The canonical absolute URL.
+ * @param {string} [path=""] - Optional path segment to append to the base URL.
+ * @returns {string} The permalink absolute URL.
  *
  * @example
- * // Assuming getBaseUrl() returns "https://example.com"
- * getCanonicalUrl("about") 	// → "https://example.com/about"
- * getCanonicalUrl("/about") 	// → "https://example.com/about"
- * getCanonicalUrl("/about/") 	// → "https://example.com/about"
- * getCanonicalUrl("") 			// → "https://example.com"
- * getCanonicalUrl("/") 		// → "https://example.com"
+ * // Assuming siteUrl() returns "https://example.com"
+ * getPermaLink("about") 	// → "https://example.com/about"
+ * getPermaLink("/about") 	// → "https://example.com/about"
+ * getPermaLink("/about/") 	// → "https://example.com/about"
+ * getPermaLink("") 			// → "https://example.com"
+ * getPermaLink("/") 		// → "https://example.com"
  */
-export const getCanonicalUrl = (slug: string = ''): string => {
-  return [getBaseUrl(), safeCanonical(slug)].filter(Boolean).join('/');
+export const getPermaLink = (path: string = ''): string => {
+  return [siteUrl(), cleanPath(path)].filter(Boolean).join('/');
 };
