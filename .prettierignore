@@ -13,6 +13,8 @@
 .next/
 .idea/
 .husky/
+.vercel/
+.git/
 node_modules/
 build/
 dist/
@@ -26,6 +28,7 @@ out/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+bun.lock
 
 # ----------------------------------------------------------------------
 # Static Assets & Public Data
