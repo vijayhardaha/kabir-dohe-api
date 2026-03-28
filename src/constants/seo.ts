@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
     description:
       'Kabir Dohe Hub is an online collection of Kabir ke dohe, featuring over 2000 authentic verses by Kabir Das. The platform provides organized access to dohas for reading, learning, and integration through APIs, making classical Indian wisdom easily accessible in the digital age.',
     url: 'https://kabirkedohe.vercel.app',
-    logo: undefined,
+    logo: null,
     foundingDate: 2024,
   },
 };
