@@ -96,7 +96,7 @@ export const SITE_METADATA: Metadata = {
   metadataBase: siteURL,
   authors: [{ name: SITE_CONFIG.creator.name, url: SITE_CONFIG.creator.urls.gravatar }],
   creator: SITE_CONFIG.creator.name,
-  publisher: SITE_CONFIG.name,
+  publisher: SITE_CONFIG.organization.name,
   robots: { index: true, follow: true },
   category: SITE_CONFIG.category,
   classification: SITE_CONFIG.classification,
