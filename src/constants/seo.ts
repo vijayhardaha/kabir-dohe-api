@@ -1,35 +1,25 @@
+import { CREATOR, type CreatorConfig } from '@vijayhardaha/schema-builder';
 import type { Metadata } from 'next';
-
-import { getCanonicalUrl } from '@/lib/utils/seo';
 
 /**
  * Site-wide configuration values for SEO and metadata.
  */
 export const SITE_CONFIG = {
-  name: 'Kabir Ke Dohe API',
+  name: 'Kabir Dohe API',
   title: 'Kabir Ke Dohe API',
+  url: 'https://kabir-ke-dohe-api.vercel.app',
   description:
     'Access over 2500 timeless dohas (couplets) by Sant Kabir through our powerful, fast, and free RESTful API. Perfect for developers, spiritual seekers, educators, and Hindi literature enthusiasts looking to integrate authentic Indian poetry, spiritual wisdom, and philosophical teachings into websites, apps, and AI-powered tools.',
-  url: 'https://kabir-ke-dohe-api.vercel.app',
-  category: 'Web API',
-  creator: {
-    name: 'Vijay Hardaha',
+  category: 'Technology',
+  classification: 'REST API, Public API, Literature API, Hindi Poetry API, Spiritual API',
+  creator: CREATOR as CreatorConfig,
+  organization: {
+    name: 'Kabir Dohe Hub',
     description:
-      'Full-Stack Web Developer and full-time freelancer specializing in modern web applications and custom digital solutions. Experienced in WordPress and WooCommerce development, building high-performance websites and scalable e-commerce platforms.',
-    jobTitle: 'Full-Stack Web Developer',
-    handle: '@vijayhardaha',
-    handles: ['@vijayhardaha', '@vegan.vijay'],
-    urls: {
-      pph: 'https://pph.me/vijayhardaha',
-      github: 'https://github.com/vijayhardaha',
-      instagram: 'https://instagram.com/vegan.vijay',
-      facebook: 'https://facebook.com/vegan.vijay',
-      linkedin: 'https://linkedin.com/in/vijayhardaha',
-      wordpress: 'https://profiles.wordpress.org/vijayhardaha/',
-      devto: 'https://dev.to/vijayhardaha',
-      stactoverflow: 'https://stackoverflow.com/users/11848895/vijay-hardaha',
-      codewars: 'https://www.codewars.com/users/vijayhardaha',
-    },
+      'Kabir Dohe Hub is an online collection of Kabir ke dohe, featuring over 2000 authentic verses by Kabir Das. The platform provides organized access to dohas for reading, learning, and integration through APIs, making classical Indian wisdom easily accessible in the digital age.',
+    url: 'https://kabirkedohe.vercel.app',
+    logo: undefined,
+    foundingDate: 2024,
   },
 };
 
@@ -80,18 +70,36 @@ export const GOOGLE_ANALYTICS_ID = 'G-GM50Y47GMH';
 const titleAndDescription = { title: SITE_CONFIG.title, description: SITE_CONFIG.description };
 
 /**
+ * Default image metadata used for Open Graph and Twitter cards.
+ */
+const seoImage = {
+  url: '/preview.png',
+  secureUrl: `/preview.png`,
+  alt: 'Kabir Ke Dohe Website Thumbnail',
+  width: 512,
+  height: 512,
+  type: 'image/png',
+};
+
+/**
+ * Canonical URL for the website, used in SEO and Open Graph metadata.
+ */
+const siteURL = new URL(SITE_CONFIG.url);
+
+/**
  * The main metadata object containing all SEO-related information for the website.
  */
 export const SITE_METADATA: Metadata = {
   ...titleAndDescription,
   keywords: SEO_KEYWORDS,
   applicationName: SITE_CONFIG.name,
-  metadataBase: new URL(getCanonicalUrl()),
-  alternates: { canonical: new URL(getCanonicalUrl()) },
-  authors: [{ name: SITE_CONFIG.creator.name, url: 'https://instagram.com/vegan.vijay' }],
-  publisher: SITE_CONFIG.creator.name,
+  metadataBase: siteURL,
+  authors: [{ name: SITE_CONFIG.creator.name, url: SITE_CONFIG.creator.urls.gravatar }],
+  creator: SITE_CONFIG.creator.name,
+  publisher: SITE_CONFIG.name,
   robots: { index: true, follow: true },
   category: SITE_CONFIG.category,
+  classification: SITE_CONFIG.classification,
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
@@ -103,16 +111,16 @@ export const SITE_METADATA: Metadata = {
   verification: { google: GOOGLE_SITE_VERIFICATION },
   openGraph: {
     ...titleAndDescription,
-    images: [{ url: '/thumbnail.png', width: 512, height: 512 }],
+    images: seoImage,
     type: 'website',
     siteName: SITE_CONFIG.name,
     locale: 'en_US',
-    url: new URL(getCanonicalUrl()),
+    url: siteURL,
   },
   twitter: {
     ...titleAndDescription,
     card: 'summary_large_image',
-    images: ['/thumbnail.png'],
-    creator: SITE_CONFIG.creator.handle,
+    images: seoImage,
+    creator: SITE_CONFIG.creator.handles[0],
   },
 };
