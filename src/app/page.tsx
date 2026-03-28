@@ -32,14 +32,7 @@ const commonOptions = { rootUrl };
 const commonSchema = { name: title, description };
 const schema = [
   personSchema(commonOptions),
-  organizationSchema(commonOptions, {
-    name: 'Kabir Dohe Hub',
-    description:
-      'Kabir Dohe Hub is an online collection of Kabir ke dohe, featuring over 2000 authentic verses by Kabir Das. The platform provides organized access to dohas for reading, learning, and integration through APIs, making classical Indian wisdom easily accessible in the digital age.',
-    url: 'https://kabirkedohe.vercel.app',
-    logo: undefined,
-    foundingDate: 2024,
-  }),
+  organizationSchema(commonOptions, { ...SITE_CONFIG.organization }),
   webSiteSchema(commonOptions, { ...commonSchema, alternateName: siteName }),
   webPageSchema({ ...commonOptions, path: '' }, commonSchema),
   webApiSchema({ ...commonOptions, path: '' }, commonSchema),
