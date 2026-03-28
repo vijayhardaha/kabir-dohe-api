@@ -35,6 +35,7 @@
   "dependencies": {
     "@next/third-parties": "^16.2.1",
     "@supabase/supabase-js": "^2.100.1",
+    "@vijayhardaha/schema-builder": "^1.0.2",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "latinize": "^2.0.0",
