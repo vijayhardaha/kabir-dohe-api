@@ -99,3 +99,4 @@ Desktop.ini
 /public/robots.txt
 /public/sitemap*
 *sitemap*.xml
+.env*
