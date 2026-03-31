@@ -1,5 +1,5 @@
 /**
- * AI-Powered CSV Generation Script for Kabir Ke Dohe
+ * AI-Powered CSV Generation Script for Kabir Dohe
  *
  * This script uses Ollama (local LLM) to analyze Kabir dohe from a JSON file
  * and generate structured data with all fields needed for the database.

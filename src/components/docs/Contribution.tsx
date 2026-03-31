@@ -1,7 +1,7 @@
 import { LuArrowUpRight } from 'react-icons/lu';
 
 /**
- * Component that displays contribution information for the Kabir Ke Dohe API project.
+ * Component that displays contribution information for the Kabir Dohe API project.
  * Explains how users can help improve the project.
  *
  * @returns {React.JSX.Element} - The rendered contribution section
@@ -56,7 +56,7 @@ export default function Contribution(): React.JSX.Element {
 
       <div>
         <a
-          href="https://github.com/vijayhardaha/kabir-ke-dohe-api"
+          href="https://github.com/vijayhardaha/kabir-dohe-api"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-primary px-6 py-3"

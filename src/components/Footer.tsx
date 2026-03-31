@@ -23,7 +23,7 @@ export default function Footer(): React.JSX.Element {
             </a>
           </p>
           <p>
-            &copy; {new Date().getFullYear()} Kabir Ke Dohe API. Powered by{' '}
+            &copy; {new Date().getFullYear()} Kabir Dohe API. Powered by{' '}
             <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="text-primary-400">
               Next.js
               <LuArrowUpRight className="inline" />

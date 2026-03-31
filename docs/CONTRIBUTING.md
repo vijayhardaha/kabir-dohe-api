@@ -1,6 +1,6 @@
-# Contributing to Kabir Ke Dohe API
+# Contributing to Kabir Dohe API
 
-Thank you for your interest in contributing to the Kabir Ke Dohe API project! We welcome contributions from everyone.
+Thank you for your interest in contributing to the Kabir Dohe API project! We welcome contributions from everyone.
 
 ## How You Can Help
 

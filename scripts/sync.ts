@@ -1,5 +1,5 @@
 /**
- * Kabir Ke Dohe Database Sync Script
+ * Kabir Dohe Database Sync Script
  *
  * This script synchronizes data from Google Sheets to the Supabase database.
  * It pulls posts, tags, and post-tag mappings from a Google Sheets document

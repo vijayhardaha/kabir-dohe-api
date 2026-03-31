@@ -21,6 +21,6 @@ export const runtime = 'edge';
 export async function GET(): Promise<NextResponse<ApiResponse>> {
   return NextResponse.json({
     success: true,
-    message: 'Welcome to the Kabir Ke Dohe API! Use the /api/couplets endpoint to retrieve and filter couplets.',
+    message: 'Welcome to the Kabir Dohe API! Use the /api/couplets endpoint to retrieve and filter couplets.',
   });
 }

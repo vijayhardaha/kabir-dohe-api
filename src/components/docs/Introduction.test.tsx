@@ -32,7 +32,7 @@ describe('Introduction', () => {
     render(<Introduction />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getAllByText(/Kabir Ke Dohe API/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Kabir Dohe API/i).length).toBeGreaterThan(0);
   });
 
   // Define a focused test case for one behavior.

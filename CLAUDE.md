@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Kabir Ke Dohe API - A Next.js API for accessing couplets and poetry.
+Kabir Dohe API - A Next.js API for accessing couplets and poetry.
 
 ## Tech Stack
 
@@ -31,22 +31,26 @@ src/
 ## Critical Rules
 
 ### Server/Client Separation
+
 - Server-only code goes in `src/lib/server/` - NEVER import in client components
 - Client-safe utilities go in `src/lib/utils/`
 
 ### Import Order
+
 1. React/Next.js built-ins
 2. External libraries
 3. Internal aliases (`@/`)
 4. Relative imports
 
 ### TypeScript
+
 - Use `interface` for object shapes
 - Use `type` for unions and tuples
 - NO `any` - use `unknown` if uncertain
 - Avoid `!` - use optional chaining
 
 ### Naming Conventions
+
 - Components: `PascalCase` (`Button.tsx`)
 - Functions: `camelCase` (`fetchCouplets`)
 - Files: `kebab-case` (`api-utils.ts`)
@@ -78,11 +82,11 @@ bun run sync:prod        # Sync production database
 Use standardized response helpers from `src/lib/server/utils/response/`:
 
 ```typescript
-import { success, successCached, failure } from '@/lib/server/utils/response/response';
+import { success, successCached, failure } from "@/lib/server/utils/response/response";
 
-return success(data);                    // 200 OK
-return successCached(data);              // 200 with cache headers
-return failure('Error message', 400);    // Error response
+return success(data); // 200 OK
+return successCached(data); // 200 with cache headers
+return failure("Error message", 400); // Error response
 ```
 
 ## Supabase Guidelines
@@ -97,9 +101,7 @@ return failure('Error message', 400);    // Error response
 ```typescript
 import { z } from "zod";
 
-const Schema = z.object({
-  title: z.string().min(5).max(100)
-});
+const Schema = z.object({ title: z.string().min(5).max(100) });
 ```
 
 ## Commit Format

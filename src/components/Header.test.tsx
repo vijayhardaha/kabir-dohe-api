@@ -23,7 +23,7 @@ describe('Header', () => {
     render(<Header />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByText(/Kabir Ke Dohe API/i)).toBeInTheDocument();
+    expect(screen.getByText(/Kabir Dohe API/i)).toBeInTheDocument();
   });
 
   // Define a focused test case for one behavior.

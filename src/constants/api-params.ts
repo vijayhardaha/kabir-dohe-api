@@ -9,7 +9,7 @@ export interface ApiQueryParam {
 }
 
 /**
- * Query parameters for the Kabir Ke Dohe API
+ * Query parameters for the Kabir Dohe API
  */
 export const API_QUERY_PARAMS: ApiQueryParam[] = [
   {

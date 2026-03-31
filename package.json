@@ -1,5 +1,5 @@
 {
-  "name": "kabir-ke-dohe-api",
+  "name": "kabir-dohe-api",
   "version": "1.0.0",
   "description": "An API for fetching and filtering Kabir's dohas, built with Next.js",
   "private": true,

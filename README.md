@@ -1,4 +1,4 @@
-# Kabir Ke Dohe API
+# Kabir Dohe API
 
 A modern API built with Next.js, designed to fetch and filter Kabir's timeless couplets (dohe). This API empowers developers to seamlessly integrate Kabir's spiritual wisdom into their applications.
 
@@ -13,7 +13,7 @@ A modern API built with Next.js, designed to fetch and filter Kabir's timeless c
 
 ## Introduction
 
-The Kabir Ke Dohe API provides programmatic access to over 2500 couplets by Saint Kabir, one of India's most influential spiritual poets. This API lets you integrate these profound teachings into your applications, websites, or research projects.
+The Kabir Dohe API provides programmatic access to over 2500 couplets by Saint Kabir, one of India's most influential spiritual poets. This API lets you integrate these profound teachings into your applications, websites, or research projects.
 
 All endpoints are free to use and require no authentication. The API is designed to be simple to use while offering powerful search and filtering capabilities.
 
@@ -31,7 +31,7 @@ To avoid hitting rate limits, we recommend creating a local copy of the data and
 
 Complete API documentation, including endpoints, parameters, examples, and response formats, is available at:
 
-**[https://kabir-ke-dohe-api.vercel.app](https://kabir-ke-dohe-api.vercel.app)**
+**[https://kabir-dohe-api.vercel.app](https://kabir-dohe-api.vercel.app)**
 
 ## Developer Setup
 
@@ -40,8 +40,8 @@ To run this project locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/vijayhardaha/kabir-ke-dohe-api.git
-   cd kabir-ke-dohe-api
+   git clone https://github.com/vijayhardaha/kabir-dohe-api.git
+   cd kabir-dohe-api
    ```
 
 2. **Install dependencies:**

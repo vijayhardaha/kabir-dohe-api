@@ -6,8 +6,8 @@ import type { Metadata } from 'next';
  */
 export const SITE_CONFIG = {
   name: 'Kabir Dohe API',
-  title: 'Kabir Ke Dohe API',
-  url: 'https://kabir-ke-dohe-api.vercel.app',
+  title: 'Kabir Dohe API',
+  url: 'https://kabir-dohe-api.vercel.app',
   description:
     'Access over 2500 timeless dohas (couplets) by Sant Kabir through our powerful, fast, and free RESTful API. Perfect for developers, spiritual seekers, educators, and Hindi literature enthusiasts looking to integrate authentic Indian poetry, spiritual wisdom, and philosophical teachings into websites, apps, and AI-powered tools.',
   category: 'Technology',
@@ -27,7 +27,7 @@ export const SITE_CONFIG = {
  * The default metadata object used for SEO, Open Graph, and Twitter cards.
  */
 export const SEO_KEYWORDS = [
-  'Kabir Ke Dohe API',
+  'Kabir Dohe API',
   'Kabir couplets API',
   'Sant Kabir dohas API',
   'Spiritual poetry API',
@@ -75,7 +75,7 @@ const titleAndDescription = { title: SITE_CONFIG.title, description: SITE_CONFIG
 const seoImage = {
   url: '/preview.png',
   secureUrl: `/preview.png`,
-  alt: 'Kabir Ke Dohe Website Thumbnail',
+  alt: 'Kabir Dohe Website Thumbnail',
   width: 512,
   height: 512,
   type: 'image/png',
