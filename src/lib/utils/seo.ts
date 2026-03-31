@@ -17,10 +17,10 @@
  */
 export const siteUrl = (): string => {
   const url =
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
+    process.env.NEXT_PUBLIC_SITE_URL
+    || process.env.VERCEL_PROJECT_PRODUCTION_URL
     || process.env.VERCEL_BRANCH_URL
     || process.env.VERCEL_URL
-    || process.env.NEXT_PUBLIC_SITE_URL
     || `http://localhost:${process.env.PORT || 3000}`;
 
   const cleaned = url.trim().replace(/\/+$/, '');
