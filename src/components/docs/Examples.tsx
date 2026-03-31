@@ -38,6 +38,12 @@ const examples: IExample[] = [
   },
 ];
 
+/**
+ * Component that displays expandable API endpoint examples.
+ * Shows code samples for different API requests with copy functionality.
+ *
+ * @returns {React.JSX.Element} - The rendered examples section
+ */
 export default function Examples(): React.JSX.Element {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);

@@ -66,6 +66,10 @@ export const SEO_KEYWORDS = [
  * Google Search Console verification code for the site
  */
 export const GOOGLE_SITE_VERIFICATION = '4CyrCxZi9TWgvS-GzB1QUhgEl0bKoIzT36368e_vlx0';
+
+/**
+ * Google Analytics measurement ID for site traffic tracking.
+ */
 export const GOOGLE_ANALYTICS_ID = 'G-GM50Y47GMH';
 
 /**

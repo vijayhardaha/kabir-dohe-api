@@ -28,6 +28,14 @@ export function success<T>(data: T): NextResponse {
   return NextResponse.json({ success: true, data } as ApiSuccess<T>, { status: 200 });
 }
 
+/**
+ * Creates a cached success response with Cache-Control headers for CDN-level caching.
+ *
+ * @param {T} data - Serialized payload returned to API consumers.
+ * @returns {NextResponse} JSON response containing success metadata, data, and cache headers.
+ * @example
+ * return successCached({ posts: [...], total: 100 });
+ */
 export function successCached<T>(data: T): NextResponse {
   return NextResponse.json({ success: true, data } as ApiSuccess<T>, {
     status: 200,

@@ -223,6 +223,7 @@ function handleRouteError(error: unknown, fallbackMessage: string = 'An error oc
   return handleError(error instanceof Error ? error : new Error(fallbackMessage));
 }
 
+/** Edge runtime configuration for the couplets route. */
 export const runtime = 'edge';
 
 /**

@@ -69,6 +69,7 @@ async function handleRequest(params: SearchQueryParams): Promise<{ posts: string
   return searchCouplets(params);
 }
 
+/** Edge runtime configuration for the search route. */
 export const runtime = 'edge';
 
 /**

@@ -41,12 +41,14 @@ describe('response utilities', () => {
 
   // Group related test behavior in this suite.
   describe('successCached', () => {
+    // Verify cached response returns 200 status
     it('should return NextResponse with 200 status', () => {
       const response = successCached({ message: 'test' });
 
       expect(response.status).toBe(200);
     });
 
+    // Verify cached response includes success flag
     it('should include success: true in body', async () => {
       const response = successCached({ id: 1 });
       const body = await response.json();
@@ -54,6 +56,7 @@ describe('response utilities', () => {
       expect(body.success).toBe(true);
     });
 
+    // Verify cached response includes provided data
     it('should include data in body', async () => {
       const testData = { id: 1, name: 'test' };
       const response = successCached(testData);
@@ -62,6 +65,7 @@ describe('response utilities', () => {
       expect(body.data).toEqual(testData);
     });
 
+    // Verify cached response includes Cache-Control header
     it('should include Cache-Control header', () => {
       const response = successCached({ message: 'test' });
 
