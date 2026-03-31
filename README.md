@@ -31,7 +31,7 @@ To avoid hitting rate limits, we recommend creating a local copy of the data and
 
 Complete API documentation, including endpoints, parameters, examples, and response formats, is available at:
 
-**[https://kabir-dohe-api.vercel.app](https://kabir-dohe-api.vercel.app)**
+**[https://kabirdoheapi.vercel.app](https://kabirdoheapi.vercel.app)**
 
 ## Developer Setup
 

@@ -12,7 +12,7 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { createSitemapConfig } = require('@vijayhardaha/dev-config/next-sitemap');
 
-const siteDomain = 'https://kabir-dohe-api.vercel.app';
+const siteDomain = 'https://kabirdoheapi.vercel.app';
 
 /** @type {import('next-sitemap').IConfig} */
 const config = createSitemapConfig({

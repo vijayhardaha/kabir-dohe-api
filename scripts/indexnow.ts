@@ -14,7 +14,7 @@ import ora from 'ora';
 import xml2js from 'xml2js';
 
 // The public site URL used to derive host and key location for IndexNow.
-const SITE_URL = 'https://kabir-dohe-api.vercel.app';
+const SITE_URL = 'https://kabirdoheapi.vercel.app';
 // IndexNow key (published as a verification file at SITE_URL/<KEY>.txt).
 const KEY = '91c80f732f4e4e5b80b4c02a7e8c9e9c';
 const KEY_LOCATION = SITE_URL + '/' + KEY + '.txt';

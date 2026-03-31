@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 export const SITE_CONFIG = {
   name: 'Kabir Dohe API',
   title: 'Kabir Dohe API',
-  url: 'https://kabir-dohe-api.vercel.app',
+  url: 'https://kabirdoheapi.vercel.app',
   description:
     'Access over 2500 timeless dohas (couplets) by Sant Kabir through our powerful, fast, and free RESTful API. Perfect for developers, spiritual seekers, educators, and Hindi literature enthusiasts looking to integrate authentic Indian poetry, spiritual wisdom, and philosophical teachings into websites, apps, and AI-powered tools.',
   category: 'Technology',
