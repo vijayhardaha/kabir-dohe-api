@@ -16,8 +16,8 @@ export default function ResponseFormat(): React.JSX.Element {
         "slug": "couplet-slug",
         "text_hi": "हिन्दी में दोहा",
         "text_en": "English couplet",
-        "interpretation_hi": "हिन्दी में व्याख्या",
-        "interpretation_en": "English interpretation",
+        "meaning_hi": "हिन्दी में अर्थ",
+        "meaning_en": "English meaning",
         "category": {
           "name": "Category Name",
           "slug": "category-slug"
@@ -129,15 +129,15 @@ export default function ResponseFormat(): React.JSX.Element {
             </tr>
             <tr>
               <td>
-                <code>posts[].interpretation_hi</code>
+                <code>posts[].meaning_hi</code>
               </td>
-              <td>Interpretation in Hindi</td>
+              <td>Meaning in Hindi (nullable)</td>
             </tr>
             <tr>
               <td>
-                <code>posts[].interpretation_en</code>
+                <code>posts[].meaning_en</code>
               </td>
-              <td>Interpretation in English</td>
+              <td>Meaning in English (nullable)</td>
             </tr>
             <tr>
               <td>

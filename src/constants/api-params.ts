@@ -41,8 +41,7 @@ export const API_QUERY_PARAMS: ApiQueryParam[] = [
   {
     name: 'sort_by',
     type: 'string',
-    description:
-      'Specify the field for ordering results. Supported: number, is_popular, is_featured, text_en, text_hi.',
+    description: 'Specify the field for ordering results. Supported: number, popular, featured, text_en, text_hi.',
     default: 'number',
   },
   {
