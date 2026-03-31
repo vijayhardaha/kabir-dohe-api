@@ -11,14 +11,23 @@
 # ----------------------------------------------------------------------
 # We never want to format external dependencies or compiled code
 .next/
-.idea/
 .husky/
 .vercel/
-.git/
+.out/
+# .github/
 node_modules/
 build/
 dist/
 out/
+coverage/
+
+# ----------------------------------------------------------------------
+# Configuration & IDE
+# ----------------------------------------------------------------------
+# These directories contain editor-specific settings
+# .vscode/
+.idea/
+.pnpm-store/
 
 # ----------------------------------------------------------------------
 # Package Manager Lockfiles
