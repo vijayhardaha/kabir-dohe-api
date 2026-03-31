@@ -35,11 +35,11 @@ describe('Footer', () => {
   });
 
   // Define a focused test case for one behavior.
-  it('should contain Vercel link', () => {
+  it('should contain Tailwind CSS link', () => {
     render(<Footer />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByText(/Vercel/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tailwind CSS/i)).toBeInTheDocument();
   });
 
   // Define a focused test case for one behavior.

@@ -40,7 +40,7 @@ describe('Introduction', () => {
     render(<Introduction />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByRole('link', { name: /2500 dohas/i })).toHaveAttribute('href', '/api/couplets');
+    expect(screen.getByRole('link', { name: /2500\+ dohe/i })).toHaveAttribute('href', '/api/couplets');
   });
 
   // Define a focused test case for one behavior.

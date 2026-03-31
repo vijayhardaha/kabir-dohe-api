@@ -23,7 +23,7 @@ describe('Header', () => {
     render(<Header />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByText(/Kabir Dohe API/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Kabir Dohe API/i })).toBeInTheDocument();
   });
 
   // Define a focused test case for one behavior.
@@ -39,7 +39,7 @@ describe('Header', () => {
     render(<Header />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByRole('link', { name: /View on GitHub/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Source Code on GitHub/i })).toBeInTheDocument();
   });
 
   // Define a focused test case for one behavior.

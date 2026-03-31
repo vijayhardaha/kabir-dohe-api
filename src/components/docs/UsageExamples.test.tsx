@@ -75,6 +75,6 @@ describe('UsageExamples', () => {
     render(<UsageExamples />);
 
     // Assert the expected outcome for this scenario.
-    expect(screen.getByRole('link', { name: /fetch api docs/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Fetch API documentation/i })).toBeInTheDocument();
   });
 });
