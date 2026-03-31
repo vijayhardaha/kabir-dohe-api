@@ -16,9 +16,13 @@ export const SITE_CONFIG = {
   organization: {
     name: 'Kabir Dohe Hub',
     description:
-      'Kabir Dohe Hub is an online collection of Kabir ke dohe, featuring over 2000 authentic verses by Kabir Das. The platform provides organized access to dohas for reading, learning, and integration through APIs, making classical Indian wisdom easily accessible in the digital age.',
-    url: 'https://kabirkedohe.vercel.app',
-    logo: null,
+      'Kabir Dohe Hub is a digital platform offering curated collections of Kabir ke dohe, along with tools and APIs to make this knowledge easily accessible.',
+    url: 'https://kabirdohehub.vercel.app',
+    sameAs: [
+      'https://kabirdohehub.vercel.app',
+      'https://kabirdoheapi.vercel.app',
+      'https://kabirdoheimages.vercel.app',
+    ],
     foundingDate: 2024,
   },
 };
@@ -75,7 +79,7 @@ const titleAndDescription = { title: SITE_CONFIG.title, description: SITE_CONFIG
 const seoImage = {
   url: '/preview.png',
   secureUrl: `/preview.png`,
-  alt: 'Kabir Dohe Website Thumbnail',
+  alt: 'Kabir Dohe API service logo',
   width: 512,
   height: 512,
   type: 'image/png',
@@ -113,7 +117,7 @@ export const SITE_METADATA: Metadata = {
     ...titleAndDescription,
     images: seoImage,
     type: 'website',
-    siteName: SITE_CONFIG.name,
+    siteName: SITE_CONFIG.organization.name,
     locale: 'en_US',
     url: siteURL,
   },

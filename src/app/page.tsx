@@ -1,7 +1,7 @@
 import {
   organizationSchema,
   personSchema,
-  webApiSchema,
+  softwareAppSchema,
   webPageSchema,
   webSiteSchema,
 } from '@vijayhardaha/schema-builder';
@@ -24,7 +24,7 @@ import { siteUrl } from '@/lib/utils/seo';
 
 const title = SITE_CONFIG.title;
 const description = SITE_CONFIG.description;
-const siteName = SITE_CONFIG.name;
+const siteName = SITE_CONFIG.organization.name;
 
 // Schema.org structured data.
 const rootUrl = siteUrl();
@@ -33,9 +33,40 @@ const commonSchema = { name: title, description };
 const schema = [
   personSchema(commonOptions),
   organizationSchema(commonOptions, { ...SITE_CONFIG.organization }),
-  webSiteSchema(commonOptions, { ...commonSchema, alternateName: siteName }),
-  webPageSchema({ ...commonOptions, path: '' }, commonSchema),
-  webApiSchema({ ...commonOptions, path: '' }, commonSchema),
+  webSiteSchema(commonOptions, { name: siteName, description, alternateName: title }),
+  webPageSchema(
+    { ...commonOptions, path: '' },
+    {
+      ...commonSchema,
+      ...{
+        keywords: [
+          'Kabir dohe API',
+          'Kabir ke dohe',
+          'Kabir Das quotes API',
+          'Hindi quotes API',
+          'Indian philosophy API',
+        ],
+      },
+    }
+  ),
+  softwareAppSchema(
+    { ...commonOptions, path: '' },
+    {
+      ...commonSchema,
+      ...{
+        applicationCategory: 'DeveloperApplication',
+        applicationSubCategory: 'API Service',
+        featureList: [
+          'Access 2500+ Kabir dohas',
+          'REST API with JSON response',
+          'Free to use',
+          'Fast and scalable',
+          'Search and filter dohas',
+          'Developer-friendly integration',
+        ],
+      },
+    }
+  ),
 ];
 
 /**
