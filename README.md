@@ -1,101 +1,45 @@
 # Kabir Dohe API
 
-A modern API built with Next.js, designed to fetch and filter Kabir's timeless couplets (dohe). This API empowers developers to seamlessly integrate Kabir's spiritual wisdom into their applications.
+A free RESTful API providing access to over 2500 couplets (dohe) by Sant Kabir, one of India's most influential spiritual poets and philosophers.
 
-## Table of Contents
+## About
 
-- [Introduction](#introduction)
-- [API Documentation](#api-documentation)
-- [Developer Setup](#developer-setup)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+Kabir Dohe API lets you fetch, search, and filter Kabir's timeless couplets in JSON format. Each doha includes the original Hindi text, English transliteration, and detailed meanings. No authentication required.
 
-## Introduction
+## Ecosystem
 
-The Kabir Dohe API provides programmatic access to over 2500 couplets by Saint Kabir, one of India's most influential spiritual poets. This API lets you integrate these profound teachings into your applications, websites, or research projects.
+| Project           | URL                                                              | Description                                          |
+| ----------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| Kabir Dohe Hub    | [kabirdohehub.vercel.app](https://kabirdohehub.vercel.app)       | Collection of Kabir ke dohe for reading and learning |
+| Kabir Dohe API    | [kabirdoheapi.vercel.app](https://kabirdoheapi.vercel.app)       | REST API for accessing couplets programmatically     |
+| Kabir Dohe Images | [kabirdoheimages.vercel.app](https://kabirdoheimages.vercel.app) | Visual quotes and image generation                   |
 
-All endpoints are free to use and require no authentication. The API is designed to be simple to use while offering powerful search and filtering capabilities.
+## Features
 
-### Rate Limiting
+- Access 2500+ couplets with Hindi text, translations, and interpretations
+- Search by keyword across couplet content
+- Filter by tags, categories, and popularity
+- Sort and paginate results
+- Completely free to use, no authentication needed
 
-To ensure fair usage and maintain service stability, the API implements rate limiting:
+## Quick Start
 
-- Each IP address is limited to 60 requests per minute per endpoint
-- Rate limits are tracked separately for each endpoint
-- When you exceed the rate limit, the API will return a 429 Too Many Requests status code
+```
+GET https://kabirdoheapi.vercel.app/api/couplets
+```
 
-To avoid hitting rate limits, we recommend creating a local copy of the data and serving it from your own server.
+```
+GET https://kabirdoheapi.vercel.app/api/couplets?search_query=truth&per_page=5
+```
 
-## API Documentation
-
-Complete API documentation, including endpoints, parameters, examples, and response formats, is available at:
-
-**[https://kabirdoheapi.vercel.app](https://kabirdoheapi.vercel.app)**
-
-## Developer Setup
-
-To run this project locally, follow these steps:
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/vijayhardaha/kabir-dohe-api.git
-   cd kabir-dohe-api
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Environment setup:**
-
-   Create an `.env.local` file in the root directory with the following variables:
-
-   ```
-   # Google Sheets API Configuration
-   SPREADSHEET_ID="your-spreadsheet-id"
-   GOOGLE_SERVICE_ACCOUNT_BASE64="base64-encoded-service-account-json"
-
-   # Supabase Configuration
-   NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
-   SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
-
-   # Security Configuration
-   IP_HASH_SALT="random-string-for-ip-hashing"
-   ```
-
-4. **Start the development server:**
-
-   ```bash
-   npm run dev
-   ```
-
-## Usage
-
-Once the server is running, you can access the API at `http://localhost:3000/api/couplets`.
-
-### Local Development
-
-- **Development mode:** Run `npm run dev` to start the Next.js development server
-- **Build:** Run `npm run build` to create an optimized production build
-- **Production mode:** Run `npm start` to start the production server
-- **Linting:** Run `npm run lint` to check for code style issues
+Full documentation with all parameters, examples, and response formats is available at **[kabirdoheapi.vercel.app](https://kabirdoheapi.vercel.app)**.
 
 ## Contributing
 
-We need your help! This project grows through community contributions.
+We welcome contributions from everyone. Whether you are a developer or not, you can help improve the couplet data, translations, and documentation.
 
-Whether you're a developer or non-developer, there are many ways to help improve this project:
-
-- **Developers**: Fix bugs, improve code, add new features, or enhance API endpoints
-- **Non-developers**: Help with translations, data verification, and documentation
-- **Everyone**: We maintain our data in Excel sheets where you can help fix typos, improve translations, and contribute new dohe
-
-Please see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines on how to contribute to this project.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+MIT License. See [LICENSE](LICENSE) for details.
