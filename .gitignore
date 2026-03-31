@@ -100,3 +100,13 @@ Desktop.ini
 /public/sitemap*
 *sitemap*.xml
 .env*
+
+# ----------------------------------------------------------------------
+# Temporary Files & Agent Directories
+# ----------------------------------------------------------------------
+# Temp files for project workflows and agent tool directories.
+# The .tmp/ folder holds scratch data like prepared git commands.
+.tmp/
+.kilo/
+.opencode/
+.qoder/
