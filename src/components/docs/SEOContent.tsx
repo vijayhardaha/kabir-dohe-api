@@ -205,7 +205,7 @@ export default function SEOContent(): React.JSX.Element {
 
           <li>
             <strong>Social Media Bots:</strong> Build bots that automatically post Kabir’s dohe on platforms like{' '}
-            <a href="https://developer.x.com/en/docs" target="_blank" rel="noopener noreferrer">
+            <a href="https://docs.x.com/overview" target="_blank" rel="noopener noreferrer">
               Twitter (X)
             </a>{' '}
             or other social platforms.
@@ -216,15 +216,7 @@ export default function SEOContent(): React.JSX.Element {
           </li>
 
           <li>
-            <strong>Language Learning Tools:</strong> Help users learn Hindi with dohe and their{' '}
-            <a
-              href="https://dictionary.cambridge.org/dictionary/english/translation"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              English translations
-            </a>
-            .
+            <strong>Language Learning Tools:</strong> Help users learn Hindi with dohe and their English translations.
           </li>
 
           <li>
