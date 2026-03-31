@@ -12,45 +12,22 @@ export default function Contribution(): React.JSX.Element {
       <h2>Contribute to the Project</h2>
 
       <p>
-        <strong>We need your help!</strong> This project grows through{' '}
-        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">
-          community contributions
-        </a>
-        .
+        <strong>We need your help!</strong> This project grows with support from the community. You can contribute in
+        many simple ways.
       </p>
 
-      <p>Whether you’re a developer or non-developer, there are many ways to help improve this project:</p>
+      <p>Whether you are a developer or not, you can help improve this project:</p>
 
       <ul>
         <li>
-          <strong>
-            <a href="https://developer.mozilla.org/" target="_blank" rel="noopener noreferrer">
-              Developers
-            </a>
-          </strong>
-          :{' '}
-          <a href="https://en.wikipedia.org/wiki/Software_bug" target="_blank" rel="noopener noreferrer">
-            Fix bugs
-          </a>
-          , improve code, add new features, or enhance API endpoints.
+          <strong>Developers</strong>: Fix bugs, improve code, add new features, or enhance API endpoints.
         </li>
         <li>
-          <strong>Non-developers</strong>: Help with{' '}
-          <a href="https://www.w3.org/International/" target="_blank" rel="noopener noreferrer">
-            translations
-          </a>
-          , data verification, and{' '}
-          <a href="https://en.wikipedia.org/wiki/Documentation" target="_blank" rel="noopener noreferrer">
-            documentation
-          </a>
-          .
+          <strong>Non-developers</strong>: Help with translations, data checking, and improving documentation.
         </li>
         <li>
-          <strong>Everyone</strong>: We maintain our data in{' '}
-          <a href="https://www.microsoft.com/en-us/microsoft-365/excel" target="_blank" rel="noopener noreferrer">
-            Excel sheets
-          </a>{' '}
-          where you can help fix typos, improve translations, and contribute new dohe.
+          <strong>Everyone</strong>: You can help update our Excel sheets by fixing mistakes, improving translations, or
+          adding new dohe.
         </li>
       </ul>
 

@@ -77,8 +77,8 @@ export default function Examples(): React.JSX.Element {
 
   return (
     <section>
-      <h2>Examples</h2>
-      <p>Browse common API requests. Click a heading to expand an example.</p>
+      <h2>API Endpoint Examples</h2>
+      <p>Browse common API requests below. Click on a section to view the example and understand how it works.</p>
 
       <div className="space-y-4">
         {examples.map((example, index) => {

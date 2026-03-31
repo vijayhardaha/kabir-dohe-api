@@ -59,11 +59,7 @@ export default function UsageExamples(): React.JSX.Element {
       <h2>Usage Examples</h2>
 
       <p>
-        Explore implementation examples for the Verses{' '}
-        <a href="https://en.wikipedia.org/wiki/API" target="_blank" rel="noopener noreferrer">
-          API
-        </a>{' '}
-        across various environments including{' '}
+        Explore simple usage examples of the Kabir Dohe API in different environments like{' '}
         <a href="https://curl.se/" target="_blank" rel="noopener noreferrer">
           cURL
         </a>
@@ -75,16 +71,21 @@ export default function UsageExamples(): React.JSX.Element {
         <a href="https://www.python.org/" target="_blank" rel="noopener noreferrer">
           Python
         </a>
-        . See the{' '}
-        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank" rel="noopener noreferrer">
-          Fetch API docs
-        </a>{' '}
-        for details on the JavaScript example. Use the navigation tabs to select your preferred language. For your
-        convenience, these snippets can be instantly copied to streamline your{' '}
-        <a href="https://en.wikipedia.org/wiki/System_integration" target="_blank" rel="noopener noreferrer">
-          integration process
-        </a>
         .
+      </p>
+
+      <p>
+        These examples help you understand how to fetch and use dohe in your application. For JavaScript, you can also
+        check the{' '}
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank" rel="noopener noreferrer">
+          Fetch API documentation
+        </a>{' '}
+        for more details.
+      </p>
+
+      <p>
+        Use the tabs to switch between languages. All code snippets are easy to copy and help you quickly integrate the
+        API into your project.
       </p>
 
       <div role="tablist" aria-label="Usage examples" className="tabs mb-4">

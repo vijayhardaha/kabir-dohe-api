@@ -14,22 +14,21 @@ export default function ApiEndpoints(): React.JSX.Element {
           <a href="/api/couplets">GET /api/couplets</a>
         </h3>
         <p>
-          The <strong>GET /api/couplets</strong> endpoint allows you to fetch a list of couplets (dohe) written by
-          <strong> Sant Kabir</strong>, one of India’s most influential spiritual poets. This API returns data in JSON
-          format, making it easy to integrate into web and mobile applications.
+          The <strong>GET /api/couplets</strong> endpoint lets you fetch a list of dohe (couplets) by
+          <strong> Kabir Das</strong>, one of India’s most well-known spiritual poets. The API returns data in JSON
+          format, making it easy to use in web and mobile apps.
         </p>
+
         <p>
           You can use optional{' '}
           <strong>
             <a href="#query-parameters">query parameters</a>
           </strong>{' '}
-          to filter the results, paginate the output, or search by keyword. This makes it ideal for applications that
-          need dynamic spiritual content, quote-of-the-day features, educational tools, or Indian philosophy resources.
+          to filter results, control pagination, or search by keyword. This makes it useful for apps like daily quotes,
+          learning platforms, and Indian philosophy tools.
         </p>
-        <p>
-          No authentication is required, and the API is completely free to use for both personal and commercial
-          projects.
-        </p>
+
+        <p>No authentication is needed, and the API is free to use for personal and educational projects.</p>
       </div>
     </section>
   );

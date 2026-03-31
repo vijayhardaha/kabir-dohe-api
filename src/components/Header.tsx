@@ -16,7 +16,7 @@ export default function Header(): React.JSX.Element {
           <a href="/api/couplets" target="_blank">
             2500 authentic couplets (dohe)
           </a>{' '}
-          by Sant Kabir, one of India’s greatest spiritual poets and philosophers. This RESTful API offers seamless
+          by Sant Kabir, one of India’s greatest spiritual poets and philosophers. Kabir Dohe API offers seamless
           integration to fetch, search, and filter Kabir’s timeless wisdom in your web or mobile apps, educational
           platforms, and AI projects.
         </p>
@@ -29,9 +29,9 @@ export default function Header(): React.JSX.Element {
             className="btn btn-white"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="View on GitHub"
+            aria-label="Source Code on GitHub"
           >
-            View on GitHub
+            Source Code
             <LuArrowUpRight />
           </a>
         </div>
