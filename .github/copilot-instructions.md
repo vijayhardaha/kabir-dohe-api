@@ -376,7 +376,14 @@ After completing a task:
    - Max subject: 50 characters
    - Max body line: 72 characters
    - Subject must be lowercase
-4. Update git.md with the new prepared commands
-5. Remove stale commits from git.md when changes are committed
+4. Update `.tmp/git.md` with the new prepared commands
+5. Remove stale commits from `.tmp/git.md` when changes are committed
+
+### `.tmp/git.md` Rules
+
+- `.tmp/git.md` holds prepared commit commands for the current task session.
+- If `.tmp/git.md` has been **cleared or modified by the user**, do NOT restore previous commit entries.
+- When resuming work, read `.tmp/git.md` first. If it is empty or changed, start fresh — only check unstaged changes (`git status`/`git diff`) and prepare new commit commands for those changes.
+- Never assume old commits from a previous session are still relevant. The user may have committed them manually or discarded them.
 
 Output the exact git commands. Do NOT commit automatically.
