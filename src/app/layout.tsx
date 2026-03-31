@@ -8,9 +8,29 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { GOOGLE_ANALYTICS_ID, SITE_METADATA } from '@/constants/seo';
 
-const sansFont = Nunito({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
-const serifFont = EB_Garamond({ subsets: ['latin'], weight: ['400', '700', '800'], variable: '--font-serif' });
-const monoFont = Geist_Mono({ subsets: ['latin'], weight: ['400'], variable: '--font-mono' });
+const sansFont = Nunito({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+  preload: true,
+});
+
+const serifFont = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '700', '800'],
+  variable: '--font-serif',
+  display: 'swap',
+  preload: true,
+});
+
+const monoFont = Geist_Mono({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-mono',
+  display: 'swap',
+  preload: true,
+});
 
 import './globals.css';
 
