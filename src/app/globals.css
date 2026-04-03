@@ -15,10 +15,7 @@
   --color-primary-950: #1a2337;
 }
 
-/* ==========================================================================
-   Base Styles
-   ========================================================================== */
-
+/* Base Styles */
 @layer base {
   /* Typography base */
   body {
@@ -86,10 +83,12 @@
     }
 
     ul {
-      @apply list-disc space-y-4 pl-6 not-last:mb-8;
+      @apply list-disc space-y-3 pl-6 not-last:mb-4;
     }
   }
+}
 
+@layer components {
   .box {
     @apply mx-auto max-w-5xl px-4 md:px-6;
   }
