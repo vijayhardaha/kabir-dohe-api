@@ -85,7 +85,7 @@ export default function Examples(): JSX.Element {
         href={fullUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="btn btn-outline-white px-3 py-1 text-xs font-medium"
+        className="btn btn-outline-white px-3 py-1 text-xs uppercase"
         aria-label={`Try request: ${fullUrl}`}
       >
         Try request
@@ -131,13 +131,11 @@ export default function Examples(): JSX.Element {
                     headerRefs.current[examples.length - 1]?.focus();
                   }
                 }}
-                className={`flex w-full items-center justify-between border px-4 py-3 text-left ${
-                  isOpen
-                    ? 'bg-primary-500 border-primary-600 text-white'
-                    : 'bg-primary-50 border-primary-200 text-primary-700'
+                className={`flex w-full items-center justify-between px-4 py-3 text-left ${
+                  isOpen ? 'bg-primary text-primary-foreground' : 'bg-background text-foreground'
                 } `}
               >
-                <span className="font-semibold">{example.title}</span>
+                <span className="font-black">{example.title}</span>
                 <span className="ml-2 text-sm">{isOpen ? '−' : '+'}</span>
               </button>
 

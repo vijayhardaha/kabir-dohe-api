@@ -39,9 +39,9 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
   const codeRef = useRef<HTMLElement | null>(null);
 
   return (
-    <div className="border-primary-200/75 relative overflow-hidden border not-last:mb-8">
-      <div className="bg-primary-500 flex items-center justify-between px-4 py-2">
-        <span className="font-semibold text-white">{language}</span>
+    <div className="relative overflow-hidden not-last:mb-8">
+      <div className="bg-foreground flex items-center justify-between px-4 py-2">
+        <span className="font-black text-white">{language}</span>
         <div className="flex items-center gap-2">
           {actionElement}
           <CopyButton textToCopy={code} />
@@ -50,8 +50,8 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
       {usePrism ? (
         <Highlight theme={themes.github} code={code} language={language}>
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre className="m-0 overflow-auto bg-white! p-4" style={style}>
-              <code ref={codeRef} className={`${className} text-primary-900 font-mono text-xs`}>
+            <pre className="bg-background! m-0 overflow-auto p-4" style={style}>
+              <code ref={codeRef} className={`${className} font-mono text-sm`}>
                 {tokens.map((line, i) => {
                   const lineProps = getLineProps({ line });
                   return (
@@ -68,8 +68,8 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
           )}
         </Highlight>
       ) : (
-        <pre className="bg-primary-50 m-0 overflow-auto p-4">
-          <code ref={codeRef} className="text-primary-900 font-mono">
+        <pre className="bg-background m-0 overflow-auto p-4">
+          <code ref={codeRef} className="font-mono">
             {code}
           </code>
         </pre>

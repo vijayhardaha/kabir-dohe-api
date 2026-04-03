@@ -33,7 +33,7 @@ export function CopyButton({ textToCopy }: ICopyButtonProps): React.JSX.Element 
 
   return (
     <button
-      className="btn btn-white min-w-16 px-2 py-1 text-xs font-medium"
+      className="btn btn-white min-w-16 px-2 py-1 text-xs uppercase"
       onClick={handleCopy}
       aria-label="Copy code to clipboard"
     >

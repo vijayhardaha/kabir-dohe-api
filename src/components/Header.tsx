@@ -8,10 +8,10 @@ import { LuArrowUpRight } from 'react-icons/lu';
  */
 export default function Header(): React.JSX.Element {
   return (
-    <header className="bg-primary-700 py-8 text-white">
+    <header className="bg-primary text-primary-foreground py-8 text-white">
       <div className="box">
         <h1 className="mb-4 text-5xl font-black">Kabir Dohe API</h1>
-        <p className="text-primary-100 mb-6 text-lg">
+        <p className="text-primary-foreground/80 mb-6 text-base">
           Access over{' '}
           <a href="/api/couplets" target="_blank">
             2500 authentic couplets (dohe)
