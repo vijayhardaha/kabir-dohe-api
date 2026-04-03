@@ -9,7 +9,7 @@ export default function ApiEndpoints(): React.JSX.Element {
     <section id="api-endpoint">
       <h2>API Endpoint</h2>
 
-      <div className="border-primary-300 bg-primary-50 rounded-lg border p-5">
+      <div className="border-primary-300 bg-primary-50 border p-5">
         <h3 className="text-primary-500 mb-2 text-xl font-semibold">
           <a href="/api/couplets">GET /api/couplets</a>
         </h3>

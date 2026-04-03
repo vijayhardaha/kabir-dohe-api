@@ -72,7 +72,7 @@
   }
 
   section {
-    @apply rounded-2xl bg-white p-6 shadow-md not-last:mb-12 md:p-8;
+    @apply bg-white p-6 shadow-md not-last:mb-12 md:p-8;
 
     h2 {
       @apply text-primary-500;
@@ -118,7 +118,7 @@
   }
 
   .table-container {
-    @apply border-primary-200/75 overflow-scroll rounded-xl border bg-white not-last:mb-8 lg:overflow-hidden;
+    @apply border-primary-200/75 overflow-scroll border bg-white not-last:mb-8 lg:overflow-hidden;
   }
 
   .table {
@@ -162,7 +162,7 @@
   .tab-button {
     @apply border-primary-700 text-primary-700 cursor-pointer border bg-transparent px-6 py-2;
     @apply inline-flex items-center justify-center gap-0.5 text-sm font-bold transition-all duration-200;
-    @apply rounded-xl active:scale-[0.9];
+    @apply active:scale-[0.9];
   }
 
   .tab-button:hover,
@@ -184,11 +184,11 @@
 
   /* Reusable info/card block for fields and error responses */
   .info-card {
-    @apply border-primary-100 flex items-start gap-4 rounded-xl border bg-white p-4;
+    @apply border-primary-100 flex items-start gap-4 border bg-white p-4;
   }
 
   .info-card-key {
-    @apply text-primary-700 flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-xl bg-stone-200/50 px-3 py-2 font-mono text-sm;
+    @apply text-primary-700 flex min-h-12 min-w-12 shrink-0 items-center justify-center bg-stone-200/50 px-3 py-2 font-mono text-sm;
   }
 
   .info-card-body h4 {

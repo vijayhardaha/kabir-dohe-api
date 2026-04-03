@@ -39,7 +39,7 @@ export function CodeBlock({ code, language, usePrism = false, actionElement }: I
   const codeRef = useRef<HTMLElement | null>(null);
 
   return (
-    <div className="border-primary-200/75 relative overflow-hidden rounded-xl border not-last:mb-8">
+    <div className="border-primary-200/75 relative overflow-hidden border not-last:mb-8">
       <div className="bg-primary-500 flex items-center justify-between px-4 py-2">
         <span className="font-semibold text-white">{language}</span>
         <div className="flex items-center gap-2">

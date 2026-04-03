@@ -131,7 +131,7 @@ export default function Examples(): JSX.Element {
                     headerRefs.current[examples.length - 1]?.focus();
                   }
                 }}
-                className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left ${
+                className={`flex w-full items-center justify-between border px-4 py-3 text-left ${
                   isOpen
                     ? 'bg-primary-500 border-primary-600 text-white'
                     : 'bg-primary-50 border-primary-200 text-primary-700'
