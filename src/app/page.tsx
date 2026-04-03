@@ -87,8 +87,8 @@ export default function Home(): React.JSX.Element {
       <ErrorResponse />
       <UsageExamples />
       <Examples />
-      <Contribution />
       <SEOContent />
+      <Contribution />
     </div>
   );
 }
