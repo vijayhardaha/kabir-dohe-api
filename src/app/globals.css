@@ -160,9 +160,9 @@
   }
 
   .tab-button {
-    @apply border-primary-700 text-primary-700 cursor-pointer border bg-transparent px-3 py-1;
+    @apply border-primary-700 text-primary-700 cursor-pointer border bg-transparent px-6 py-2;
     @apply inline-flex items-center justify-center gap-0.5 text-sm font-bold transition-all duration-200;
-    @apply rounded-lg active:scale-[0.9];
+    @apply rounded-xl active:scale-[0.9];
   }
 
   .tab-button:hover,
