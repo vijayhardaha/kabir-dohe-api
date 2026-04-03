@@ -85,7 +85,7 @@ export default function Examples(): JSX.Element {
         href={fullUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="btn btn-outline-white px-3 py-1 text-xs"
+        className="btn btn-outline-white px-3 py-1 text-xs font-medium"
         aria-label={`Try request: ${fullUrl}`}
       >
         Try request
