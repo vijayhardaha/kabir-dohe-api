@@ -2,13 +2,13 @@ import type { ReactNode } from 'react';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
-import { EB_Garamond, Geist_Mono, Nunito } from 'next/font/google';
+import { DM_Serif_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { GOOGLE_ANALYTICS_ID, SITE_METADATA } from '@/constants/seo';
 
-const sansFont = Nunito({
+const sansFont = DM_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
@@ -16,15 +16,15 @@ const sansFont = Nunito({
   preload: true,
 });
 
-const serifFont = EB_Garamond({
+const serifFont = DM_Serif_Display({
   subsets: ['latin'],
-  weight: ['400', '700', '800'],
+  weight: ['400'],
   variable: '--font-serif',
   display: 'swap',
   preload: true,
 });
 
-const monoFont = Geist_Mono({
+const monoFont = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-mono',
