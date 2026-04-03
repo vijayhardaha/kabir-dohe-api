@@ -7,25 +7,35 @@ import { LuArrowUpRight } from 'react-icons/lu';
  */
 export default function Footer(): React.JSX.Element {
   return (
-    <footer className="bg-accent text-accent-foreground border-t py-8">
+    <footer className="bg-primary/90 text-primary-foreground border-t py-10">
       <div className="box">
-        <p className="mb-2">&copy; {new Date().getFullYear()} Kabir Dohe Hub. All rights reserved.</p>
-        <p className="mb-2 text-sm">
+        <p className="mb-4">&copy; {new Date().getFullYear()} Kabir Dohe Hub. All rights reserved.</p>
+        <p className="mb-4 text-sm">
           Built and actively maintained by{' '}
           <a
             href="https://github.com/vijayhardaha"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-secondary"
+            className="text-background font-semibold"
           >
             Vijay Hardaha <LuArrowUpRight className="inline" />
           </a>{' '}
           using{' '}
-          <a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer" className="text-secondary">
+          <a
+            href="https://nextjs.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-background font-semibold"
+          >
             Next.js <LuArrowUpRight className="inline" />
           </a>{' '}
           and{' '}
-          <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" className="text-secondary">
+          <a
+            href="https://tailwindcss.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-background font-semibold"
+          >
             Tailwind CSS <LuArrowUpRight className="inline" />
           </a>
           .
