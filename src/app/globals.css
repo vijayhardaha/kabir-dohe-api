@@ -2,24 +2,24 @@
 
 @theme {
   /* Primary colors */
-  --color-primary-50: #f5f6f0;
-  --color-primary-100: #e7eada;
-  --color-primary-200: #d1d6b9;
-  --color-primary-300: #aeb784;
-  --color-primary-400: #9ea86d;
-  --color-primary-500: #899258;
-  --color-primary-600: #727847;
-  --color-primary-700: #5c5f3a;
-  --color-primary-800: #4e5033;
-  --color-primary-900: #45462f;
-  --color-primary-950: #252618;
+  --color-primary-50: #f5fbf2;
+  --color-primary-100: #e7f7e1;
+  --color-primary-200: #c7eabb;
+  --color-primary-300: #a8de97;
+  --color-primary-400: #7bc563;
+  --color-primary-500: #57aa3d;
+  --color-primary-600: #438c2d;
+  --color-primary-700: #376e27;
+  --color-primary-800: #2f5823;
+  --color-primary-900: #27491e;
+  --color-primary-950: #11270c;
 }
 
 /* Base Styles */
 @layer base {
   /* Typography base */
   body {
-    @apply bg-primary-50 text-primary-900 font-sans text-base leading-normal font-normal;
+    @apply bg-primary-50/50 text-primary-900 font-sans text-base leading-normal font-normal;
   }
 
   /* Headings - bold by default */
@@ -72,7 +72,7 @@
   }
 
   section {
-    @apply rounded-lg bg-white p-6 shadow-sm not-last:mb-12 md:p-8;
+    @apply rounded-2xl bg-white p-6 shadow-md not-last:mb-12 md:p-8;
 
     h2 {
       @apply text-primary-500;
@@ -94,10 +94,9 @@
   }
 
   .btn {
-    @apply cursor-pointer rounded-lg border px-6 py-2.5 no-underline;
+    @apply cursor-pointer rounded-xl border px-6 py-2.5 no-underline;
     @apply inline-flex items-center justify-center gap-0.5;
-    @apply text-sm font-bold transition-all duration-200;
-    @apply active:scale-[0.9]; /* Tactile click effect */
+    @apply text-sm font-semibold transition-all duration-200;
   }
 
   /* --- PRIMARY --- */
@@ -119,7 +118,7 @@
   }
 
   .table-container {
-    @apply border-primary-100 overflow-scroll rounded-lg border bg-white not-last:mb-8 lg:overflow-hidden;
+    @apply border-primary-200/75 overflow-scroll rounded-xl border bg-white not-last:mb-8 lg:overflow-hidden;
   }
 
   .table {
@@ -135,7 +134,7 @@
     }
 
     td {
-      @apply border-primary-100 border-b px-4 py-5 text-left;
+      @apply border-primary-200/75 border-b px-4 py-5 text-left;
     }
 
     tr:last-child td {
