@@ -184,11 +184,11 @@
 
   /* Reusable info/card block for fields and error responses */
   .info-card {
-    @apply border-primary-100 flex items-start gap-4 rounded-lg border bg-white p-4;
+    @apply border-primary-100 flex items-start gap-4 rounded-xl border bg-white p-4;
   }
 
   .info-card-key {
-    @apply bg-stone-200/50 text-primary-700 flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-md px-3 py-2 font-mono text-sm;
+    @apply text-primary-700 flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-xl bg-stone-200/50 px-3 py-2 font-mono text-sm;
   }
 
   .info-card-body h4 {
