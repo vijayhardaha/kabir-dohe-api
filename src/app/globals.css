@@ -56,7 +56,7 @@
 
   /* Inline code styling with automatic backticks */
   code:not(:where(.prism-code, [class*="prism-"])) {
-    @apply font-mono text-[#f81ce5];
+    @apply font-mono text-[#FF3E9B];
 
     &::before {
       content: "`";
