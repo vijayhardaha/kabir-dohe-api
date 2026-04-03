@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
-import { Mulish, JetBrains_Mono } from 'next/font/google';
+import { Mulish, Roboto_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
@@ -16,7 +16,7 @@ const sansFont = Mulish({
   preload: true,
 });
 
-const monoFont = JetBrains_Mono({
+const monoFont = Roboto_Mono({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-mono',
