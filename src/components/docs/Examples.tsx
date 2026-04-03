@@ -154,7 +154,7 @@ export default function Examples(): JSX.Element {
                 <div className="pt-2">
                   <CodeBlock
                     code={getCurlCommand(example.url)}
-                    language="http"
+                    language="bash"
                     actionElement={actionElement(example)}
                     usePrism={true}
                   />
