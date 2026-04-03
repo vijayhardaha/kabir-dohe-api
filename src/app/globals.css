@@ -72,6 +72,10 @@
   section {
     @apply bg-secondary text-secondary-foreground p-6 not-last:mb-12 md:p-8;
 
+    h2 {
+      @apply relative mb-6;
+    }
+
     h3 {
       @apply mb-2 text-lg font-black;
     }
