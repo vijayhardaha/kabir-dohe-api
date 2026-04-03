@@ -23,6 +23,7 @@ export default function Header(): React.JSX.Element {
         <div className="space-x-4">
           <a href="/api/couplets" className="btn btn-outline-white" target="_blank">
             Try the API
+            <LuArrowUpRight />
           </a>
           <a
             href="https://github.com/vijayhardaha/kabir-dohe-api"

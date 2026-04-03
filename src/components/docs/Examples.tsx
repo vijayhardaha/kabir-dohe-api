@@ -2,6 +2,8 @@
 
 import { type JSX, useState, useEffect, useRef } from 'react';
 
+import { LuArrowUpRight } from 'react-icons/lu';
+
 import { CodeBlock } from '@/components/CodeBlock';
 import { getPermaLink } from '@/lib/utils/seo';
 
@@ -87,6 +89,7 @@ export default function Examples(): JSX.Element {
         aria-label={`Try request: ${fullUrl}`}
       >
         Try request
+        <LuArrowUpRight />
       </a>
     );
   };
