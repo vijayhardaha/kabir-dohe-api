@@ -83,9 +83,9 @@ const titleAndDescription = { title: SITE_CONFIG.title, description: SITE_CONFIG
 const seoImage = {
   url: '/preview.png',
   secureUrl: `/preview.png`,
-  alt: 'Kabir Dohe API service logo',
-  width: 512,
-  height: 512,
+  alt: 'Kabir Dohe API service banner',
+  width: 1200,
+  height: 630,
   type: 'image/png',
 };
 
