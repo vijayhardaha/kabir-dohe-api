@@ -2,24 +2,16 @@ import type { ReactNode } from 'react';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
-import { DM_Serif_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { Mulish, JetBrains_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { GOOGLE_ANALYTICS_ID, SITE_METADATA } from '@/constants/seo';
 
-const sansFont = DM_Sans({
+const sansFont = Mulish({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-sans',
-  display: 'swap',
-  preload: true,
-});
-
-const serifFont = DM_Serif_Display({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-serif',
   display: 'swap',
   preload: true,
 });
@@ -52,7 +44,7 @@ const RootLayout = ({ children }: { children: ReactNode }): React.JSX.Element =>
       <head>
         <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
       </head>
-      <body className={`${sansFont.variable} ${monoFont.variable} ${serifFont.variable}`}>
+      <body className={`${sansFont.variable} ${monoFont.variable}`}>
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1 py-12">{children}</main>
