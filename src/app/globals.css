@@ -77,7 +77,7 @@
     }
 
     ul {
-      @apply list-disc space-y-3 pl-6 not-last:mb-4;
+      @apply list-disc space-y-2 pl-6 not-last:mb-4;
     }
   }
 }
