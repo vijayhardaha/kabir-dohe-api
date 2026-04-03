@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { type JSX, useState, useEffect, useRef } from 'react';
 
 import { CodeBlock } from '@/components/CodeBlock';
 import { getPermaLink } from '@/lib/utils/seo';
@@ -8,33 +8,44 @@ import { getPermaLink } from '@/lib/utils/seo';
 /**
  * Interface representing an example API request.
  */
-interface IExample {
+interface Example {
   title: string;
-  code: string;
+  url: string;
 }
 
 // Get the canonical URL for constructing API request examples
 const canonicalUrl: string = getPermaLink();
 
-const examples: IExample[] = [
-  { title: '1. Fetch All Couplets', code: 'curl -X GET ' + canonicalUrl + '/api/couplets' },
-  { title: '2. Search for a Couplet', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?search_query=itna%20dijai' },
-  {
-    title: '3. Search with Content',
-    code: 'curl -X GET ' + canonicalUrl + '/api/couplets?search_query=wisdom&search_content=true',
-  },
-  { title: '4. Filter by Tags', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?tags=spiritual,life' },
-  { title: '5. Filter by Category', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?category=philosophy' },
-  { title: '6. Filter by Popular', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?is_popular=true' },
-  { title: '7. Filter by Featured', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?is_featured=true' },
-  { title: '8. Sort Results', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?sort_by=text_en&sort_order=asc' },
-  { title: '9. Paginate Results', code: 'curl -X GET ' + canonicalUrl + '/api/couplets?page=2&per_page=5' },
+/**
+ * Returns the full API endpoint URL with canonical base.
+ *
+ * @param {string} apiEndpoint - The API endpoint path (e.g., '/api/couplets').
+ * @returns {string} Full URL with canonical base and endpoint.
+ */
+const getApiEndpointUrl = (apiEndpoint: string): string => canonicalUrl + apiEndpoint;
+
+/**
+ * Returns a curl command for the given URL.
+ *
+ * @param {string} url - The API endpoint path to curl.
+ * @returns {string} Curl command string.
+ */
+const getCurlCommand = (url: string): string => `curl -X GET ${getApiEndpointUrl(url)}`;
+
+/** Example API request configurations */
+const examples: Example[] = [
+  { title: '1. Fetch All Couplets', url: '/api/couplets' },
+  { title: '2. Search for a Couplet', url: '/api/couplets?search_query=itna%20dijai' },
+  { title: '3. Search with Content', url: '/api/couplets?search_query=wisdom&search_content=true' },
+  { title: '4. Filter by Tags', url: '/api/couplets?tags=spiritual,life' },
+  { title: '5. Filter by Category', url: '/api/couplets?category=philosophy' },
+  { title: '6. Filter by Popular', url: '/api/couplets?is_popular=true' },
+  { title: '7. Filter by Featured', url: '/api/couplets?is_featured=true' },
+  { title: '8. Sort Results', url: '/api/couplets?sort_by=text_en&sort_order=asc' },
+  { title: '9. Paginate Results', url: '/api/couplets?page=2&per_page=5' },
   {
     title: '10. Combining Multiple Filters',
-    code:
-      'curl -X GET '
-      + canonicalUrl
-      + '/api/couplets?search_query=wisdom&search_content=true&tags=philosophy&is_popular=false&is_featured=false&sort_by=number&sort_order=desc&page=1&per_page=10',
+    url: '/api/couplets?search_query=wisdom&search_content=true&tags=philosophy&is_popular=false&is_featured=false&sort_by=number&sort_order=desc&page=1&per_page=10',
   },
 ];
 
@@ -42,19 +53,15 @@ const examples: IExample[] = [
  * Component that displays expandable API endpoint examples.
  * Shows code samples for different API requests with copy functionality.
  *
- * @returns {React.JSX.Element} - The rendered examples section
+ * @returns {JSX.Element} - The rendered examples section
  */
-export default function Examples(): React.JSX.Element {
+export default function Examples(): JSX.Element {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
-
-  // Function to extract the API path from the code example
-  const getApiUrl = (code: string): string => code.replace('curl -X GET ', '');
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
   const headerRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
-  // Update panel max-heights for smooth slide animation
   useEffect(() => {
     panelRefs.current.forEach((el, i) => {
       if (!el) return;
@@ -69,17 +76,20 @@ export default function Examples(): React.JSX.Element {
     });
   }, [openIndex]);
 
-  const actionElement = (example: IExample) => (
-    <a
-      href={getApiUrl(example.code)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-outline-white px-3 py-1 text-xs"
-      aria-label={`Try request: ${getApiUrl(example.code)}`}
-    >
-      Try this request
-    </a>
-  );
+  const actionElement = (example: Example) => {
+    const fullUrl = getApiEndpointUrl(example.url);
+    return (
+      <a
+        href={fullUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn btn-outline-white px-3 py-1 text-xs"
+        aria-label={`Try request: ${fullUrl}`}
+      >
+        Try request
+      </a>
+    );
+  };
 
   return (
     <section>
@@ -140,7 +150,7 @@ export default function Examples(): React.JSX.Element {
               >
                 <div className="pt-2">
                   <CodeBlock
-                    code={example.code}
+                    code={getCurlCommand(example.url)}
                     language="http"
                     actionElement={actionElement(example)}
                     usePrism={true}
