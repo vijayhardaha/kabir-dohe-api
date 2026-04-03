@@ -7,7 +7,7 @@ import { LuArrowUpRight } from 'react-icons/lu';
  */
 export default function Footer(): React.JSX.Element {
   return (
-    <footer className="text-primary-100 bg-primary-900 border-t py-8">
+    <footer className="text-primary-100 bg-primary-700 border-t py-8">
       <div className="box">
         <p className="mb-2">&copy; {new Date().getFullYear()} Kabir Dohe Hub. All rights reserved.</p>
         <p className="mb-2 text-sm">
@@ -16,16 +16,16 @@ export default function Footer(): React.JSX.Element {
             href="https://github.com/vijayhardaha"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary-400"
+            className="text-primary-300"
           >
             Vijay Hardaha <LuArrowUpRight className="inline" />
           </a>{' '}
           using{' '}
-          <a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer" className="text-primary-400">
+          <a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer" className="text-primary-300">
             Next.js <LuArrowUpRight className="inline" />
           </a>{' '}
           and{' '}
-          <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400">
+          <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" className="text-primary-300">
             Tailwind CSS <LuArrowUpRight className="inline" />
           </a>
           .
