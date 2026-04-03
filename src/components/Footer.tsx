@@ -11,7 +11,7 @@ export default function Footer(): React.JSX.Element {
       <div className="box">
         <p className="mb-2">&copy; {new Date().getFullYear()} Kabir Dohe Hub. All rights reserved.</p>
         <p className="mb-2 text-sm">
-          Created by{' '}
+          Built and actively maintained by{' '}
           <a
             href="https://github.com/vijayhardaha"
             target="_blank"
@@ -31,11 +31,9 @@ export default function Footer(): React.JSX.Element {
           .
         </p>
         <p className="text-xs">
-          <strong>Disclaimer:</strong> The Kabir Dohe API provides access to dohe attributed to Sant Kabir Das for
-          informational and educational purposes. While efforts are made to ensure accuracy, we do not guarantee the
-          completeness or correctness of all content. Users are responsible for how they use the data, and Kabir Dohe
-          Hub shall not be held liable for any misuse or misinterpretation. The verses themselves are not owned by us;
-          only the API service and its implementation are.
+          <strong>Disclaimer:</strong> The Kabir Dohe API provides dohe of Sant Kabir Das for educational and
+          informational use. While we strive for accuracy, we do not guarantee completeness or correctness. Users are
+          responsible for their use of the content. The verses are not owned by us, only the API service is.
         </p>
       </div>
     </footer>
