@@ -139,10 +139,14 @@ Store prepared `git add`/`git commit` commands. Read on resume; if cleared, star
 ## Commands
 
 ```bash
-bun run dev|build|start       # Dev/prod
-bun run lint|lint:fix|format # Quality
-bun run test|test:run         # Testing
-bun run sync|sync:prod         # DB sync (dev/prod)
-bun run indexnow               # IndexNow submission
-supabase migration new <name>  # Create migration
+### Dev/prod
+bun run dev|build
+### Lint/Fix
+bun run lint|lint:fix|format|format:check
+### Type Check
+bun run tsc
+### Testing
+bun run test|test:watch|test:coverage
+# Create migration
+supabase migration new <name>
 ```
