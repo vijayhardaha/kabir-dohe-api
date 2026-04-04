@@ -3,10 +3,13 @@
  * @package vitest
  */
 
+import { createClient as supabaseCreateClient } from '@supabase/supabase-js';
 import { describe, it, expect, vi } from 'vitest';
 
 import type { ScriptEnv } from './env';
 import { createSupabaseClient } from './supabase';
+
+// Import the mocked function for assertion
 
 vi.mock('@supabase/supabase-js', () => ({ createClient: vi.fn(() => 'mock-supabase-client' as unknown) }));
 
@@ -28,6 +31,40 @@ describe('supabase', () => {
 
       // Assert the expected outcome for this scenario.
       expect(client).toBe('mock-supabase-client');
+    });
+
+    // Define a focused test case for one behavior.
+    it('should pass correct URL and key to createClient', () => {
+      createSupabaseClient(mockEnv);
+      // Assert the expected outcome for this scenario.
+      expect(vi.mocked(supabaseCreateClient)).toHaveBeenCalledWith(
+        'https://example.supabase.co',
+        'test-service-role-key'
+      );
+    });
+
+    // Define a focused test case for one behavior.
+    it('should handle different environment values', () => {
+      const prodEnv: ScriptEnv = {
+        NODE_ENV: 'production',
+        SUPABASE_URL: 'https://prod.supabase.co',
+        SUPABASE_SERVICE_ROLE_KEY: 'prod-key',
+        GOOGLE_SERVICE_ACCOUNT_BASE64: 'encoded',
+        GOOGLE_SHEET_ID: 'sheet-id',
+      };
+      createSupabaseClient(prodEnv);
+      // Assert the expected outcome for this scenario.
+      expect(vi.mocked(supabaseCreateClient)).toHaveBeenCalledWith('https://prod.supabase.co', 'prod-key');
+    });
+
+    // Define a focused test case for one behavior.
+    it('should propagate errors from createClient', () => {
+      vi.mocked(supabaseCreateClient).mockImplementation(() => {
+        throw new Error('Invalid credentials');
+      });
+
+      // Assert the expected outcome for this scenario.
+      expect(() => createSupabaseClient(mockEnv)).toThrow('Invalid credentials');
     });
   });
 });

@@ -51,4 +51,12 @@ describe('CodeBlock', () => {
     // Assert the expected outcome for this scenario.
     expect(screen.getByTestId('custom-action')).toBeInTheDocument();
   });
+
+  // Define a focused test case for one behavior.
+  it('should set language class on code element', () => {
+    const { container } = render(<CodeBlock code="test" language="python" usePrism={true} />);
+    const codeElement = container.querySelector('code');
+    // Assert the expected outcome for this scenario.
+    expect(codeElement).toHaveClass('language-python');
+  });
 });
