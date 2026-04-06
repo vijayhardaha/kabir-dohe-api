@@ -1,62 +1,177 @@
-# AGENTS.md - Kabir Dohe API Guidelines (for Agents, Claude, Copilot)
+# AGENTS.md
 
-You are an expert Senior Developer. Write clean, performant, type-safe code.
+> **This file serves as the authoritative reference for AI agents working on the `kabir-dohe-api` codebase.**
 
-## Stack
+## Project Overview
 
-Next.js 16 (App Router) · TypeScript (strict) · Supabase · Zod · Tailwind · Vitest · Bun
+Kabir Dohe API is a RESTful API that serves Kabir Das's dohas (couplets) with search, filtering, and metadata. This repository contains both the **API backend** and a **documentation frontend** for developers.
 
-## Structure
+### What This Project Provides
+
+- **Couplets API**: REST-based endpoints for retrieving and searching Kabir's dohas with transliteration, translation, and metadata
+- **Search API**: Full-text search across couplets with query parameters for filtering
+- **Documentation Site**: Interactive API documentation with examples, response formats, and usage guides
+
+### Tech Stack
+
+- **Type**: Next.js 16 API (App Router)
+- **Lang**: TypeScript (strict mode)
+- **Database**: Supabase (PostgreSQL)
+- **Validation**: Zod
+- **UI**: React 19 + Tailwind CSS v4
+- **Testing**: Vitest
+- **Package Manager**: Bun
+
+## Project Architecture
 
 ```
 src/
-├── app/api/           # API routes (routing only)
-├── components/         # UI components (PascalCase)
-├── constants/         # SEO metadata, API params
+├── app/                    # Next.js App Router - routing only
+│   ├── api/               # API routes
+│   │   ├── couplets/
+│   │   │   ├── route.ts   # GET all couplets
+│   │   │   └── search/
+│   │   │       └── route.ts # GET search couplets
+│   │   └── route.ts       # Root API endpoint
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Documentation home page
+│
+├── components/
+│   ├── CodeBlock.tsx      # Code display component
+│   ├── CopyButton.tsx     # Copy to clipboard button
+│   ├── Footer.tsx         # Site footer
+│   ├── Header.tsx         # Site header
+│   └── docs/              # Documentation components
+│       ├── ApiEndpoints.tsx
+│       ├── Contribution.tsx
+│       ├── ErrorResponse.tsx
+│       ├── Examples.tsx
+│       ├── Introduction.tsx
+│       ├── QueryParameters.tsx
+│       ├── ResponseFormat.tsx
+│       ├── SEOContent.tsx
+│       ├── UsageExamples.tsx
+│       └── index.tsx
+│
+├── constants/             # Project-wide constants
+│   ├── api-params.ts      # API parameter defaults
+│   └── seo.ts             # SEO metadata
+│
 ├── lib/
-│   ├── server/       # Server-only: db, env, utils (NEVER import in client)
-│   └── utils/       # Client-safe: seo, schema
-└── types/            # TypeScript definitions
+│   ├── server/           # Server-only (NEVER import in client)
+│   │   ├── db/
+│   │   │   └── supabase.ts  # Supabase client singleton
+│   │   ├── env/
+│   │   │   └── server.ts    # Environment variables
+│   │   └── utils/
+│   │       ├── errors/
+│   │       │   ├── api-error.ts      # ApiError class
+│   │       │   └── error-handler.ts  # Error handling utilities
+│   │       ├── response/
+│   │       │   └── response.ts       # Response helpers
+│   │       ├── string/
+│   │       │   ├── formatting.ts     # String formatting
+│   │       │   └── sanitize.ts       # String sanitization
+│   │       └── index.ts
+│   │
+│   └── utils/            # Client-safe utilities
+│       ├── classnames.ts  # cn() utility
+│       ├── schema.ts      # Zod schemas
+│       └── seo.ts         # SEO utilities
+│
+├── types/                 # TypeScript definitions
+│
+└── proxy.ts               # Proxy configuration
 ```
 
-## Rules
+## Available Commands
 
-**Server/Client**: `src/lib/server/` = server-only · `src/lib/utils/` = client-safe
+```bash
+# Development
+bun run dev              # Start development server
+bun run build            # Build for production
 
-**Naming**: Components→PascalCase · Functions→camelCase · Files→kebab-case · Constants→SCREAMING_SNAKE_CASE
+# Linting & Formatting
+bun run lint             # Lint all files
+bun run lint:fix         # Fix auto-fixable issues
+bun run format           # Format files (Prettier)
+bun run format:check     # Check formatting
 
-**TypeScript**: `interface` for shapes · `type` for unions · NO `any` (use `unknown`) · Avoid `!` (use `?.`)
+# Type Checking
+bun run tsc              # TypeScript type check
 
-**Prettier**: `printWidth:120`, `tabWidth:2`, `semi`, `singleQuote`, `trailingComma:"es5"`
+# Testing
+bun run test             # Run tests (watch mode)
+bun run test:run         # Run tests once
+bun run test:coverage    # Run tests with coverage
+
+# Database
+supabase migration new <name>  # Create new migration
+```
+
+## Utils Knowledge Base
+
+### Client-Safe (`src/lib/utils/`)
+
+**`classnames.ts`**
+
+- `cn()` — Combines Tailwind classes conditionally
+
+**`seo.ts`**
+
+- `siteUrl()` — Returns the site URL
+- `cleanPath(slug)` — Normalizes a path slug
+- `getPermaLink(slug)` — Generates a permalink URL
+
+**`schema.ts`**
+
+- `personSchema()` — Builds Schema.org Person entity
+- `webApiSchema()` — Builds Schema.org WebAPI entity
+- `getFullSchemaGraph()` — Returns complete JSON-LD graph
+
+### Server (`src/lib/server/utils/`)
+
+**`string/sanitize.ts`**
+
+- `sanitize(str, sep)` — Normalizes string to slug
+- `sanitizeKey()` — Sanitizes a key value
+- `sanitizeTitle()` — Sanitizes a title
+
+**`string/formatting.ts`**
+
+- `toSentenceCase(str)` — Converts string to sentence case
+
+**`response/response.ts`**
+
+- `success(data)` — Returns 200 OK response
+- `successCached(data)` — Returns 200 with cache headers
+- `failure(msg, status)` — Returns error response
+
+**`errors/api-error.ts`**
+
+- `ApiError` — Custom error class with `statusCode` and `isOperational`
+
+**`errors/error-handler.ts`**
+
+- `handleError(error)` — Generic error handler
+- `handleRouteError(error)` — Route-specific error handler
 
 ## Response Helpers
 
 ```typescript
 import { success, successCached, failure } from "@/lib/server/utils/response/response";
+
 return success(data); // 200 OK
 return successCached(data); // 200 + cache headers
 return failure("Error", 400); // Error response
 ```
 
-## Utils
-
-### Client-Safe (`src/lib/utils/`)
-
-- `seo.ts`: `siteUrl()` · `cleanPath(slug)` · `getPermaLink(slug)`
-- `schema.ts`: `personSchema()` · `webApiSchema()` · `getFullSchemaGraph()`
-
-### Server (`src/lib/server/utils/`)
-
-- `string/sanitize.ts`: `sanitize(str, sep)` · `sanitizeKey()` · `sanitizeTitle()`
-- `string/formatting.ts`: `toSentenceCase(str)`
-- `response/response.ts`: `success(data)` · `successCached(data)` · `failure(msg, status)`
-- `errors/api-error.ts`: `ApiError` class with `statusCode` and `isOperational`
-- `errors/error-handler.ts`: `handleError(error)` · `handleRouteError(error)`
-
 ## Supabase
 
-- Singleton: `import { supabase } from '@/lib/server/db/supabase'`
-- Select specific columns (no `SELECT *`) · Use RLS · Never expose service role key
+- **Singleton**: `import { supabase } from '@/lib/server/db/supabase'`
+- Select specific columns (no `SELECT *`)
+- Use Row Level Security (RLS)
+- Never expose service role key
 
 ## Validation (Zod)
 
@@ -88,17 +203,25 @@ type QueryParams = z.infer<typeof QuerySchema>;
 throw new ApiError("Not found", 404);
 ```
 
-## JSDoc
+## Coding Conventions
 
-Add JSDoc to exported functions, types, interfaces, and scripts. Use `@param {type}`, `@returns`, `@throws {Error}`, and `@example`.
+### Server/Client Boundary
 
-```typescript
+- `src/lib/server/` — Server-only (database, env, server utils). **NEVER import in client components.**
+- `src/lib/utils/` — Client-safe (seo, schema, classnames).
+
+### Comments
+
+#### JSDoc (for exported functions, types, interfaces, and scripts)
+
+```ts
 /**
  * Converts arbitrary text into a normalized slug.
  *
  * @param {string} string - Source text that may include accents and symbols.
  * @param {string} [separator="-"] - Replacement character between slug segments.
  * @returns {string} Lowercase slug stripped to URL-safe characters.
+ * @throws {Error} When input is empty after sanitization.
  * @example
  * sanitize("Hello World!"); // "hello-world"
  */
@@ -107,46 +230,84 @@ export function sanitize(string: string, separator = "-"): string { ... }
 
 **Skip for**: Obvious props (`className`, `children`), simple interfaces, private/helper functions.
 
-## Comments
+#### Regular Comments
 
 Explain **why**, not what. Capitalize first letter. Place on own line (avoid end-of-line).
 
-```typescript
+```ts
 // Cache category results for quick lookups during post sync.
 // Transliterate before slugging so accented characters produce stable ASCII output.
 ```
 
 **Skip for**: Obvious code that explains itself, TODOs without context.
 
+### Naming Conventions
+
+- Components: `PascalCase` (`Button.tsx`)
+- Functions/variables: `camelCase` (`getBaseUrl`)
+- Files: `kebab-case` (`api-utils.ts`)
+- Constants: `SCREAMING_SNAKE_CASE` (`MAX_RETRIES`)
+
+### TypeScript
+
+- Strict mode enabled
+- Use `interface` for object shapes, `type` for unions/tuples
+- NO `any` — use `unknown` instead
+- Avoid `!` — prefer optional chaining (`?.`)
+- Error handling: `error instanceof Error ? error.message : String(error)`
+
+## Rules
+
+- Use response helpers (`success`, `successCached`, `failure`) for all API responses
+- Validate all inputs with Zod schemas
+- Use `ApiError` for operational errors with proper status codes
+- Select specific columns from Supabase (never `SELECT *`)
+- Never import from `src/lib/server/` in client components
+
 ## Testing
 
-- Files: `*.test.ts` next to code they test
+- Files: `*.test.ts` / `*.test.tsx` next to code they test
+- Framework: Vitest
 - Run: `bun run test` (watch) · `bun run test:run` (once)
 
-## Commits
+## Git Workflow
 
-```
-fix: lowercase subject max 50 chars
+**Before preparing git.md (after each task):**
 
-- Body: normal case, max 72 chars per line
-- Conventional commits (type: subject)
-```
+1. Run `bun run tsc` — Type check
+2. Run `bun run format:check` — Format check
+3. Run `bun run lint` — ESLint check
 
-## `.tmp/git.md`
+**After completing a task:**
 
-Store prepared `git add`/`git commit` commands. Read on resume; if cleared, start fresh with unstaged changes. Output exact commands only — do NOT auto-commit.
+1. Check unstaged changes: `git status --porcelain` && `git diff`
+2. Stage files: `git add <files>`
+3. Create `.tmp/git.md` containing the staged files and commit command
+4. Create separate commits for each logical change
+5. Do NOT run git commands directly — only write to `.tmp/git.md`
+6. Wait for user to verify and commit
+7. Do NOT restore `.tmp/git.md` after it's cleared — clearing is intentional
 
-## Commands
+Example `.tmp/git.md`:
 
 ```bash
-### Dev/prod
-bun run dev|build
-### Lint/Fix
-bun run lint|lint:fix|format|format:check
-### Type Check
-bun run tsc
-### Testing
-bun run test|test:watch|test:coverage
-# Create migration
-supabase migration new <name>
+git add src/app/api/couplets/route.ts src/lib/server/utils/response/response.ts
+git commit -m "feat: add couplets endpoint with response caching
+
+- implement GET handler for fetching all couplets
+- add successCached response helper with cache headers"
 ```
+
+## Commit Conventions
+
+**Format:** `<type>(<scope>): <summary>`
+
+**Types:** `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `chore`
+
+**Rules:** Subject line ≤50 chars, lowercase. Body: normal case, max 72 chars per line. Blank line after subject.
+
+## Notes
+
+- The API serves Kabir Das couplets with transliteration and translation data
+- Documentation components in `src/components/docs/` have associated test files
+- Prettier config: `printWidth: 120`, `singleQuote`, `semi`, `trailingComma: "es5"`
