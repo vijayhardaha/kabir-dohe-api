@@ -5,7 +5,7 @@
  * Purpose: Generate sitemaps and robots.txt to help search engines
  *          discover and index site content.
  *          Use `npx next-sitemap` for local testing.
- * Docs: https://github.com/iamvishnusankar/next-sitemap
+ * Docs:    https://github.com/iamvishnusankar/next-sitemap
  * ======================================================================
  */
 

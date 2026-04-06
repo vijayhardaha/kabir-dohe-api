@@ -5,7 +5,7 @@
  * Purpose: Configure PostCSS plugins used to transform project styles
  *          (Tailwind, autoprefixer, etc.). Changes may require
  *          restarting the dev server.
- * Docs: https://github.com/postcss/postcss/blob/main/docs/config.md
+ * Docs:    https://github.com/postcss/postcss/blob/main/docs/config.md
  * ======================================================================
  */
 

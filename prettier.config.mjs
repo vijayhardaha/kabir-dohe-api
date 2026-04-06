@@ -2,9 +2,10 @@
  * ======================================================================
  * Prettier Configuration
  * ======================================================================
- * Purpose: Defines code formatting rules to ensure consistent style across the
- * repository. Use `npx prettier --write .` to apply these rules.
- * Docs: https://prettier.io/docs/configuration
+ * Purpose: Defines code formatting rules to ensure consistent style
+ *          across the repository. Use `npx prettier --write .` to apply
+ *          these rules.
+ * Docs:    https://prettier.io/docs/configuration
  * ======================================================================
  */
 

@@ -3,7 +3,7 @@
  * Next Configuration
  * ======================================================================
  * Purpose: Centralized runtime and build-time configuration for Next.js.
- * Docs: https://nextjs.org/docs/app/api-reference/config/next-config-js
+ * Docs:    https://nextjs.org/docs/app/api-reference/config/next-config-js
  * ======================================================================
  */
 

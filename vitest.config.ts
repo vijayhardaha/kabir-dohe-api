@@ -3,8 +3,8 @@
  * Vitest Configuration
  * ======================================================================
  * Purpose: Defines test execution, coverage, and alias resolution for the
- * project test suite.
- * Docs: https://vitest.dev/config/
+ *          project test suite.
+ * Docs:    https://vitest.dev/config/
  * ======================================================================
  */
 

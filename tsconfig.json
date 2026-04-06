@@ -4,7 +4,7 @@
 // Purpose: Static type-checking and module resolution strategy for the
 //          repository, ensuring predictable behavior and strong typing
 //          across code.
-// Docs: https://www.typescriptlang.org/tsconfig
+// Docs:    https://www.typescriptlang.org/tsconfig
 // =======================================================================
 
 {

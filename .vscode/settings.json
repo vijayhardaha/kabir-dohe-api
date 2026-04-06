@@ -22,25 +22,5 @@
   // Allow ESLint to handle formatting (via Prettier plugin)
   "eslint.enable": true,
   "eslint.format.enable": true,
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-
-  // ---- Spell Checker (CSpell) ----
-  // Whitelist for project-specific terms to avoid noisy suggestions
-  "cSpell.words": [
-    "dohas",
-    "Dohe",
-    "Hardaha",
-    "ilike",
-    "indexnow",
-    "Kabir",
-    "Sant",
-    "SUPABASE",
-    "treeify",
-    "Upserted",
-    "upserting",
-    "Upserts",
-    "vercel",
-    "Vijay",
-    "vijayhardaha"
-  ]
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }

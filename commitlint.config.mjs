@@ -3,7 +3,7 @@
  * Commitlint Configuration
  * =======================================================================
  * Purpose: Enforce conventional commits and project commit style.
- * Docs: https://commitlint.js.org/#/
+ * Docs:    https://commitlint.js.org/#/
  * =======================================================================
  */
 
